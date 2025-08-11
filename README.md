@@ -28,6 +28,7 @@
 - Thiết lập khung hình và đối tượng
 - Thêm xử lý khóa
 - Thêm delta/bộ tích lũy Vòng lặp trò chơi
+- Thêm FPS
 
 ### So sánh
 
