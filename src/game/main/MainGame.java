@@ -1,7 +1,5 @@
 package game.main;
 
-import java.awt.Graphics;
-
 import javax.swing.JFrame;
 
 public class MainGame {
@@ -15,6 +13,7 @@ public class MainGame {
 		window.pack(); // Use the JPanel component to determine window configuration
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
+	    //game.setUpGame();
 		game.startGame();
 	}
 }

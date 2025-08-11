@@ -3,8 +3,17 @@ package game.keyhandler;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import game.enums.MoveMode;
+import game.main.GamePanel;
+
 public class KeyHandler implements KeyListener {
+	
 	public boolean upPressed, downPressed, leftPressed, rightPressed;
+	GamePanel gp;
+	
+	public KeyHandler(GamePanel gp) {
+		this.gp = gp;
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -17,15 +26,19 @@ public class KeyHandler implements KeyListener {
 		int code = e.getKeyCode();
 		if(code == KeyEvent.VK_W) {
 			upPressed = true;
+			gp.moveMode = MoveMode.KEYBOARD;
 		}
 		if(code == KeyEvent.VK_S) {
 			downPressed = true;
+			gp.moveMode = MoveMode.KEYBOARD;
 		}
 		if(code == KeyEvent.VK_A) {
 			leftPressed = true;	
+			gp.moveMode = MoveMode.KEYBOARD;
 		}
 		if(code == KeyEvent.VK_D) {
 			rightPressed = true;
+			gp.moveMode = MoveMode.KEYBOARD;
 		}
 	}
 
