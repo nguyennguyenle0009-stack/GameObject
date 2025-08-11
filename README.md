@@ -27,8 +27,11 @@
 
 - Thiết lập khung hình và đối tượng
 - Thêm xử lý khóa
+- Thêm delta/bộ tích lũy Vòng lặp trò chơi
 
 ### So sánh
 
 ### Ý tưởng
+
+- cố định FPS (fixed timestep) → đảm bảo game chạy mượt, không phụ thuộc vào tốc độ CPU.
 
