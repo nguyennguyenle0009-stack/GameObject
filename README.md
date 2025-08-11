@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# GameObject
-=======
 ## Project: học lập trình game.
 
 - https://www.youtube.com/watch?v=om59cwR7psI&list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq
@@ -29,11 +26,9 @@
 ### Comment
 
 - Thiết lập khung hình và đối tượng
+- Thêm xử lý khóa
 
 ### So sánh
 
 ### Ý tưởng
 
-
-
->>>>>>> f3432ff (Thiết lập khung hình và đối tượng)

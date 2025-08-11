@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import game.keyhandler.KeyHandler;
+
 public class GamePanel extends JPanel implements Runnable {
 
 	public final int originalTileSize = 16;
@@ -20,10 +22,26 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	private Thread thread;
 	
+	private int FPS = 60;
+	
+	//Đặt vị trí mặc định người chơi
+	private int playerX = 100;
+	private int playerY = 100;
+	private int speed = 4;
+	
+	KeyHandler keyH = new KeyHandler();
+	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setBackground(Color.black);
 		this.setDoubleBuffered(true);
+		this.addKeyListener(keyH);
+		this.setFocusable(true);
+	}
+	
+	public void startGame() {
+		thread = new Thread(this);
+		thread.start();
 	}
 	
 	@Override
@@ -38,7 +56,18 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void update() {
-		
+		if(keyH.upPressed == true) {
+			playerY -= speed;
+		}
+		if(keyH.downPressed == true) {
+			playerY += speed;
+		}
+		if(keyH.leftPressed == true) {
+			playerX -= speed;
+		}
+		if(keyH.rightPressed == true) {
+			playerX += speed;
+		}
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -46,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.white);
-		g2.fillRect(300, 100, tileSize, tileSize);
+		g2.fillRect(playerX, playerY, tileSize, tileSize);
 		g2.dispose();
 	}
 	
