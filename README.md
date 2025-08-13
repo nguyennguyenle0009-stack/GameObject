@@ -30,6 +30,7 @@
 - Thêm delta/bộ tích lũy Vòng lặp trò chơi
 - Thêm FPS
 - Thêm nhấn chuột phải di chuyển nhân vật
+- thêm hình ảnh nhân vật
 
 ### So sánh
 

@@ -82,6 +82,22 @@ public class Player extends Entity {
 			float dy = mouseH.targetY - getY();
 			float dist = (float)Math.sqrt(dx * dx + dy * dy);
 			
+		    if (Math.abs(dx) > Math.abs(dy)) {
+		        if (dx < 0) {
+		            setDirection("left");
+		        } else {
+		            setDirection("right");
+		        }
+		    } else {
+		        if (dy < 0) {
+		            setDirection("up");
+		        } else {
+		            setDirection("down");
+		        }
+		    }
+
+
+			
 	        if (dist > getSpeed()) {
 	        	setX(getX() + (int)(dx / dist * getSpeed()));
 	        	setY(getY() + (int)(dy / dist * getSpeed()));
