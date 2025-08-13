@@ -29,11 +29,6 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	private int FPS = 60;
 	
-	private int playerX = 100;
-	private int playerY = 100;
-	private int speed = 4;
-
-	
 	KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
 	Entity player = new Player(this, keyH, mounseH);
