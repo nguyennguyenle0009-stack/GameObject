@@ -7,7 +7,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import game.enums.MoveMode;
+import game.entity.Entity;
+import game.entity.Player;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
 
@@ -28,7 +29,6 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	private int FPS = 60;
 	
-	//Đặt vị trí mặc định người chơi
 	private int playerX = 100;
 	private int playerY = 100;
 	private int speed = 4;
@@ -36,8 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
-	
-	public MoveMode moveMode = MoveMode.PRESSED;
+	Entity player = new Player(this, keyH, mounseH);
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -53,7 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void startGame() {
-		thread = new Thread(this);
+		this.thread = new Thread(this);
 		thread.start();
 	}
 	
@@ -85,69 +84,31 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void update() {
-		if(moveMode == MoveMode.KEYBOARD) {
-			if(keyH.upPressed == true) { playerY -= speed; }
-			if(keyH.downPressed == true) { playerY += speed; }
-			if(keyH.leftPressed == true) { playerX -= speed; }
-			if(keyH.rightPressed == true) { playerX += speed; }
-		}
-		else if(moveMode == MoveMode.PRESSED) {
-			if(mounseH.moving == true) {
-				float dx = mounseH.targetX - playerX;
-				float dy = mounseH.targetY - playerY;
-				float dist = (float)Math.sqrt(dx * dx + dy * dy);
-				
-		        if (dist > speed) {
-		        	playerX += dx / dist * speed;
-		        	playerY += dy / dist * speed;
-		        } else {
-		        	playerX = mounseH.targetX;
-		        	playerY = mounseH.targetY;
-		            mounseH.moving = false;
-		        }
-			}
-		}
-
+		player.update();
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
 		Graphics2D g2 = (Graphics2D)g;
-		g2.setColor(Color.white);
-		g2.fillRect(playerX, playerY, tileSize, tileSize);
+		player.draw(g2);
 		g2.dispose();
 	}
 	
 }
 
-//public void update() {
-//    switch (moveMode) {
-//        case KEYBOARD -> updateKeyboard();
-//        case CLICK -> updateClickMove();
-//    }
-//}
-//
-//private void updateKeyboard() {
-//    if (keyH.upPressed) playerY -= speed;
-//    if (keyH.downPressed) playerY += speed;
-//    if (keyH.leftPressed) playerX -= speed;
-//    if (keyH.rightPressed) playerX += speed;
-//}
-//
-//private void updateClickMove() {
-//    if (!mouseH.moving) return;
-//
-//    float dx = mouseH.targetX - playerX;
-//    float dy = mouseH.targetY - playerY;
-//    float dist = (float) Math.sqrt(dx * dx + dy * dy);
-//
-//    if (dist > speed) {
-//        playerX += dx / dist * speed;
-//        playerY += dy / dist * speed;
-//    } else {
-//        playerX = mouseH.targetX;
-//        playerY = mouseH.targetY;
-//        mouseH.moving = false;
-//    }
-//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

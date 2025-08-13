@@ -9,7 +9,7 @@ import game.main.GamePanel;
 public class MouseHandler implements MouseListener {
 	
 	public int targetX, targetY;
-	public boolean moving;
+	public boolean moving = false;
 	
 	GamePanel gp;
 	
@@ -28,7 +28,6 @@ public class MouseHandler implements MouseListener {
 			targetX = e.getX();
 			targetY = e.getY();
 			moving = true;
-			gp.moveMode = MoveMode.PRESSED;
 		}
 	}
 

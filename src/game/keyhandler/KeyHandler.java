@@ -3,7 +3,6 @@ package game.keyhandler;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import game.enums.MoveMode;
 import game.main.GamePanel;
 
 public class KeyHandler implements KeyListener {
@@ -24,21 +23,18 @@ public class KeyHandler implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
+		
 		if(code == KeyEvent.VK_W) {
 			upPressed = true;
-			gp.moveMode = MoveMode.KEYBOARD;
 		}
 		if(code == KeyEvent.VK_S) {
 			downPressed = true;
-			gp.moveMode = MoveMode.KEYBOARD;
 		}
 		if(code == KeyEvent.VK_A) {
 			leftPressed = true;	
-			gp.moveMode = MoveMode.KEYBOARD;
 		}
 		if(code == KeyEvent.VK_D) {
 			rightPressed = true;
-			gp.moveMode = MoveMode.KEYBOARD;
 		}
 	}
 
