@@ -11,6 +11,7 @@ import game.entity.Entity;
 import game.entity.Player;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
+import game.tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -32,6 +33,7 @@ public class GamePanel extends JPanel implements Runnable {
 	KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
 	Entity player = new Player(this, keyH, mounseH);
+	TileManager tile = new TileManager(this);
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -86,6 +88,7 @@ public class GamePanel extends JPanel implements Runnable {
 		super.paintComponent(g);
 		
 		Graphics2D g2 = (Graphics2D)g;
+		tile.draw(g2);
 		player.draw(g2);
 		g2.dispose();
 	}
