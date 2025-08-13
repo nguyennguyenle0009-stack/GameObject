@@ -44,7 +44,11 @@ public class Player extends Entity {
 		setX(100); 
 		setY(100);
 		setSpeed(4);
+		
 		setDirection("down");
+		
+		setSpriteCouter(0);
+		setSpriteNum(1);
 	}
 	
 	@Override
@@ -58,30 +62,32 @@ public class Player extends Entity {
 	}
 	
 	private void updateKeyboard() {
-		if(keyH.upPressed == true) { 
-			setDirection("up");
-			setY(getY() - getSpeed()); 
+		if(keyH.isUpPressed() == true || keyH.isDownPressed() == true 
+				|| keyH.isLeftPressed() == true || keyH.isRightPressed() == true) {
+			if(keyH.isUpPressed() == true) { 
+				setDirection("up");
+				setY(getY() - getSpeed()); 
 			}
-		if(keyH.downPressed == true) { 
-			setDirection("down");
-			setY(getY() + getSpeed()); 
+			if(keyH.isDownPressed() == true) { 
+				setDirection("down");
+				setY(getY() + getSpeed()); 
 			}
-		if(keyH.leftPressed == true) { 
-			setDirection("left");
-			setX(getX() - getSpeed()); 
+			if(keyH.isLeftPressed() == true) { 
+				setDirection("left");
+				setX(getX() - getSpeed()); 
 			}
-		if(keyH.rightPressed == true) { 
-			setDirection("right");
-			setX(getX() + getSpeed()); 
+			if(keyH.isRightPressed() == true) { 
+				setDirection("right");
+				setX(getX() + getSpeed()); 
 			}
+			checkAndChangeSpriteAnimation();
+		}
 	}
 	
 	private void updateClickMove() {
-
 			float dx = mouseH.targetX - getX();
 			float dy = mouseH.targetY - getY();
 			float dist = (float)Math.sqrt(dx * dx + dy * dy);
-			
 		    if (Math.abs(dx) > Math.abs(dy)) {
 		        if (dx < 0) {
 		            setDirection("left");
@@ -95,9 +101,6 @@ public class Player extends Entity {
 		            setDirection("down");
 		        }
 		    }
-
-
-			
 	        if (dist > getSpeed()) {
 	        	setX(getX() + (int)(dx / dist * getSpeed()));
 	        	setY(getY() + (int)(dy / dist * getSpeed()));
@@ -106,30 +109,53 @@ public class Player extends Entity {
 	        	setY(mouseH.targetY);
 	            mouseH.moving = false;
 	        }
-		
-		if(keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true) {
+	        checkAndChangeSpriteAnimation();
+		if(keyH.isUpPressed() == true || keyH.isDownPressed() == true 
+				|| keyH.isLeftPressed() == true || keyH.isRightPressed() == true) {
 			mouseH.moving = false;
+		}
+	}
+	
+	public void checkAndChangeSpriteAnimation() {
+		setSpriteCouter(getSpriteCouter() + 1);
+		if(getSpriteCouter() > 10) {
+			if(getSpriteNum() == 1) {
+				setSpriteNum(2);
+			}
+			else if(getSpriteNum() == 2) {
+				setSpriteNum(1);
+			}
+			setSpriteCouter(0);
 		}
 	}
 	
 	@Override
 	public void draw(Graphics2D g2) {
+		g2.drawImage(getDirectionImage(), getX(), getY(), gp.tileSize, gp.tileSize, null);
+	}
+	
+
+	private BufferedImage getDirectionImage() {
 		BufferedImage image = null;
 		switch(getDirection()) {
 		case "up":
-			image = getUp1();
+			if(getSpriteNum() == 1) { image = getUp1(); }
+			if(getSpriteNum() == 2) { image = getUp2(); }
 			break;
 		case "down":
-			image = getDown1();
+			if(getSpriteNum() == 1) { image = getDown1(); }
+			if(getSpriteNum() == 2) { image = getDown2(); }
 			break;
 		case "left":
-			image = getLeft1();
+			if(getSpriteNum() == 1) { image = getLeft1(); }
+			if(getSpriteNum() == 2) { image = getLeft2(); }
 			break;
 		case "right":
-			image = getRight1();
+			if(getSpriteNum() == 1) { image = getRight1(); }
+			if(getSpriteNum() == 2) { image = getRight2(); }
 			break;
 		}
-		g2.drawImage(image, getX(), getY(), gp.tileSize, gp.tileSize, null);
+		return image;
 	}
 }
 

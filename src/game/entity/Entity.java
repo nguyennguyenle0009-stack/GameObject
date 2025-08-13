@@ -10,8 +10,12 @@ public abstract class Entity {
 	
 	private int x, y;
 	private int speed;
+	
 	private BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
 	private String direction;
+	
+	private int spriteCouter;
+	private int spriteNum;
 	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
@@ -135,6 +139,24 @@ public abstract class Entity {
 
 	public Entity setDirection(String direction) {
 		this.direction = direction;
+		return this;
+	}
+
+	public int getSpriteCouter() {
+		return spriteCouter;
+	}
+
+	public Entity setSpriteCouter(int spriteCouter) {
+		this.spriteCouter = spriteCouter;
+		return this;
+	}
+
+	public int getSpriteNum() {
+		return spriteNum;
+	}
+
+	public Entity setSpriteNum(int spriteNum) {
+		this.spriteNum = spriteNum;
 		return this;
 	}
 	

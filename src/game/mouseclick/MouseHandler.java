@@ -3,7 +3,6 @@ package game.mouseclick;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import game.enums.MoveMode;
 import game.main.GamePanel;
 
 public class MouseHandler implements MouseListener {
@@ -19,7 +18,7 @@ public class MouseHandler implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -33,7 +32,7 @@ public class MouseHandler implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -45,7 +44,34 @@ public class MouseHandler implements MouseListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
+	public int getTargetX() {
+		return targetX;
+	}
+
+	public MouseHandler setTargetX(int targetX) {
+		this.targetX = targetX;
+		return this;
+	}
+
+	public int getTargetY() {
+		return targetY;
+	}
+
+	public MouseHandler setTargetY(int targetY) {
+		this.targetY = targetY;
+		return this;
+	}
+
+	public boolean isMoving() {
+		return moving;
+	}
+
+	public MouseHandler setMoving(boolean moving) {
+		this.moving = moving;
+		return this;
+	}
+
+	
 }
