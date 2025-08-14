@@ -11,14 +11,22 @@ import game.mouseclick.MouseHandler;
 
 public class Player extends Entity {
 	
+	// Dùng để xử lý bàn phím và chuột
 	KeyHandler keyH = new KeyHandler(gp);
 	MouseHandler mouseH = new MouseHandler(gp);
+	
+	// Vị trí nhân vật trên màn hình (luôn ở giữa)
+    private final int screenX;
+    private final int screenY;
 
 	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
 		super(gp);
 		
 		this.keyH = keyH;
 		this.mouseH = mounseH;
+		
+        this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);
+        this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);
 		
 		setDefaultValue();
 		getImagePlayer();
@@ -40,8 +48,8 @@ public class Player extends Entity {
 	}
 	
 	public void setDefaultValue() {
-		setX(100); 
-		setY(100);
+		setWorldX(100); 
+		setWorldY(100);
 		setSpeed(4);
 		
 		setDirection("down");
@@ -65,54 +73,49 @@ public class Player extends Entity {
 				|| keyH.isLeftPressed() == true || keyH.isRightPressed() == true) {
 			if(keyH.isUpPressed() == true) { 
 				setDirection("up");
-				setY(getY() - getSpeed()); 
+				setWorldY(getWorldY() - getSpeed()); 
 			}
 			if(keyH.isDownPressed() == true) { 
 				setDirection("down");
-				setY(getY() + getSpeed()); 
+				setWorldY(getWorldY() + getSpeed()); 
 			}
 			if(keyH.isLeftPressed() == true) { 
 				setDirection("left");
-				setX(getX() - getSpeed()); 
+				setWorldX(getWorldX() - getSpeed()); 
 			}
 			if(keyH.isRightPressed() == true) { 
 				setDirection("right");
-				setX(getX() + getSpeed()); 
+				setWorldX(getWorldX() + getSpeed()); 
 			}
 			checkAndChangeSpriteAnimation();
 		}
 	}
 	
 	private void updateClickMove() {
-			float dx = mouseH.targetX - getX();
-			float dy = mouseH.targetY - getY();
-			float dist = (float)Math.sqrt(dx * dx + dy * dy);
-		    if (Math.abs(dx) > Math.abs(dy)) {
-		        if (dx < 0) {
-		            setDirection("left");
-		        } else {
-		            setDirection("right");
-		        }
-		    } else {
-		        if (dy < 0) {
-		            setDirection("up");
-		        } else {
-		            setDirection("down");
-		        }
-		    }
-	        if (dist > getSpeed()) {
-	        	setX(getX() + (int)(dx / dist * getSpeed()));
-	        	setY(getY() + (int)(dy / dist * getSpeed()));
-	        } else {
-	        	setX(mouseH.targetX);
-	        	setY(mouseH.targetY);
-	            mouseH.moving = false;
-	        }
-	        checkAndChangeSpriteAnimation();
-		if(keyH.isUpPressed() == true || keyH.isDownPressed() == true 
-				|| keyH.isLeftPressed() == true || keyH.isRightPressed() == true) {
-			mouseH.moving = false;
-		}
+	    float dx = mouseH.targetX - getWorldX();
+	    float dy = mouseH.targetY - getWorldY();
+	    float dist = (float)Math.sqrt(dx * dx + dy * dy);
+
+	    if (Math.abs(dx) > Math.abs(dy)) {
+	        setDirection(dx < 0 ? "left" : "right");
+	    } else {
+	        setDirection(dy < 0 ? "up" : "down");
+	    }
+
+	    if (dist > getSpeed()) {
+	        setWorldX(getWorldX() + (int)(dx / dist * getSpeed()));
+	        setWorldY(getWorldY() + (int)(dy / dist * getSpeed()));
+	    } else {
+	        setWorldX(mouseH.targetX);
+	        setWorldY(mouseH.targetY);
+	        mouseH.moving = false;
+	    }
+
+	    checkAndChangeSpriteAnimation();
+
+	    if (keyH.isUpPressed() || keyH.isDownPressed() || keyH.isLeftPressed() || keyH.isRightPressed()) {
+	        mouseH.moving = false;
+	    }
 	}
 	
 	public void checkAndChangeSpriteAnimation() {
@@ -130,7 +133,7 @@ public class Player extends Entity {
 	
 	@Override
 	public void draw(Graphics2D g2) {
-		g2.drawImage(getDirectionImage(), getX(), getY(), gp.tileSize, gp.tileSize, null);
+		g2.drawImage(getDirectionImage(), screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
 	}
 	
 
@@ -156,6 +159,16 @@ public class Player extends Entity {
 		}
 		return image;
 	}
+
+	public int getScreenX() {
+		return screenX;
+	}
+
+	public int getScreenY() {
+		return screenY;
+	}
+	
+	
 }
 
 

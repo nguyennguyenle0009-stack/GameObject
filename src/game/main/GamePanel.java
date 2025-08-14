@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import game.entity.Entity;
 import game.entity.Player;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -17,14 +16,24 @@ public class GamePanel extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 	
-	public final int originalTileSize = 16;
-	public final int scale = 3;
+	private final int originalTileSize = 16;
+	private final int scale = 3;
 	
-	public final int tileSize = originalTileSize * scale;
-	public final int maxScreenCol = 16;
-	public final int maxScreenRow = 12;
-	public final int screenWidth = tileSize * maxScreenCol;
-	public final int screenHeight = tileSize * maxScreenRow;
+	//Độ dài tile
+	private final int tileSize = originalTileSize * scale;
+	//Tổng số cột hàng trong khung hình
+	private final int maxScreenCol = 16;
+	private final int maxScreenRow = 12;
+	//Tổng số độ dài khung hình hiển thị
+	private final int screenWidth = tileSize * maxScreenCol;//768
+	private final int screenHeight = tileSize * maxScreenRow;//576
+	
+	// Tổng cột và hàng trong map
+	private final int maxWorldCol = 50;
+	private final int maxWorldRow = 50;
+	// Tổng số chiều rộng và chiều cao trong map(pixel)
+	private final int worldWidth = tileSize * maxWorldCol;//2400
+	private final int worldHeight = tileSize * maxWorldRow;
 	
 	private Thread thread;
 	
@@ -32,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
-	Entity player = new Player(this, keyH, mounseH);
+	private final Player player = new Player(this, keyH, mounseH);
 	TileManager tile = new TileManager(this);
 	
 	public GamePanel() {
@@ -92,6 +101,47 @@ public class GamePanel extends JPanel implements Runnable {
 		player.draw(g2);
 		g2.dispose();
 	}
+	
+    public int getTileSize() {
+        return tileSize;
+    }
+
+	public int getMaxScreenCol() {
+		return maxScreenCol;
+	}
+
+	public int getMaxScreenRow() {
+		return maxScreenRow;
+	}
+
+	public int getScreenWidth() {
+		return screenWidth;
+	}
+
+	public int getScreenHeight() {
+		return screenHeight;
+	}
+
+	public int getMaxWorldCol() {
+		return maxWorldCol;
+	}
+
+	public int getMaxWorldRow() {
+		return maxWorldRow;
+	}
+
+	public int getWorldWidth() {
+		return worldWidth;
+	}
+
+	public int getWorldHeight() {
+		return worldHeight;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+	
 	
 }
 

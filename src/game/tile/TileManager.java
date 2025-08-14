@@ -14,12 +14,15 @@ public class TileManager {
 	
 	private final GamePanel gp;
 	private final Tile[] tile;
+	
+	// Mảng lưu số hiệu của từng tile trong bản đồ
 	private final int [][] mapTileNumber;
 	
+	// Contructor
 	public TileManager(GamePanel gp) {
 		this.gp = gp;
 		this.tile = new Tile[10];
-		this.mapTileNumber = new int[gp.maxScreenCol][gp.maxScreenRow];
+		this.mapTileNumber = new int[gp.getMaxWorldCol()][gp.getMaxWorldRow()];
 		
 		getTileImage();
 		loadMap("/data/map/world01.txt");
@@ -28,13 +31,22 @@ public class TileManager {
 	public void getTileImage() {
 		try {
 			tile[0] = new Tile();
-			tile[0].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/earth.png"))));
+			tile[0].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/grass00.png"))));
 			
 			tile[1] = new Tile();
-			tile[1].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/grass00.png"))));
+			tile[1].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/wall.png"))));
 			
 			tile[2] = new Tile();
 			tile[2].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/water00.png"))));
+			
+			tile[3] = new Tile();
+			tile[3].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/earth.png"))));
+			
+			tile[4] = new Tile();
+			tile[4].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/tree.png"))));
+			
+			tile[5] = new Tile();
+			tile[5].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/road00.png"))));
 		}catch (Exception e) {
 			e.getStackTrace();
 		}
@@ -48,17 +60,17 @@ public class TileManager {
             int col = 0;
             int row = 0;
 
-            while (col < gp.maxScreenCol && row < gp.maxScreenRow) {
+            while (col < gp.getMaxWorldCol() && row < gp.getMaxWorldRow()) {
                 String line = bufferedReader.readLine();
 
-                while (col < gp.maxScreenCol) {
+                while (col < gp.getMaxWorldCol()) {
                     String[] numbers = line.split(" ");
                     int number = Integer.parseInt(numbers[col]);
 
                     mapTileNumber[col][row] = number;
                     col++;
                 }
-                if (col == gp.maxScreenCol) {
+                if (col == gp.getMaxWorldCol()) {
                     col = 0;
                     row++;
                 }
@@ -72,21 +84,26 @@ public class TileManager {
     }
 	
    public void draw(Graphics2D graphics2D) {
-        int col = 0;
-        int row = 0;
-        int x = 0;
-        int y = 0;
+	   //Số cột số hàng
+        int worldCol = 0;
+        int worldRow = 0;
         
-        while(col < gp.maxScreenCol && row < gp.maxScreenRow) {
-        	int tileNumber = mapTileNumber[col][row];
-            graphics2D.drawImage(tile[tileNumber].getImage(), x, y, gp.tileSize, gp.tileSize, null);
-            col++;
-            x += gp.tileSize;
-            if(col == gp.maxScreenCol) {
-            	col = 0;
-            	x = 0;
-            	row++;
-            	y += gp.tileSize;
+        while(worldCol < gp.getMaxWorldCol() && worldRow < gp.getMaxWorldRow()) {
+        	int tileNumber = mapTileNumber[worldCol][worldRow];
+        	int worldX = worldCol * gp.getTileSize();
+        	int worldY = worldRow * gp.getTileSize();
+            int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
+            int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
+            if (worldX + gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() &&
+                    worldX - gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
+                    worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() &&
+                    worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY()) {
+                graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+            }
+            worldCol++;
+            if(worldCol == gp.getMaxWorldCol()) {
+            	worldCol = 0;
+            	worldRow++;
             }
         }
     }

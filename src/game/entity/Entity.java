@@ -8,7 +8,8 @@ import game.main.GamePanel;
 public abstract class Entity {
 	GamePanel gp;
 	
-	private int x, y;
+	// Vị trí nhân vật trong bản đồ
+	private int worldX, worldY;
 	private int speed;
 	
 	private BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
@@ -24,22 +25,22 @@ public abstract class Entity {
 	public abstract  void  update();
 	public abstract  void draw(Graphics2D g2);
 	
-	public int getX() {
-		return x;
+	public int getWorldX() {
+		return worldX;
 	}
 	
-	public Entity setX(int x) {
-		this.x = x;
+	public Entity setWorldX(int x) {
+		this.worldX = x;
 		return this;
 	}
 	
-	public int getY() {
-		return y;
+	public int getWorldY() {
+		return worldY;
 	}
 	
 	
-	public Entity setY(int y) {
-		this.y = y;
+	public Entity setWorldY(int y) {
+		this.worldY = y;
 		return this;
 	}
 	

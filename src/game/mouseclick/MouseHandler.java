@@ -23,11 +23,16 @@ public class MouseHandler implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON3) {
-			targetX = e.getX();
-			targetY = e.getY();
-			moving = true;
-		}
+	    if (e.getButton() == MouseEvent.BUTTON3) {
+	        int mouseX = e.getX();
+	        int mouseY = e.getY();
+	        // Chuyển đổi tọa độ màn hình sang tọa độ thế giới
+	        int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
+	        int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
+	        targetX = worldX;
+	        targetY = worldY;
+	        moving = true;
+	    }
 	}
 
 	@Override
