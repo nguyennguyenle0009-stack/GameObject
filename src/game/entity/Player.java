@@ -26,8 +26,8 @@ public class Player extends Entity {
 		this.keyH = keyH;
 		this.mouseH = mounseH;
 		
-        this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);
-        this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);
+        this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
+        this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
         
         setCollisionArea(new Rectangle( 8, 16, 32, 32));
 		
@@ -122,11 +122,9 @@ public class Player extends Entity {
 	        int rightCol = rightWorldX / tileSize;
 	        int topRow = topWorldY / tileSize;
 	        int bottomRow = bottomWorldY / tileSize;
-
 	        // Giả sử bạn có mảng tileMngr.mapTileNum[row][col] và tileMngr.tile[].collision
 	        boolean canMoveX = true;
 	        boolean canMoveY = true;
-
 	        // Kiểm tra va chạm trục X
 	        if (dx < 0) { // sang trái
 	            if (gp.getTileManager().getTile()[ gp.getTileManager().getMapTileNumber()[topRow][leftCol] ].isCollision() ||
@@ -139,7 +137,6 @@ public class Player extends Entity {
 	                canMoveX = false;
 	            }
 	        }
-
 	        // Kiểm tra va chạm trục Y
 	        if (dy < 0) { // lên
 	            if (gp.getTileManager().getTile()[ gp.getTileManager().getMapTileNumber()[topRow][leftCol]].isCollision() ||
@@ -152,11 +149,9 @@ public class Player extends Entity {
 	                canMoveY = false;
 	            }
 	        }
-
 	        // Cập nhật vị trí chỉ khi không va chạm
 	        if (canMoveX) setWorldX(nextWorldX);
 	        if (canMoveY) setWorldY(nextWorldY);
-
 	    } else {
 	        // Nếu quá gần đích thì ghim luôn
 	        setWorldX(mouseH.targetX);
@@ -179,10 +174,18 @@ public class Player extends Entity {
 	}
 	
 	private void moveIfCollisionNotDetected() {
+//		int rightOffset = gp.getScreenWidth() - screenX;
+//		int x = checkCharacterPositionAtXAxis(rightOffset);
+//		int botOffSet = gp.getScreenHeight() - screenY;
+//		int y = checkCharacterPositionAtYAxis(botOffSet);
 		if(isCollisionOn() == false) {
 			switch(getDirection()) {
 			case "up":
 				setWorldY(getWorldY() - getSpeed());
+//				System.out.println("getWorldY:" + getWorldY());
+//				System.out.println("getWorldX:" + getWorldX());
+//				System.out.println("X:" + x);
+//				System.out.println("Y:" + y);
 				break;
 			case "down":
 				setWorldY(getWorldY() + getSpeed());
@@ -212,9 +215,40 @@ public class Player extends Entity {
 	
 	@Override
 	public void draw(Graphics2D g2) {
-		g2.drawImage(getDirectionImage(), screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+		int rightOffset = gp.getScreenWidth() - screenX;
+		int x = checkCharacterPositionAtXAxis(rightOffset);
+		int botOffSet = gp.getScreenHeight() - screenY;
+		int y = checkCharacterPositionAtYAxis(botOffSet);
+		g2.drawImage(getDirectionImage(), x, y, gp.getTileSize(), gp.getTileSize(), null);
+
 	}
 	
+	//Kiểm tra màn hình có bị tràn ra khỏi bản đồ theo trục ngang không
+	private int checkCharacterPositionAtXAxis(int rightOffset) {
+		// Giới hạn khi nhân vật ở quá sát rìa trái bản đồ (camera không thể dịch sang trái hơn)
+		if(screenX > getWorldX()) {
+			// giới hạn tọa độ bên phải của nhân vật/camera trong bản đồ
+			return getWorldX();
+		}
+		// rightOffset = khoảng cách từ nhân vật đến mép phải màn hình
+		// Giới hạn khi camera ở quá sát rìa phải bản đồ (màn hình tràn ra ngoài)
+		if(rightOffset > gp.getWorldWidth() - getWorldX()) {
+			// vị trí nhân vật trên màn hình khi camera bị ghim ở mép phải bản đồ (bù trừ phần màn hình bị tràn).
+			return gp.getScreenWidth() - (gp.getWorldWidth() - getWorldX());
+		}
+		// Nếu màn hình không bị tràn ra khỏi bản đồ trả về bình thường
+		return screenX;
+	}
+	
+	private int checkCharacterPositionAtYAxis(int botOffset) {
+		if(screenY > getWorldY()) {
+			return getWorldY();
+		}
+		if(botOffset > gp.getWorldHeight() - getWorldY()) {
+			return gp.getScreenHeight()	- (gp.getWorldHeight() - getWorldY());
+		}
+		return screenY;
+	}
 
 	private BufferedImage getDirectionImage() {
 		BufferedImage image = null;

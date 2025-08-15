@@ -11,6 +11,7 @@ public abstract class Entity {
 	
 	// Vị trí nhân vật trong bản đồ
 	private int worldX, worldY;
+	// Tốc độ
 	private int speed;
 	
 	private BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;

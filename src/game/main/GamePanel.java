@@ -21,7 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private final int scale = 3;
 	
 	//Độ dài tile
-	private final int tileSize = originalTileSize * scale;
+	private final int tileSize = originalTileSize * scale;//48
 	//Tổng số cột hàng trong khung hình
 	private final int maxScreenCol = 16;
 	private final int maxScreenRow = 12;
@@ -84,7 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
 	            drawCount++;
 			}
 			if(timer >= 1000000000) {
-				System.out.println("FPS: " + drawCount);
+				//System.out.println("FPS: " + drawCount);
 				timer = 0;
 				drawCount = 0;
 			}
