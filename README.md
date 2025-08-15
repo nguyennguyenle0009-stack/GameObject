@@ -19,6 +19,8 @@
 
 ### Lỗi 
 
+- Khi nhấn chuột tại đích đến, nhân vật di chuyển theo đường thẳng và bị kẹt tại vùng chạm
+
 ### Sửa lỗi
 
 ### PS
@@ -31,6 +33,11 @@
 - Thêm FPS
 - Thêm nhấn chuột phải di chuyển nhân vật
 - thêm hình ảnh nhân vật
+- Add player animation
+- Add tiles
+- Add map loader
+- Add camera following character
+- Add collision detection
 
 ### So sánh
 

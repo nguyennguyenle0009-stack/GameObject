@@ -1,6 +1,7 @@
 package game.entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import game.main.GamePanel;
@@ -17,6 +18,10 @@ public abstract class Entity {
 	
 	private int spriteCouter;
 	private int spriteNum;
+	
+	//Khu vựa va chạm
+	private Rectangle collisionArea;
+	private boolean collisionOn = false;
 	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
@@ -158,6 +163,24 @@ public abstract class Entity {
 
 	public Entity setSpriteNum(int spriteNum) {
 		this.spriteNum = spriteNum;
+		return this;
+	}
+
+	public Rectangle getCollisionArea() {
+		return collisionArea;
+	}
+
+	public Entity setCollisionArea(Rectangle collisionArea) {
+		this.collisionArea = collisionArea;
+		return this;
+	}
+
+	public boolean isCollisionOn() {
+		return collisionOn;
+	}
+
+	public Entity setCollisionOn(boolean collision) {
+		this.collisionOn = collision;
 		return this;
 	}
 	

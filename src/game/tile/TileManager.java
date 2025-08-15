@@ -44,6 +44,7 @@ public class TileManager {
 			
 			tile[4] = new Tile();
 			tile[4].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/tree.png"))));
+			tile[4].setCollision(true);
 			
 			tile[5] = new Tile();
 			tile[5].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/road00.png"))));
@@ -84,14 +85,16 @@ public class TileManager {
     }
 	
    public void draw(Graphics2D graphics2D) {
-	   //Số cột số hàng
+	   // Thứ tự của tile trên hàng và cột trong thế giới
         int worldCol = 0;
         int worldRow = 0;
         
         while(worldCol < gp.getMaxWorldCol() && worldRow < gp.getMaxWorldRow()) {
         	int tileNumber = mapTileNumber[worldCol][worldRow];
+        	// Vị trí thực tế của tile trong thế giới
         	int worldX = worldCol * gp.getTileSize();
         	int worldY = worldRow * gp.getTileSize();
+        	// Vị trí tile trên màn hình, tính theo vị trí người chơi
             int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
             int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
             if (worldX + gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() &&
@@ -107,6 +110,15 @@ public class TileManager {
             }
         }
     }
+   
+   public Tile[] getTile() {
+       return tile;
+   }
+
+   public int[][] getMapTileNumber() {
+	return mapTileNumber;
+   }
+   
 }
 
 

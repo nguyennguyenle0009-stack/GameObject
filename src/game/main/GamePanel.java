@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import game.check.CollisionChecker;
 import game.entity.Player;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -42,7 +43,8 @@ public class GamePanel extends JPanel implements Runnable {
 	KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
 	private final Player player = new Player(this, keyH, mounseH);
-	TileManager tile = new TileManager(this);
+	private final TileManager tileManager = new TileManager(this);
+	private final CollisionChecker checkCollision = new CollisionChecker(this);
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -97,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
 		super.paintComponent(g);
 		
 		Graphics2D g2 = (Graphics2D)g;
-		tile.draw(g2);
+		tileManager.draw(g2);
 		player.draw(g2);
 		g2.dispose();
 	}
@@ -140,6 +142,14 @@ public class GamePanel extends JPanel implements Runnable {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public TileManager getTileManager() {
+		return tileManager;
+	}
+
+	public CollisionChecker getCheckCollision() {
+		return checkCollision;
 	}
 	
 	
