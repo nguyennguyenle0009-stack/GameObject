@@ -11,6 +11,8 @@ import game.check.CollisionChecker;
 import game.entity.Player;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
+import game.object.ObjectManager;
+import game.object.SuperObject;
 import game.tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -45,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private final Player player = new Player(this, keyH, mounseH);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
+    private final SuperObject[] obj = new SuperObject[10];
+    private final ObjectManager objectManager = new ObjectManager(this);
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -56,7 +60,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setUpGame() {
-		
+		objectManager.setObject();
 	}
 	
 	public void startGame() {
@@ -84,7 +88,7 @@ public class GamePanel extends JPanel implements Runnable {
 	            drawCount++;
 			}
 			if(timer >= 1000000000) {
-				//System.out.println("FPS: " + drawCount);
+				System.out.println("FPS: " + drawCount);
 				timer = 0;
 				drawCount = 0;
 			}
@@ -98,9 +102,31 @@ public class GamePanel extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
+		long drawStart = 0;
+		if(keyH.isCheckDrawTime() == true) {
+			drawStart = System.nanoTime();
+		}
+		
 		Graphics2D g2 = (Graphics2D)g;
 		tileManager.draw(g2);
+		
+		for(int i = 0; i < obj.length; i++) {
+			if(obj[i] != null ) {
+				obj[i].draw(g2, this);
+			}
+		}
+		
 		player.draw(g2);
+		
+		if(keyH.isCheckDrawTime() == true) {
+			long drawEnd = System.nanoTime();
+			long passedTime = drawEnd - drawStart;
+			
+			g2.setColor(Color.white);
+			g2.drawString("Draw Timn: " + passedTime, 10, 400);
+			System.out.println("Draw Timn: " + passedTime);
+		}
+		
 		g2.dispose();
 	}
 	
@@ -150,6 +176,14 @@ public class GamePanel extends JPanel implements Runnable {
 
 	public CollisionChecker getCheckCollision() {
 		return checkCollision;
+	}
+
+	public SuperObject[] getObjects() {
+		return obj;
+	}
+
+	public ObjectManager getObjectManager() {
+		return objectManager;
 	}
 	
 	

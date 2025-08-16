@@ -24,6 +24,8 @@ public abstract class Entity {
 	private Rectangle collisionArea;
 	private boolean collisionOn = false;
 	
+	private int collisionDefaultX, collisionDefaultY;
+	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
 	}
@@ -182,6 +184,24 @@ public abstract class Entity {
 
 	public Entity setCollisionOn(boolean collision) {
 		this.collisionOn = collision;
+		return this;
+	}
+
+	public int getCollisionDefaultX() {
+		return collisionDefaultX;
+	}
+
+	public Entity setCollisionDefaultX(int collisionDefaultX) {
+		this.collisionDefaultX = collisionDefaultX;
+		return this;
+	}
+
+	public int getCollisionDefaultY() {
+		return collisionDefaultY;
+	}
+
+	public Entity setCollisionDefaultY(int collisionDefaultY) {
+		this.collisionDefaultY = collisionDefaultY;
 		return this;
 	}
 	

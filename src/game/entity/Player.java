@@ -21,6 +21,8 @@ public class Player extends Entity {
     private final int screenY;
     
     private int resestTime;
+    
+    private int numberOfKeys = 0;
 
 	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
 		super(gp);
@@ -31,11 +33,18 @@ public class Player extends Entity {
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
         this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
         
-        setCollisionArea(new Rectangle( 8, 16, 32, 32));
+        //setCollisionArea(new Rectangle( 8, 16, 32, 32));
 		
+        setCollision();
 		setDefaultValue();
 		getImagePlayer();
 	}
+	
+    private void setCollision() {
+        setCollisionArea(new Rectangle(8, 16, 32, 32));
+        setCollisionDefaultX(getCollisionArea().x);
+        setCollisionDefaultY(getCollisionArea().y);
+    }
 	
 	public void getImagePlayer() {
 		try {
@@ -91,7 +100,7 @@ public class Player extends Entity {
 			checkAndChangeSpriteAnimation();
 		} 
 		else {
-			resestTileToDefault();
+			resestSpriteToDefault();
 		}
 	}
 	
@@ -171,12 +180,27 @@ public class Player extends Entity {
 	        mouseH.moving = false;
 	    }
 	}
-
 	
 	private void checkCollision() {
 		setCollisionOn(false);
 		gp.getCheckCollision().checkTile(this);
+        int objectIndex = gp.getCheckCollision().checkObject(this, true);
+        pickUpObject(objectIndex);
 	}
+	
+  private void pickUpObject(int index) {
+
+      if (index != 999) {
+//          String objectName = gp.getObjects()[index].getName();
+//          switch (objectName) {
+//          case "Tree_da" -> {
+//              gp.getObjects()[index] = null;
+//              numberOfKeys++;
+//              System.out.println("Keys: " + numberOfKeys);
+//              }
+//          }
+      }
+  }
 	
 	private void moveIfCollisionNotDetected() {
 		if(isCollisionOn() == false) {
@@ -210,7 +234,8 @@ public class Player extends Entity {
 		}
 	}
 	
-	private void resestTileToDefault() {
+	// Resest sprite khi đứng im
+	private void resestSpriteToDefault() {
 		resestTime++;
 		if(resestTime == 20) {
 			setSpriteNum(1);

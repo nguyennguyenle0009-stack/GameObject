@@ -17,7 +17,7 @@ public class MainGame {
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
 		
-	    //game.setUpGame();
+	    game.setUpGame();
 		game.startGame();
 	}
 }

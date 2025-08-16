@@ -8,6 +8,7 @@ import game.main.GamePanel;
 public class KeyHandler implements KeyListener {
 	
 	private boolean upPressed, downPressed, leftPressed, rightPressed;
+	private boolean checkDrawTime = false;
 	GamePanel gp;
 	
 	public KeyHandler(GamePanel gp) {
@@ -53,6 +54,14 @@ public class KeyHandler implements KeyListener {
 		if(code == KeyEvent.VK_D) {
 			rightPressed = false;
 		}
+		if(code == KeyEvent.VK_T) {
+			if(checkDrawTime == false) {
+				checkDrawTime = true;
+			}
+			else {
+				checkDrawTime = false;
+			}
+		}
 	}
 
 	public boolean isUpPressed() {
@@ -88,6 +97,15 @@ public class KeyHandler implements KeyListener {
 
 	public KeyHandler setRightPressed(boolean rightPressed) {
 		this.rightPressed = rightPressed;
+		return this;
+	}
+
+	public boolean isCheckDrawTime() {
+		return checkDrawTime;
+	}
+
+	public KeyHandler setCheckDrawTime(boolean checkDrawTime) {
+		this.checkDrawTime = checkDrawTime;
 		return this;
 	}
 	
