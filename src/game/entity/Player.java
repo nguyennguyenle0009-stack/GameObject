@@ -51,8 +51,8 @@ public class Player extends Entity {
 	}
 	
 	public void setDefaultValue() {
-		setWorldX(23 * gp.getTileSize()); 
-		setWorldY(21 * gp.getTileSize());
+		setWorldX(100); 
+		setWorldY(100);
 		setSpeed(4);
 		setDirection("down");
 		setSpriteCouter(0);
@@ -174,18 +174,10 @@ public class Player extends Entity {
 	}
 	
 	private void moveIfCollisionNotDetected() {
-//		int rightOffset = gp.getScreenWidth() - screenX;
-//		int x = checkCharacterPositionAtXAxis(rightOffset);
-//		int botOffSet = gp.getScreenHeight() - screenY;
-//		int y = checkCharacterPositionAtYAxis(botOffSet);
 		if(isCollisionOn() == false) {
 			switch(getDirection()) {
 			case "up":
 				setWorldY(getWorldY() - getSpeed());
-//				System.out.println("getWorldY:" + getWorldY());
-//				System.out.println("getWorldX:" + getWorldX());
-//				System.out.println("X:" + x);
-//				System.out.println("Y:" + y);
 				break;
 			case "down":
 				setWorldY(getWorldY() + getSpeed());

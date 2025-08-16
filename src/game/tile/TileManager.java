@@ -31,23 +31,26 @@ public class TileManager {
 	public void getTileImage() {
 		try {
 			tile[0] = new Tile();
-			tile[0].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/grass00.png"))));
+			tile[0].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/aa6.png"))));
+			tile[0].setCollision(true);
 			
 			tile[1] = new Tile();
-			tile[1].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/wall.png"))));
+			tile[1].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/aa.png"))));
 			
 			tile[2] = new Tile();
-			tile[2].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/water00.png"))));
+			tile[2].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/aa1.png"))));
 			
 			tile[3] = new Tile();
-			tile[3].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/earth.png"))));
+			tile[3].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/aa2.png"))));
 			
 			tile[4] = new Tile();
-			tile[4].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/tree.png"))));
-			tile[4].setCollision(false);
+			tile[4].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/aa3.png"))));
 			
 			tile[5] = new Tile();
-			tile[5].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/road00.png"))));
+			tile[5].setImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/aa5.png"))));
+			tile[5].setCollision(true);
+			
+			
 		}catch (Exception e) {
 			e.getStackTrace();
 		}
