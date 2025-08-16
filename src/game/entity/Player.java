@@ -19,6 +19,8 @@ public class Player extends Entity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
+    
+    private int resestTime;
 
 	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
 		super(gp);
@@ -87,6 +89,9 @@ public class Player extends Entity {
 			checkCollision();
 			moveIfCollisionNotDetected();
 			checkAndChangeSpriteAnimation();
+		} 
+		else {
+			resestTileToDefault();
 		}
 	}
 	
@@ -192,7 +197,7 @@ public class Player extends Entity {
 		}
 	}
 	
-	public void checkAndChangeSpriteAnimation() {
+	private void checkAndChangeSpriteAnimation() {
 		setSpriteCouter(getSpriteCouter() + 1);
 		if(getSpriteCouter() > 10) {
 			if(getSpriteNum() == 1) {
@@ -202,6 +207,14 @@ public class Player extends Entity {
 				setSpriteNum(1);
 			}
 			setSpriteCouter(0);
+		}
+	}
+	
+	private void resestTileToDefault() {
+		resestTime++;
+		if(resestTime == 20) {
+			setSpriteNum(1);
+			resestTime = 0;
 		}
 	}
 	
