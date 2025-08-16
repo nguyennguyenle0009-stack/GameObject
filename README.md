@@ -19,9 +19,13 @@
 
 ### Lỗi 
 
-- Khi nhấn chuột tại đích đến, nhân vật di chuyển theo đường thẳng và bị kẹt tại vùng chạm
+- Cây di chuyển khi nhân vật di chuyển
 
 ### Sửa lỗi
+
+- Khi camera còn cuộn được: object dùng công thức thường (đi cùng map).
+- Khi camera bị ghim ở mép: object chuyển sang hệ quy chiếu “world → screen” giống như tile & player đang dùng, nên không còn trôi lệch nữa.
+- Điều kiện hiển thị giữ nguyên: chỉ vẽ khi nằm trong khung hình.
 
 ### PS
 

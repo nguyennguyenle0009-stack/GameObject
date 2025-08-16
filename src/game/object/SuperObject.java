@@ -21,18 +21,41 @@ public class SuperObject {
 //	this.
 //}
 	
-    public void draw(Graphics2D graphics2D, GamePanel gamePanel) {
-        int screenX = getWorldX() - gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX();
-        int screenY = getWorldY() - gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY();
+	public void draw(Graphics2D g2, GamePanel gp) {
+	    int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
+	    int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
 
-        if (worldX + gamePanel.getTileSize() > gamePanel.getPlayer().getWorldX() - gamePanel.getPlayer().getScreenX() &&
-            worldX - gamePanel.getTileSize() < gamePanel.getPlayer().getWorldX() + gamePanel.getPlayer().getScreenX() &&
-            worldY + gamePanel.getTileSize() > gamePanel.getPlayer().getWorldY() - gamePanel.getPlayer().getScreenY() &&
-            worldY - gamePanel.getTileSize() < gamePanel.getPlayer().getWorldY() + gamePanel.getPlayer().getScreenY()) {
+	    // TÍNH OFFSET BIÊN GIỐNG TILE
+	    int rightOffset  = gp.getScreenWidth()  - gp.getPlayer().getScreenX();
+	    int bottomOffset = gp.getScreenHeight() - gp.getPlayer().getScreenY();
 
-            graphics2D.drawImage(image, screenX, screenY,3 *  gamePanel.getTileSize(),3 * gamePanel.getTileSize(), null);
-        }
-    }
+	    // KẸP THEO TRỤC X
+	    if (gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX()) {
+	        // mép trái map: camera không cuộn được nữa
+	        screenX = worldX;
+	    } else if (rightOffset > gp.getWorldWidth() - gp.getPlayer().getWorldX()) {
+	        // mép phải map
+	        screenX = gp.getScreenWidth() - (gp.getWorldWidth() - worldX);
+	    }
+
+	    // KẸP THEO TRỤC Y
+	    if (gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY()) {
+	        // mép trên map
+	        screenY = worldY;
+	    } else if (bottomOffset > gp.getWorldHeight() - gp.getPlayer().getWorldY()) {
+	        // mép dưới map
+	        screenY = gp.getScreenHeight() - (gp.getWorldHeight() - worldY);
+	    }
+
+	    // CHỈ VẼ KHI TRONG KHUNG HÌNH (giống điều kiện trong TileManager)
+	    if (worldX + gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() &&
+	        worldX - gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
+	        worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() &&
+	        worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY()) {
+
+	        g2.drawImage(image, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+	    }
+	}
 	
 	public String getName() {
 		return name;
