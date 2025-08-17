@@ -4,11 +4,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.JPanel;
 
 import game.check.CollisionChecker;
 import game.entity.Player;
+import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
 import game.object.ObjectManager;
@@ -16,12 +20,9 @@ import game.object.SuperObject;
 import game.tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
-
 	private static final long serialVersionUID = 1L;
-	
 	private final int originalTileSize = 16;
 	private final int scale = 3;
-	
 	//Độ dài tile
 	private final int tileSize = originalTileSize * scale;//48
 	//Tổng số cột hàng trong khung hình
@@ -30,18 +31,14 @@ public class GamePanel extends JPanel implements Runnable {
 	//Tổng số độ dài khung hình hiển thị
 	private final int screenWidth = tileSize * maxScreenCol;//768
 	private final int screenHeight = tileSize * maxScreenRow;//576
-	
 	// Tổng cột và hàng trong map
 	private final int maxWorldCol = 50;
 	private final int maxWorldRow = 50;
 	// Tổng số chiều rộng và chiều cao trong map(pixel)
 	private final int worldWidth = tileSize * maxWorldCol;//2400
 	private final int worldHeight = tileSize * maxWorldRow;
-	
 	private Thread thread;
-	
 	private int FPS = 60;
-	
 	KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
 	private final Player player = new Player(this, keyH, mounseH);
@@ -59,14 +56,9 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setFocusable(true);
 	}
 	
-	public void setUpGame() {
-		objectManager.setObject();
-	}
+	public void setUpGame() { objectManager.setObject(); }
 	
-	public void startGame() {
-		this.thread = new Thread(this);
-		thread.start();
-	}
+	public void startGame() { this.thread = new Thread(this); thread.start(); }
 	
 	@Override
 	public void run() {
@@ -95,119 +87,50 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 	
-	public void update() {
-		player.update();
-	}
+	public void update() { player.update(); }
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
 		long drawStart = 0;
 		if(keyH.isCheckDrawTime() == true) {
 			drawStart = System.nanoTime();
 		}
-		
 		Graphics2D g2 = (Graphics2D)g;
 		tileManager.draw(g2);
-		
-//		if(getPlayer().checkCharacterFootPositionAtYAxis() > object.getScreenY()) {
-//			for(int i = 0; i < obj.length; i++) {
-//				if(obj[i] != null ) {
-//					obj[i].draw(g2, this);
-//				}
-//			}
-//			player.draw(g2);
-//		}
-//		else {
-//			player.draw(g2);
-//			for(int i = 0; i < obj.length; i++) {
-//				if(obj[i] != null ) {
-//					obj[i].draw(g2, this);
-//				}
-//			}
-//		}
-		
-		for(SuperObject object: getObjects()) {
-			if(object != null && getPlayer().checkCharacterFootPositionAtYAxis() > object.checkObjectFootPositionAtYAxis()) {
-				object.draw(g2, this);
-			}
+		//Check object
+		List<DrawableEntity> drawList = new ArrayList<>();
+		for (SuperObject obj : getObjects()) {
+		    if (obj != null) drawList.add(obj);
 		}
-		player.draw(g2);
-		for(SuperObject object: getObjects()) {
-			if(object != null && getPlayer().checkCharacterFootPositionAtYAxis() <= object.checkObjectFootPositionAtYAxis()) {
-				object.draw(g2, this);
-			}
+		drawList.add(getPlayer());
+		drawList.sort(Comparator.comparingInt(DrawableEntity::getFootY));
+		for (DrawableEntity entity : drawList) {
+		    entity.draw(g2, this);
 		}
-		
 		if(keyH.isCheckDrawTime() == true) {
 			long drawEnd = System.nanoTime();
 			long passedTime = drawEnd - drawStart;
-			
 			g2.setColor(Color.white);
 			g2.drawString("Draw Timn: " + passedTime, 10, 400);
 			System.out.println("Draw Timn: " + passedTime);
 		}
-		
 		g2.dispose();
 	}
 	
-    public int getTileSize() {
-        return tileSize;
-    }
-
-	public int getMaxScreenCol() {
-		return maxScreenCol;
-	}
-
-	public int getMaxScreenRow() {
-		return maxScreenRow;
-	}
-
-	public int getScreenWidth() {
-		return screenWidth;
-	}
-
-	public int getScreenHeight() {
-		return screenHeight;
-	}
-
-	public int getMaxWorldCol() {
-		return maxWorldCol;
-	}
-
-	public int getMaxWorldRow() {
-		return maxWorldRow;
-	}
-
-	public int getWorldWidth() {
-		return worldWidth;
-	}
-
-	public int getWorldHeight() {
-		return worldHeight;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public TileManager getTileManager() {
-		return tileManager;
-	}
-
-	public CollisionChecker getCheckCollision() {
-		return checkCollision;
-	}
-
-	public SuperObject[] getObjects() {
-		return obj;
-	}
-
-	public ObjectManager getObjectManager() {
-		return objectManager;
-	}
-	
-	
+    public int getTileSize() { return tileSize; }
+	public int getMaxScreenCol() { return maxScreenCol; }
+	public int getMaxScreenRow() { return maxScreenRow; }
+	public int getScreenWidth() { return screenWidth; }
+	public int getScreenHeight() { return screenHeight; }
+	public int getMaxWorldCol() { return maxWorldCol; }
+	public int getMaxWorldRow() { return maxWorldRow; }
+	public int getWorldWidth() { return worldWidth; }
+	public int getWorldHeight() { return worldHeight; }
+	public Player getPlayer() { return player; }
+	public TileManager getTileManager() { return tileManager; }
+	public CollisionChecker getCheckCollision() { return checkCollision; }
+	public SuperObject[] getObjects() { return obj; }
+	public ObjectManager getObjectManager() { return objectManager; }
 }
 
 

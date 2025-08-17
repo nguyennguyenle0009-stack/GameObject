@@ -5,9 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
+import game.util.UtilityTool;
 
-public class SuperObject {
+public class SuperObject implements DrawableEntity {
 	
 	private String name;
 	private int index;
@@ -21,22 +23,18 @@ public class SuperObject {
 	private int scaleObjectHeight = 1;// mặc định là 1
 	private int drawOffsetY = 0;
 
-	public SuperObject() {
-	}
+	public SuperObject() {}
 	
-	public int checkObjectFootPositionAtYAxis() {
-		int objFoot = worldY + collisionArea.y;
-		return objFoot;
-	}
+	@Override
+	public int getFootY() { int objFoot = worldY + collisionArea.y; return objFoot; }
 	
+	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
 	    int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
 	    int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
-
 	    // TÍNH OFFSET BIÊN GIỐNG TILE
 	    int rightOffset  = gp.getScreenWidth()  - gp.getPlayer().getScreenX();
 	    int bottomOffset = gp.getScreenHeight() - gp.getPlayer().getScreenY();
-
 	    // KẸP THEO TRỤC X
 	    if (gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX()) {
 	        // mép trái map: camera không cuộn được nữa
@@ -45,7 +43,6 @@ public class SuperObject {
 	        // mép phải map
 	        screenX = gp.getScreenWidth() - (gp.getWorldWidth() - worldX);
 	    }
-
 	    // KẸP THEO TRỤC Y
 	    if (gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY()) {
 	        // mép trên map
@@ -54,12 +51,8 @@ public class SuperObject {
 	        // mép dưới map
 	        screenY = gp.getScreenHeight() - (gp.getWorldHeight() - worldY);
 	    }
- 
 	    // CHỈ VẼ KHI TRONG KHUNG HÌNH (giống điều kiện trong TileManager)
-	    if (worldX + gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() &&
-	        worldX - gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
-	        worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() &&
-	        worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY()) {
+        if(UtilityTool.isInsidePlayerView(worldX, worldY, gp)) {
 	        g2.drawImage(
 	        		image, 
 	        		screenX, 
@@ -74,68 +67,31 @@ public class SuperObject {
 	            collisionArea.width,
 	            collisionArea.height
 	        );
-
 	    }
 	}
 	
 	public String getName() { return name; }
-	public SuperObject setName(String name) {
-		this.name = name;
-		return this;
-	}
+	public SuperObject setName(String name) { this.name = name; return this; }
 	public int getIndex() { return index; }
-	public SuperObject setIndex(int index) {
-		this.index = index;
-		return this;
-	}
+	public SuperObject setIndex(int index) { this.index = index; return this; }
 	public BufferedImage getImage() { return image; }
-	public SuperObject setImage(BufferedImage image) {
-		this.image = image;
-		return this;
-	}
+	public SuperObject setImage(BufferedImage image) { this.image = image; return this; }
 	public boolean isCollision() { return collision; }
-	public SuperObject setCollision(boolean collision) {
-		this.collision = collision;
-		return this;
-	}
+	public SuperObject setCollision(boolean collision) { this.collision = collision; return this; }
 	public int getWorldX() { return worldX; }
-	public SuperObject setWorldX(int worldX) {
-		this.worldX = worldX;
-		return this;
-	}
+	public SuperObject setWorldX(int worldX) { this.worldX = worldX; return this; }
 	public int getWorldY() { return worldY; }
-	public SuperObject setWorldY(int worldY) {
-		this.worldY = worldY;
-		return this;
-	}
+	public SuperObject setWorldY(int worldY) { this.worldY = worldY; return this; }
 	public Rectangle getCollisionArea() { return collisionArea; }
-	public SuperObject setCollisionArea(Rectangle collisionArea) {
-		this.collisionArea = collisionArea;
-		return this;
-	}
+	public SuperObject setCollisionArea(Rectangle collisionArea) { this.collisionArea = collisionArea; return this; }
 	public int getCollisionDefaultX() { return collisionDefaultX; }
-	public SuperObject setCollisionDefaultX(int collisionDefaultX) {
-		this.collisionDefaultX = collisionDefaultX;
-		return this;
-	}
+	public SuperObject setCollisionDefaultX(int collisionDefaultX) { this.collisionDefaultX = collisionDefaultX; return this; }
 	public int getCollisionDefaultY() { return collisionDefaultY; }
-	public SuperObject setCollisionDefaultY(int collisionDefaultY) {
-		this.collisionDefaultY = collisionDefaultY;
-		return this;
-	}
+	public SuperObject setCollisionDefaultY(int collisionDefaultY) { this.collisionDefaultY = collisionDefaultY; return this; }
 	public int getScaleObjectWidth() { return scaleObjectWidth; }
-	public SuperObject setScaleObjectWidth(int scaleObjectWidth) {
-		this.scaleObjectWidth = scaleObjectWidth;
-		return this;
-	}
+	public SuperObject setScaleObjectWidth(int scaleObjectWidth) { this.scaleObjectWidth = scaleObjectWidth; return this; }
 	public int getScaleObjectHeight() { return scaleObjectHeight; }
-	public SuperObject setScaleObjectHeight(int scaleObjectHeight) {
-		this.scaleObjectHeight = scaleObjectHeight;
-		return this;
-	}
+	public SuperObject setScaleObjectHeight(int scaleObjectHeight) { this.scaleObjectHeight = scaleObjectHeight; return this; }
 	public int getDrawOffsetY() { return drawOffsetY; }
-	public SuperObject setDrawOffsetY(int drawOffsetY) {
-		this.drawOffsetY = drawOffsetY;
-		return this;
-	}
+	public SuperObject setDrawOffsetY(int drawOffsetY) { this.drawOffsetY = drawOffsetY; return this; }
 }

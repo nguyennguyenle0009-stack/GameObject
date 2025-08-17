@@ -13,25 +13,18 @@ public class CollisionChecker {
 		this.gp = gp;
 	}
 	
-	public void checkObject(SuperObject obj) {
-
-	}
-	
 	public void checkTile(Entity entity) {
 		//Tính tọa độ tuyệt đối của 4 cạnh vùng va chạm trong một entity
 		int entityLeftWorldX = entity.getWorldX() + entity.getCollisionArea().x;
 		int entityRightWorldX = entityLeftWorldX + entity.getCollisionArea().width;
 		int entityTopWorldY = entity.getWorldY() + entity.getCollisionArea().y;
 		int entityBotWorldY = entityTopWorldY + entity.getCollisionArea().height;
-		
 		// Tính chỉ số cột và hàng tuyệt đối của 4 cạnh vùng va chạm trong bản đồ
         int entityLeftCol = entityLeftWorldX / gp.getTileSize();
         int entityRightCol = entityRightWorldX / gp.getTileSize();
         int entityTopRow = entityTopWorldY / gp.getTileSize();
         int entityBotRow = entityBotWorldY / gp.getTileSize();
-        
         int tileNum1, tileNum2;
-        
         switch(entity.getDirection()) {
         case "up":
         	entityTopRow = (entityTopWorldY - entity.getSpeed()) / gp.getTileSize();
@@ -74,10 +67,8 @@ public class CollisionChecker {
 	
 	public int checkObject(Entity entity, boolean isPlayer) {
 	    int index = 999;
-
 	    for (SuperObject object : gp.getObjects()) {
 	        if (object == null || !object.isCollision()) continue;
-
 	        // Tạo vùng va chạm tạm cho entity
 	        Rectangle entityArea = new Rectangle(
 	            entity.getWorldX() + entity.getCollisionArea().x,
@@ -85,7 +76,6 @@ public class CollisionChecker {
 	            entity.getCollisionArea().width,
 	            entity.getCollisionArea().height
 	        );
-
 	        // Tạo vùng va chạm tạm cho object
 	        Rectangle objectArea = new Rectangle(
 	            object.getWorldX() + object.getCollisionArea().x,
@@ -93,7 +83,6 @@ public class CollisionChecker {
 	            object.getCollisionArea().width,
 	            object.getCollisionArea().height
 	        );
-
 	        // Di chuyển vùng va chạm entity theo hướng
 	        switch (entity.getDirection()) {
 	            case "up" -> entityArea.y -= entity.getSpeed();
@@ -101,7 +90,6 @@ public class CollisionChecker {
 	            case "left" -> entityArea.x -= entity.getSpeed();
 	            case "right" -> entityArea.x += entity.getSpeed();
 	        }
-
 	        // Kiểm tra va chạm
 	        if (entityArea.intersects(objectArea)) {
 	            entity.setCollisionOn(true);
@@ -110,11 +98,8 @@ public class CollisionChecker {
 	            }
 	        }
 	    }
-
 	    return index;
 	}
-
-	
 }
 
 

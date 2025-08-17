@@ -11,9 +11,10 @@ import game.object.SuperObject;
 public class OBJ_Tree_da extends SuperObject {
     public OBJ_Tree_da() {
         setName("Tree_da");
-
         try {
-            BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/data/tile/Tree_da.png")));
+            BufferedImage img = ImageIO.read(
+            		Objects.requireNonNull(getClass()
+            				.getResourceAsStream("/data/tile/Tree_da.png")));
             setImage(img);
             setCollision(true);
             setDrawOffsetY(10); //hình ảnh cao tính từ gốc

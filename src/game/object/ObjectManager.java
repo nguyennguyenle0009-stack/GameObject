@@ -5,11 +5,8 @@ import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_da;
 
 public class ObjectManager {
-    private final GamePanel gp;
-
-    public ObjectManager(GamePanel gp) {
-        this.gp = gp;
-    }
+    private final GamePanel gp; 
+    public ObjectManager(GamePanel gp) { this.gp = gp; }
 
     public void setObject() {
         SuperObject tree = new OBJ_Tree_da();

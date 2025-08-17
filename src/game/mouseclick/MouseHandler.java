@@ -6,21 +6,12 @@ import java.awt.event.MouseListener;
 import game.main.GamePanel;
 
 public class MouseHandler implements MouseListener {
-	
 	public int targetX, targetY;
 	public boolean moving = false;
-	
 	GamePanel gp;
-	
-	public MouseHandler(GamePanel gp) {
-		this.gp = gp;
-	}
-
+	public MouseHandler(GamePanel gp) { this.gp = gp; }
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
+	public void mouseClicked(MouseEvent e) { }
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// Right mouse pressed
@@ -38,49 +29,16 @@ public class MouseHandler implements MouseListener {
 	        moving = true;
 	    }
 	}
-
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
+	public void mouseReleased(MouseEvent e) { }
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void mouseEntered(MouseEvent e) { }
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	public int getTargetX() {
-		return targetX;
-	}
-
-	public MouseHandler setTargetX(int targetX) {
-		this.targetX = targetX;
-		return this;
-	}
-
-	public int getTargetY() {
-		return targetY;
-	}
-
-	public MouseHandler setTargetY(int targetY) {
-		this.targetY = targetY;
-		return this;
-	}
-
-	public boolean isMoving() {
-		return moving;
-	}
-
-	public MouseHandler setMoving(boolean moving) {
-		this.moving = moving;
-		return this;
-	}
-
-	
+	public void mouseExited(MouseEvent e) { }
+	public int getTargetX() { return targetX; }
+	public MouseHandler setTargetX(int targetX) { this.targetX = targetX; return this; }
+	public int getTargetY() { return targetY; }
+	public MouseHandler setTargetY(int targetY) { this.targetY = targetY; return this; } 
+	public boolean isMoving() { return moving; } 
+	public MouseHandler setMoving(boolean moving) { this.moving = moving; return this; } 
 }
