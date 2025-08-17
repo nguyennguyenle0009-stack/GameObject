@@ -188,16 +188,7 @@ public class Player extends Entity {
 	}
 	
   private void pickUpObject(int index) {
-
       if (index != 999) {
-//          String objectName = gp.getObjects()[index].getName();
-//          switch (objectName) {
-//          case "Tree_da" -> {
-//              gp.getObjects()[index] = null;
-//              numberOfKeys++;
-//              System.out.println("Keys: " + numberOfKeys);
-//              }
-//          }
       }
   }
 	

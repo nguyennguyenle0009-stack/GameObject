@@ -69,16 +69,18 @@
 	+ thiết lập phần va chạm ủa nhân vật và object ở gốc tính tương đương 3d
 	+ tính chuyển động nhân vật và nếu nhân vật trước object thì nhân vật che object (characterFootPosition)
 	+ vị trí object luôn đứng im nên không cần tính vị trí sau chuyển động
-- nâng cao(Chưa làm)
-
+	
+- nâng cao(đã làm)
 	 ý tưởng xây dựng map phức tạp (nhà, cây, cột, tường…):
 	- Dùng tiled editor như Tiled Map Editor để vẽ map rồi import vào Java.
 	- Hoặc tạo một hệ thống ObjectLayer riêng, trong đó mỗi object có:
 	- anchorY để xác định gốc.
 	- drawOffsetY để vẽ hình ảnh lệch lên.
 	- collisionArea nằm ở chân.
-- tối ưu(chưa làm)
-
+	BUG
+	- cây không thể che nhà nếu đứng trước ngôi nhà(chưa làm)
+- tối ưu(đang làm)
+	- tối ưu code package object(ok)
 
 
 

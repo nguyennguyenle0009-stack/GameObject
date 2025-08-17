@@ -14,33 +14,19 @@ public class SuperObject {
 	private BufferedImage image;
 	private boolean collision = false;
 	private int worldX, worldY;
-	private Rectangle collisionArea = new Rectangle( 72, 160, 48, 32);
+	private Rectangle collisionArea = new Rectangle( 0, 0, 0, 0);
 	private int collisionDefaultX = 0;
 	private int collisionDefaultY = 0;
-	private int scX = 0;
-	private int scY = 0;
+	private int scaleObjectWidth = 1; // mặc định là 1
+	private int scaleObjectHeight = 1;// mặc định là 1
+	private int drawOffsetY = 0;
+
+	public SuperObject() {
+	}
 	
-	public SuperObject(GamePanel gp) {
-	    scX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
-	    scY = 5 * gp.getTileSize() + collisionArea.y;
-	}
-	
-	public int getScreenX() {
-		return scX;
-	}
-
-	public SuperObject setScreenX(int screenX) {
-		this.scX = screenX;
-		return this;
-	}
-
-	public int getScreenY() {
-		return scY;
-	}
-
-	public SuperObject setScreenY(int screenY) {
-		this.scY = screenY;
-		return this;
+	public int checkObjectFootPositionAtYAxis() {
+		int objFoot = worldY + collisionArea.y;
+		return objFoot;
 	}
 	
 	public void draw(Graphics2D g2, GamePanel gp) {
@@ -68,14 +54,19 @@ public class SuperObject {
 	        // mép dưới map
 	        screenY = gp.getScreenHeight() - (gp.getWorldHeight() - worldY);
 	    }
-
+ 
 	    // CHỈ VẼ KHI TRONG KHUNG HÌNH (giống điều kiện trong TileManager)
 	    if (worldX + gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() &&
 	        worldX - gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
 	        worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() &&
 	        worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY()) {
-
-	        g2.drawImage(image, screenX, screenY,4 *  gp.getTileSize(),4 * gp.getTileSize(), null);
+	        g2.drawImage(
+	        		image, 
+	        		screenX, 
+	        		screenY - drawOffsetY,
+	        		getScaleObjectWidth() *  gp.getTileSize(),
+	        		getScaleObjectHeight() * gp.getTileSize(), 
+	        		null);
 	        g2.setColor(Color.RED);
 	        g2.drawRect(
 	            screenX + collisionArea.x,  // vị trí X trên màn hình + offset
@@ -87,68 +78,64 @@ public class SuperObject {
 	    }
 	}
 	
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 	public SuperObject setName(String name) {
 		this.name = name;
 		return this;
 	}
-	public int getIndex() {
-		return index;
-	}
+	public int getIndex() { return index; }
 	public SuperObject setIndex(int index) {
 		this.index = index;
 		return this;
 	}
-	public BufferedImage getImage() {
-		return image;
-	}
+	public BufferedImage getImage() { return image; }
 	public SuperObject setImage(BufferedImage image) {
 		this.image = image;
 		return this;
 	}
-	public boolean isCollision() {
-		return collision;
-	}
+	public boolean isCollision() { return collision; }
 	public SuperObject setCollision(boolean collision) {
 		this.collision = collision;
 		return this;
 	}
-	public int getWorldX() {
-		return worldX;
-	}
+	public int getWorldX() { return worldX; }
 	public SuperObject setWorldX(int worldX) {
 		this.worldX = worldX;
 		return this;
 	}
-	public int getWorldY() {
-		return worldY;
-	}
+	public int getWorldY() { return worldY; }
 	public SuperObject setWorldY(int worldY) {
 		this.worldY = worldY;
 		return this;
 	}
-	public Rectangle getCollisionArea() {
-		return collisionArea;
-	}
+	public Rectangle getCollisionArea() { return collisionArea; }
 	public SuperObject setCollisionArea(Rectangle collisionArea) {
 		this.collisionArea = collisionArea;
 		return this;
 	}
-	public int getCollisionDefaultX() {
-		return collisionDefaultX;
-	}
+	public int getCollisionDefaultX() { return collisionDefaultX; }
 	public SuperObject setCollisionDefaultX(int collisionDefaultX) {
 		this.collisionDefaultX = collisionDefaultX;
 		return this;
 	}
-	public int getCollisionDefaultY() {
-		return collisionDefaultY;
-	}
+	public int getCollisionDefaultY() { return collisionDefaultY; }
 	public SuperObject setCollisionDefaultY(int collisionDefaultY) {
 		this.collisionDefaultY = collisionDefaultY;
 		return this;
 	}
-	
+	public int getScaleObjectWidth() { return scaleObjectWidth; }
+	public SuperObject setScaleObjectWidth(int scaleObjectWidth) {
+		this.scaleObjectWidth = scaleObjectWidth;
+		return this;
+	}
+	public int getScaleObjectHeight() { return scaleObjectHeight; }
+	public SuperObject setScaleObjectHeight(int scaleObjectHeight) {
+		this.scaleObjectHeight = scaleObjectHeight;
+		return this;
+	}
+	public int getDrawOffsetY() { return drawOffsetY; }
+	public SuperObject setDrawOffsetY(int drawOffsetY) {
+		this.drawOffsetY = drawOffsetY;
+		return this;
+	}
 }
