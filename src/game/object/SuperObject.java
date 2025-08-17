@@ -1,5 +1,6 @@
 package game.object;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -13,13 +14,34 @@ public class SuperObject {
 	private BufferedImage image;
 	private boolean collision = false;
 	private int worldX, worldY;
-	private Rectangle collisionArea = new Rectangle(0, 0, 48, 48);
+	private Rectangle collisionArea = new Rectangle( 72, 160, 48, 32);
 	private int collisionDefaultX = 0;
 	private int collisionDefaultY = 0;
+	private int scX = 0;
+	private int scY = 0;
 	
-//	public SuperObject() {
-//	this.
-//}
+	public SuperObject(GamePanel gp) {
+	    scX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
+	    scY = 5 * gp.getTileSize() + collisionArea.y;
+	}
+	
+	public int getScreenX() {
+		return scX;
+	}
+
+	public SuperObject setScreenX(int screenX) {
+		this.scX = screenX;
+		return this;
+	}
+
+	public int getScreenY() {
+		return scY;
+	}
+
+	public SuperObject setScreenY(int screenY) {
+		this.scY = screenY;
+		return this;
+	}
 	
 	public void draw(Graphics2D g2, GamePanel gp) {
 	    int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
@@ -53,7 +75,15 @@ public class SuperObject {
 	        worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() &&
 	        worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY()) {
 
-	        g2.drawImage(image, screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+	        g2.drawImage(image, screenX, screenY,4 *  gp.getTileSize(),4 * gp.getTileSize(), null);
+	        g2.setColor(Color.RED);
+	        g2.drawRect(
+	            screenX + collisionArea.x,  // vị trí X trên màn hình + offset
+	            screenY + collisionArea.y,  // vị trí Y trên màn hình + offset
+	            collisionArea.width,
+	            collisionArea.height
+	        );
+
 	    }
 	}
 	

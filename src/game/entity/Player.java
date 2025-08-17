@@ -1,5 +1,6 @@
 package game.entity;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -21,8 +22,6 @@ public class Player extends Entity {
     private final int screenY;
     
     private int resestTime;
-    
-    private int numberOfKeys = 0;
 
 	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
 		super(gp);
@@ -41,7 +40,7 @@ public class Player extends Entity {
 	}
 	
     private void setCollision() {
-        setCollisionArea(new Rectangle(8, 16, 32, 32));
+        setCollisionArea(new Rectangle( 19, 38, 10, 10));
         setCollisionDefaultX(getCollisionArea().x);
         setCollisionDefaultY(getCollisionArea().y);
     }
@@ -250,7 +249,15 @@ public class Player extends Entity {
 		int botOffSet = gp.getScreenHeight() - screenY;
 		int y = checkCharacterPositionAtYAxis(botOffSet);
 		g2.drawImage(getDirectionImage(), x, y, gp.getTileSize(), gp.getTileSize(), null);
+        g2.setColor(Color.BLUE);
+        g2.drawRect(x+getCollisionArea().x, y + getCollisionArea().y, getCollisionArea().width, getCollisionArea().height);
+//        System.out.println(getWorldY());
 
+	}
+	
+	public int checkCharacterFootPositionAtYAxis(){
+		int chaFoot = getWorldY() + getCollisionArea().y;
+		return chaFoot;
 	}
 	
 	//Kiểm tra màn hình có bị tràn ra khỏi bản đồ theo trục ngang không

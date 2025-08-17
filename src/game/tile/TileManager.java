@@ -1,5 +1,6 @@
 package game.tile;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -113,12 +114,16 @@ public class TileManager {
                 worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() &&
                 worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY()) {
                 graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+                graphics2D.setColor(Color.BLUE);
+                graphics2D.drawRect(screenX, screenY, gp.getTileSize(), gp.getTileSize());
             } 
             else if (gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX() || 
             		 gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY() || 
             		 rightOffset > gp.getWorldWidth() - gp.getPlayer().getWorldX() || 
                      bottomOffset > gp.getWorldHeight() - gp.getPlayer().getWorldY()) {
             	graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, gp.getTileSize(), gp.getTileSize(), null);
+                graphics2D.setColor(Color.BLUE);
+                graphics2D.drawRect(screenX, screenY, gp.getTileSize(), gp.getTileSize());
             }
             worldCol++;
             if(worldCol == gp.getMaxWorldCol()) {

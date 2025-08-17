@@ -48,6 +48,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
     private final SuperObject[] obj = new SuperObject[10];
+    private final SuperObject object = new SuperObject(this);
     private final ObjectManager objectManager = new ObjectManager(this);
 	
 	public GamePanel() {
@@ -110,13 +111,25 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 		tileManager.draw(g2);
 		
-		for(int i = 0; i < obj.length; i++) {
-			if(obj[i] != null ) {
-				obj[i].draw(g2, this);
+		if(getPlayer().checkCharacterFootPositionAtYAxis() > object.getScreenY()) {
+			for(int i = 0; i < obj.length; i++) {
+				if(obj[i] != null ) {
+					obj[i].draw(g2, this);
+				}
+			}
+			player.draw(g2);
+		}
+		else {
+			player.draw(g2);
+			for(int i = 0; i < obj.length; i++) {
+				if(obj[i] != null ) {
+					obj[i].draw(g2, this);
+				}
 			}
 		}
+		System.out.println("vị trí y của nhân vật: " + getPlayer().checkCharacterFootPositionAtYAxis());
+		System.out.println("vị trí y của cây     : " + object.getScreenY());
 		
-		player.draw(g2);
 		
 		if(keyH.isCheckDrawTime() == true) {
 			long drawEnd = System.nanoTime();

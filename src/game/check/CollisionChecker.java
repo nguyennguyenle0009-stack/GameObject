@@ -1,5 +1,7 @@
 package game.check;
 
+import java.awt.Rectangle;
+
 import game.entity.Entity;
 import game.main.GamePanel;
 import game.object.SuperObject;
@@ -70,82 +72,48 @@ public class CollisionChecker {
         }
 	}
 	
-	 public int checkObject(Entity entity, boolean isPlayer) {
-	        int index = 999;
+	public int checkObject(Entity entity, boolean isPlayer) {
+	    int index = 999;
 
-	        for (SuperObject object : gp.getObjects()) {
+	    for (SuperObject object : gp.getObjects()) {
+	        if (object == null || !object.isCollision()) continue;
 
-	            if (object != null) {
-	                entity.getCollisionArea().x = entity.getWorldX() + entity.getCollisionArea().x;
-	                entity.getCollisionArea().y = entity.getWorldY() + entity.getCollisionArea().y;
+	        // Tạo vùng va chạm tạm cho entity
+	        Rectangle entityArea = new Rectangle(
+	            entity.getWorldX() + entity.getCollisionArea().x,
+	            entity.getWorldY() + entity.getCollisionArea().y,
+	            entity.getCollisionArea().width,
+	            entity.getCollisionArea().height
+	        );
 
-	                object.getCollisionArea().x = object.getWorldX() + object.getCollisionArea().x;
-	                object.getCollisionArea().y = object.getWorldY() + object.getCollisionArea().y;
+	        // Tạo vùng va chạm tạm cho object
+	        Rectangle objectArea = new Rectangle(
+	            object.getWorldX() + object.getCollisionArea().x,
+	            object.getWorldY() + object.getCollisionArea().y,
+	            object.getCollisionArea().width,
+	            object.getCollisionArea().height
+	        );
 
-	                switch (entity.getDirection()) {
-	                    case "up" -> {
-	                        entity.getCollisionArea().y -= entity.getSpeed();
-
-	                        if (entity.getCollisionArea().intersects(object.getCollisionArea())) {
-	                            if (object.isCollision()) {
-	                                entity.setCollisionOn(true);
-	                            }
-
-	                            if (isPlayer) {
-	                                index = object.getIndex();
-	                            }
-	                        }
-	                    }
-	                    case "down" -> {
-	                        entity.getCollisionArea().y += entity.getSpeed();
-
-	                        if (entity.getCollisionArea().intersects(object.getCollisionArea())) {
-	                            if (object.isCollision()) {
-	                                entity.setCollisionOn(true);
-	                            }
-
-	                            if (isPlayer) {
-	                                index = object.getIndex();
-	                            }
-	                        }
-	                    }
-	                    case "left" -> {
-	                        entity.getCollisionArea().x -= entity.getSpeed();
-
-	                        if (entity.getCollisionArea().intersects(object.getCollisionArea())) {
-	                            if (object.isCollision()) {
-	                                entity.setCollisionOn(true);
-	                            }
-
-	                            if (isPlayer) {
-	                                index = object.getIndex();
-	                            }
-	                        }
-	                    }
-	                    case "right" -> {
-	                        entity.getCollisionArea().x += entity.getSpeed();
-
-	                        if (entity.getCollisionArea().intersects(object.getCollisionArea())) {
-	                            if (object.isCollision()) {
-	                                entity.setCollisionOn(true);
-	                            }
-
-	                            if (isPlayer) {
-	                                index = object.getIndex();
-	                            }
-	                        }
-	                    }
-	                }
-
-	                entity.getCollisionArea().x = entity.getCollisionDefaultX();
-	                entity.getCollisionArea().y = entity.getCollisionDefaultY();
-	                object.getCollisionArea().x = object.getCollisionDefaultX();
-	                object.getCollisionArea().y = object.getCollisionDefaultY();
-	            }
+	        // Di chuyển vùng va chạm entity theo hướng
+	        switch (entity.getDirection()) {
+	            case "up" -> entityArea.y -= entity.getSpeed();
+	            case "down" -> entityArea.y += entity.getSpeed();
+	            case "left" -> entityArea.x -= entity.getSpeed();
+	            case "right" -> entityArea.x += entity.getSpeed();
 	        }
 
-	        return index;
+	        // Kiểm tra va chạm
+	        if (entityArea.intersects(objectArea)) {
+	            entity.setCollisionOn(true);
+	            if (isPlayer) {
+	                index = object.getIndex();
+	            }
+	        }
 	    }
+
+	    return index;
+	}
+
 	
 }
 

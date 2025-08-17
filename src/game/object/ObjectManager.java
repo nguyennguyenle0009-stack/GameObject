@@ -9,9 +9,9 @@ public class ObjectManager {
 		this.gp = gp;
 	}
 	public void setObject() {
-		gp.getObjects()[0] = new OBJ_Tree_da();
-		gp.getObjects()[0].setWorldX(200);
-		gp.getObjects()[0].setWorldY(200);
+		gp.getObjects()[0] = new OBJ_Tree_da(gp);
+		gp.getObjects()[0].setWorldX(5 * gp.getTileSize());
+		gp.getObjects()[0].setWorldY(5 * gp.getTileSize());
 		gp.getObjects()[0].setIndex(0);
 	}
 }
