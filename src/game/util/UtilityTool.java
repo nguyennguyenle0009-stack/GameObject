@@ -13,10 +13,12 @@ public class UtilityTool {
         graphics2D.dispose();
         return scaledImage;
     }
+    
+    //Objet được vẽ cách ngoài biên màn hình 2 * gp.getTileSize()
     public static boolean isInsidePlayerView(int worldX, int worldY, GamePanel gp) {
-        return worldX + gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() && 
-	           worldX - gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
-	           worldY + gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() && 
-	           worldY - gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
+        return worldX + 2 * gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() && 
+	           worldX - 2 * gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
+	           worldY + 2 * gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() && 
+	           worldY - 2 * gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
     }
 }

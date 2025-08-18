@@ -2,6 +2,7 @@ package game.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.main.GamePanel;
 import game.mouseclick.MouseHandler;
+import game.util.CameraHelper;
 import game.util.UtilityTool;
 
 public class Player extends Entity implements DrawableEntity {
@@ -89,51 +91,20 @@ public class Player extends Entity implements DrawableEntity {
 	
 	@Override
 	public void draw(Graphics2D g2) {
-		int rightOffset = gp.getScreenWidth() - screenX;
-		int x = checkCharacterPositionAtXAxis(rightOffset);
-		int botOffSet = gp.getScreenHeight() - screenY;
-		int y = checkCharacterPositionAtYAxis(botOffSet);
-		g2.drawImage(getDirectionImage(), x, y, gp.getTileSize(), gp.getTileSize(), null);
+		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
+		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
         g2.setColor(Color.BLUE);
-        g2.drawRect(x+getCollisionArea().x, y + getCollisionArea().y, getCollisionArea().width, getCollisionArea().height);
-
+        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
+        		getCollisionArea().width, getCollisionArea().height);
 	}
 	
 	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
-		int rightOffset = gp.getScreenWidth() - screenX;
-		int x = checkCharacterPositionAtXAxis(rightOffset);
-		int botOffSet = gp.getScreenHeight() - screenY;
-		int y = checkCharacterPositionAtYAxis(botOffSet);
-		g2.drawImage(getDirectionImage(), x, y, null);
+		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
+		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
         g2.setColor(Color.BLUE);
-        g2.drawRect(x+getCollisionArea().x, y + getCollisionArea().y, 
+        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
         		getCollisionArea().width, getCollisionArea().height);
-	}
-	
-	//Kiểm tra màn hình có bị tràn ra khỏi bản đồ theo trục ngang không
-	private int checkCharacterPositionAtXAxis(int rightOffset) {
-		// Giới hạn khi nhân vật ở quá sát rìa trái bản đồ (camera không thể dịch sang trái hơn)
-		if(screenX > getWorldX()) {
-			// giới hạn tọa độ bên phải của nhân vật/camera trong bản đồ
-			return getWorldX();
-		}
-		// rightOffset = khoảng cách từ nhân vật đến mép phải màn hình
-		// Giới hạn khi camera ở quá sát rìa phải bản đồ (màn hình tràn ra ngoài)
-		if(rightOffset > gp.getWorldWidth() - getWorldX()) {
-			// vị trí nhân vật trên màn hình khi camera bị ghim ở mép phải bản đồ (bù trừ phần màn hình bị tràn).
-			return gp.getScreenWidth() - (gp.getWorldWidth() - getWorldX());
-		}
-		// Nếu màn hình không bị tràn ra khỏi bản đồ trả về bình thường
-		return screenX;
-	}
-	
-	private int checkCharacterPositionAtYAxis(int botOffset) {
-		if(screenY > getWorldY()) { return getWorldY(); }
-		if(botOffset > gp.getWorldHeight() - getWorldY()) {
-			return gp.getScreenHeight()	- (gp.getWorldHeight() - getWorldY());
-		}
-		return screenY;
 	}
 
 	private BufferedImage getDirectionImage() {

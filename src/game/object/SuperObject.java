@@ -2,11 +2,13 @@ package game.object;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
+import game.util.CameraHelper;
 import game.util.UtilityTool;
 
 public class SuperObject implements DrawableEntity {
@@ -30,40 +32,20 @@ public class SuperObject implements DrawableEntity {
 	
 	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
-	    int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
-	    int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
-	    // TÍNH OFFSET BIÊN GIỐNG TILE
-	    int rightOffset  = gp.getScreenWidth()  - gp.getPlayer().getScreenX();
-	    int bottomOffset = gp.getScreenHeight() - gp.getPlayer().getScreenY();
-	    // KẸP THEO TRỤC X
-	    if (gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX()) {
-	        // mép trái map: camera không cuộn được nữa
-	        screenX = worldX;
-	    } else if (rightOffset > gp.getWorldWidth() - gp.getPlayer().getWorldX()) {
-	        // mép phải map
-	        screenX = gp.getScreenWidth() - (gp.getWorldWidth() - worldX);
-	    }
-	    // KẸP THEO TRỤC Y
-	    if (gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY()) {
-	        // mép trên map
-	        screenY = worldY;
-	    } else if (bottomOffset > gp.getWorldHeight() - gp.getPlayer().getWorldY()) {
-	        // mép dưới map
-	        screenY = gp.getScreenHeight() - (gp.getWorldHeight() - worldY);
-	    }
-	    // CHỈ VẼ KHI TRONG KHUNG HÌNH (giống điều kiện trong TileManager)
+		Point screenPos = CameraHelper.worldToScreen(worldX, worldY, gp);
+	    
         if(UtilityTool.isInsidePlayerView(worldX, worldY, gp)) {
 	        g2.drawImage(
 	        		image, 
-	        		screenX, 
-	        		screenY - drawOffsetY,
+	        		screenPos.x, 
+	        		screenPos.y - drawOffsetY,
 	        		getScaleObjectWidth() *  gp.getTileSize(),
 	        		getScaleObjectHeight() * gp.getTileSize(), 
 	        		null);
 	        g2.setColor(Color.RED);
 	        g2.drawRect(
-	            screenX + collisionArea.x,  // vị trí X trên màn hình + offset
-	            screenY + collisionArea.y,  // vị trí Y trên màn hình + offset
+        		screenPos.x + collisionArea.x,
+        		screenPos.y + collisionArea.y,
 	            collisionArea.width,
 	            collisionArea.height
 	        );
