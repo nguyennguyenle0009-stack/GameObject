@@ -29,6 +29,8 @@ public abstract class Entity implements DrawableEntity {
 	private int collisionDefaultX, collisionDefaultY;
     private int resestTime;
     private int actionLockCounter;
+    private int scaleEntityX;
+    private int scaleEntityY;
 	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
@@ -129,5 +131,8 @@ public abstract class Entity implements DrawableEntity {
 	public Entity setResestTime(int resestTime) { this.resestTime = resestTime; return this; }
 	public int getActionLockCounter() { return actionLockCounter; }
 	public Entity setActionLockCounter(int actionLockCounter) { this.actionLockCounter = actionLockCounter; return this; }
-	
+	public int getScaleEntityX() { return scaleEntityX; }
+	public Entity setScaleEntityX(int scaleEntityX) { this.scaleEntityX = scaleEntityX; return this; }
+	public int getScaleEntityY() { return scaleEntityY; }
+	public Entity setScaleEntityY(int scaleEntityY) { this.scaleEntityY = scaleEntityY; return this; }
 }

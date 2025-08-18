@@ -42,13 +42,15 @@ public class SuperObject implements DrawableEntity {
 	        		getScaleObjectWidth() *  gp.getTileSize(),
 	        		getScaleObjectHeight() * gp.getTileSize(), 
 	        		null);
-	        g2.setColor(Color.RED);
-	        g2.drawRect(
-        		screenPos.x + collisionArea.x,
-        		screenPos.y + collisionArea.y,
-	            collisionArea.width,
-	            collisionArea.height
-	        );
+			if(gp.keyH.isDrawRect() == true) {
+		        g2.setColor(Color.RED);
+		        g2.drawRect(
+	        		screenPos.x + collisionArea.x,
+	        		screenPos.y + collisionArea.y,
+		            collisionArea.width,
+		            collisionArea.height
+		        );
+			}
 	    }
 	}
 	

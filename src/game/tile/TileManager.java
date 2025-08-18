@@ -117,17 +117,17 @@ public class TileManager {
             // Tối ưu hiệu suất, bản đồ không được vẽ khi ngoài màn hình
             if(UtilityTool.isInsidePlayerView(worldX, worldY, gp)) {
                 graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, null);
-                graphics2D.setColor(Color.BLUE);
-                graphics2D.drawRect(screenX, screenY, gp.getTileSize(), gp.getTileSize());
             } 
             else if (gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX() || 
             		 gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY() || 
             		 rightOffset > gp.getWorldWidth() - gp.getPlayer().getWorldX() || 
                      bottomOffset > gp.getWorldHeight() - gp.getPlayer().getWorldY()) {
             	graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, null);
+            }
+			if(gp.keyH.isDrawRect() == true) {
                 graphics2D.setColor(Color.BLUE);
                 graphics2D.drawRect(screenX, screenY, gp.getTileSize(), gp.getTileSize());
-            }
+			}
             worldCol++;
             if(worldCol == gp.getMaxWorldCol()) {
             	worldCol = 0;

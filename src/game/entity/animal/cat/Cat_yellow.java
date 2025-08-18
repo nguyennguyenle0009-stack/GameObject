@@ -18,7 +18,9 @@ public class Cat_yellow extends Entity {
         super(gp);
         this.setSpeed(1);
         this.setDirection("down");
-        this.setCollisionArea(new Rectangle( 19, 38, 10, 10));
+        this.setScaleEntityX(24);
+        this.setScaleEntityY(24);
+        this.setCollisionArea(new Rectangle( 7, 14, 10, 10));
         
         this.setSpriteNum(1);
         this.setSpriteCouter(0);
@@ -28,14 +30,14 @@ public class Cat_yellow extends Entity {
     
 	public void getImageCat() {
 		try {
-			setUp1(setup("/data/animal/cat/catYellow/Cat_yellow_up_1"));
+			setUp1(setup("/data/animal/cat/catYellow/Cat_yellow_up_4"));
 			setUp2(setup("/data/animal/cat/catYellow/Cat_yellow_up_2")); 
 			setDown1(setup("/data/animal/cat/catYellow/Cat_yellow_down_1")); 
-			setDown2(setup("/data/animal/cat/catYellow/Cat_yellow_down_2")); 
-			setLeft1(setup("/data/animal/cat/catYellow/Cat_yellow_left_1")); 
-			setLeft2(setup("/data/animal/cat/catYellow/Cat_yellow_left_2")); 
-			setRight1(setup("/data/animal/cat/catYellow/Cat_yellow_right_1")); 
-			setRight2(setup("/data/animal/cat/catYellow/Cat_yellow_right_2")); 
+			setDown2(setup("/data/animal/cat/catYellow/Cat_yellow_down_4")); 
+			setLeft1(setup("/data/animal/cat/catYellow/Cat_yellow_left_2")); 
+			setLeft2(setup("/data/animal/cat/catYellow/Cat_yellow_left_3")); 
+			setRight1(setup("/data/animal/cat/catYellow/Cat_yellow_right_2")); 
+			setRight2(setup("/data/animal/cat/catYellow/Cat_yellow_right_4")); 
 		}catch (Exception e) {
 			e.getStackTrace();
 		}
@@ -47,11 +49,12 @@ public class Cat_yellow extends Entity {
 
         if(UtilityTool.isInsidePlayerView(getWorldX(), getWorldY(), gp)) {
 	        
-	        g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, gp.getTileSize(), gp.getTileSize(), null);
-
-	        g2.setColor(Color.RED);
-	        g2.drawRect(screenPos.x + getCollisionArea().x, screenPos.y + getCollisionArea().y,
-	                    getCollisionArea().width, getCollisionArea().height);
+	        g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, getScaleEntityX(), getScaleEntityY(), null);
+			if(gp.keyH.isDrawRect() == true) {
+		        g2.setColor(Color.RED);
+		        g2.drawRect(screenPos.x + getCollisionArea().x, screenPos.y + getCollisionArea().y,
+		                    getCollisionArea().width, getCollisionArea().height);
+			}
 	    }
 	}
 	

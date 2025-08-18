@@ -37,7 +37,7 @@ public class Player extends Entity implements DrawableEntity {
 	}
 	
     private void setCollision() {
-        setCollisionArea(new Rectangle( 19, 38, 10, 10));
+        setCollisionArea(new Rectangle( 16, 32, 16, 16));
         setCollisionDefaultX(getCollisionArea().x);
         setCollisionDefaultY(getCollisionArea().y);
     }
@@ -110,9 +110,11 @@ public class Player extends Entity implements DrawableEntity {
 	public void draw(Graphics2D g2, GamePanel gp) {
 		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
 		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
-        g2.setColor(Color.BLUE);
-        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
-        		getCollisionArea().width, getCollisionArea().height);
+		if(keyH.isDrawRect() == true) {
+	        g2.setColor(Color.BLUE);
+	        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
+	        		getCollisionArea().width, getCollisionArea().height);
+		}
 	}
 
 	private BufferedImage getDirectionImage() {
