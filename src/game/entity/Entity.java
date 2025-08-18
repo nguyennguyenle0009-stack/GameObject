@@ -3,10 +3,16 @@ package game.entity;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
+import javax.imageio.ImageIO;
+
+import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
+import game.util.UtilityTool;
 
-public abstract class Entity {
+public abstract class Entity implements DrawableEntity {
 	GamePanel gp;
 	
 	// Vị trí nhân vật trong bản đồ
@@ -21,6 +27,8 @@ public abstract class Entity {
 	private Rectangle collisionArea;
 	private boolean collisionOn = false;
 	private int collisionDefaultX, collisionDefaultY;
+    private int resestTime;
+    private int actionLockCounter;
 	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
@@ -28,6 +36,56 @@ public abstract class Entity {
 	
 	public abstract  void  update();
 	public abstract  void draw(Graphics2D g2);
+	
+	
+	public void checkCollision() {
+		setCollisionOn(false);
+		gp.getCheckCollision().checkTile(this);
+        gp.getCheckCollision().checkObject(this, false);
+	}
+	
+	public void moveIfCollisionNotDetected() {
+		if(isCollisionOn() == false) {
+			switch(getDirection()) {
+			case "up": setWorldY(getWorldY() - getSpeed()); break;
+			case "down": setWorldY(getWorldY() + getSpeed()); break;
+			case "left": setWorldX(getWorldX() - getSpeed()); break;
+			case "right": setWorldX(getWorldX() + getSpeed()); break;
+			}
+		}
+	}
+	
+	public void checkAndChangeSpriteAnimation() {
+		setSpriteCouter(getSpriteCouter() + 1);
+		if(getSpriteCouter() > 10) {
+			if(getSpriteNum() == 1) { setSpriteNum(2); }
+			else if(getSpriteNum() == 2) { setSpriteNum(1); }
+			setSpriteCouter(0);
+		}
+	}
+	
+	// Resest sprite khi đứng im
+	public void resestSpriteToDefault() {
+		resestTime++;
+		if(resestTime == 20) { setSpriteNum(1); resestTime = 0; }
+	}
+	
+	public BufferedImage setup(String imagePath) {
+	    BufferedImage image = null;
+	    try {
+	        image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
+	}
+
+	
+	@Override
+	public int getFootY(){
+		int chaFoot = getWorldY() + getCollisionArea().y;
+		return chaFoot;
+	}
 	
 	public int getWorldX() { return worldX; }
 	public Entity setWorldX(int x) { this.worldX = x; return this; }
@@ -65,4 +123,9 @@ public abstract class Entity {
 	public Entity setCollisionDefaultX(int collisionDefaultX) { this.collisionDefaultX = collisionDefaultX; return this; }
 	public int getCollisionDefaultY() { return collisionDefaultY; }
 	public Entity setCollisionDefaultY(int collisionDefaultY) { this.collisionDefaultY = collisionDefaultY; return this; }
+	public int getResestTime() { return resestTime; }
+	public Entity setResestTime(int resestTime) { this.resestTime = resestTime; return this; }
+	public int getActionLockCounter() { return actionLockCounter; }
+	public Entity setActionLockCounter(int actionLockCounter) { this.actionLockCounter = actionLockCounter; return this; }
+	
 }

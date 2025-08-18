@@ -22,7 +22,7 @@ public class TileManager {
 	// Contructor
 	public TileManager(GamePanel gp) {
 		this.gp = gp;
-		this.tile = new Tile[10];
+		this.tile = new Tile[30];
 		this.mapTileNumber = new int[gp.getMaxWorldCol()][gp.getMaxWorldRow()];
 		
 		getTileImage();
@@ -30,12 +30,30 @@ public class TileManager {
 	}
 	
 	public void getTileImage() {
+		
 		setup(0, "aa6", true);
 		setup(1, "aa", false);
 		setup(2, "aa1", false);
 		setup(3, "aa2", false);
 		setup(4, "aa3", false);
 		setup(5, "aa5", true);
+		setup(6, "aaa", false);
+		setup(7, "aaa1", false);
+		setup(8, "aaa2", false);
+		setup(9, "aaa6", false);
+		
+		setup(10, "aa6", true);
+		setup(11, "aa", false);
+		setup(12, "aa1", false);
+		setup(13, "aa2", false);
+		setup(14, "aa3", false);
+		setup(15, "aaa5", false);
+		setup(16, "aaa", false);
+		setup(17, "aaa1", false);
+		setup(18, "aaa2", false);
+		setup(19, "aaa6", false);
+		setup(20, "aaa4", false);
+		setup(21, "aaa3", false);
 	}
 	
     public void setup(int index, String imageName, boolean collision) {

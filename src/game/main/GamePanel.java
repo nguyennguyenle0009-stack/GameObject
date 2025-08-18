@@ -11,6 +11,7 @@ import java.util.Comparator;
 import javax.swing.JPanel;
 
 import game.check.CollisionChecker;
+import game.entity.Entity;
 import game.entity.Player;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
@@ -45,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
     private final SuperObject[] obj = new SuperObject[10];
+    private final Entity[] npc = new Entity[10];
     private final ObjectManager objectManager = new ObjectManager(this);
 	
 	public GamePanel() {
@@ -56,7 +58,10 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setFocusable(true);
 	}
 	
-	public void setUpGame() { objectManager.setObject(); }
+	public void setUpGame() { 
+		objectManager.setObject(); 
+		objectManager.setEntity();
+	}
 	
 	public void startGame() { this.thread = new Thread(this); thread.start(); }
 	
@@ -87,7 +92,14 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 	
-	public void update() { player.update(); }
+	public void update() { 
+		player.update();
+        for (Entity npc : npc) {
+            if (npc != null) {
+                npc.update();
+            }
+        }
+	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -99,9 +111,14 @@ public class GamePanel extends JPanel implements Runnable {
 		tileManager.draw(g2);
 		//Check object
 		List<DrawableEntity> drawList = new ArrayList<>();
-		for (SuperObject obj : getObjects()) {
+		for(SuperObject obj : getObjects()) {
 		    if (obj != null) drawList.add(obj);
 		}
+        for (Entity npc : getNpc()) {
+            if (npc != null) {
+            	drawList.add(npc);
+            }
+        }
 		drawList.add(getPlayer());
 		drawList.sort(Comparator.comparingInt(DrawableEntity::getFootY));
 		for (DrawableEntity entity : drawList) {
@@ -130,7 +147,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public TileManager getTileManager() { return tileManager; }
 	public CollisionChecker getCheckCollision() { return checkCollision; }
 	public SuperObject[] getObjects() { return obj; }
-	public ObjectManager getObjectManager() { return objectManager; }
+	public ObjectManager getObjectManager() { return objectManager; } 
+	public Entity[] getNpc() { return npc; }
 }
 
 

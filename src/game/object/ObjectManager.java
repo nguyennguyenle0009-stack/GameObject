@@ -1,7 +1,10 @@
 package game.object;
 
+import game.entity.Entity;
+import game.entity.animal.cat.Cat_yellow;
 import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
+import game.object.tree.OBJ_Tree_1;
 import game.object.tree.OBJ_Tree_da;
 
 public class ObjectManager {
@@ -22,9 +25,22 @@ public class ObjectManager {
         house.setScaleObjectWidth(4);	//Tỉ lệ chiều cao * 48
         house.setScaleObjectHeight(4);	//Tỉ lệ chiều rộng * 48
         house.setIndex(1);
+        
+        SuperObject tree1 = new OBJ_Tree_1();
+        tree1.setWorldX(6 * gp.getTileSize()); //Vị trí trên trục X
+        tree1.setWorldY(1 * gp.getTileSize()); //Vị trí trên trục Y
+        tree1.setScaleObjectWidth(1);	//Tỉ lệ chiều cao * 48
+        tree1.setScaleObjectHeight(2);	//Tỉ lệ chiều rộng * 48
+        tree1.setIndex(2);
 
-        gp.getObjects()[0] = tree;
-        gp.getObjects()[1] = house;
+        gp.getObjects()[0] = tree1;
+//        gp.getObjects()[1] = tree;
+//        gp.getObjects()[2] = house;
+    }
+    
+    public void setEntity(){
+        Entity cat1 = new Cat_yellow(gp);
+        gp.getNpc()[0] = cat1;
     }
 }
 

@@ -22,7 +22,6 @@ public class Player extends Entity implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
-    private int resestTime;
 
 	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
 		super(gp);
@@ -67,8 +66,7 @@ public class Player extends Entity implements DrawableEntity {
 	
 	@Override
 	public void update() {
-	    if(mouseH.moving == true) { updateClickMove(); }
-	    else { updateKeyboard(); }
+	    updateKeyboard();
 	}
 	
 	private void updateKeyboard() {
@@ -85,120 +83,9 @@ public class Player extends Entity implements DrawableEntity {
 		else { resestSpriteToDefault(); }
 	}
 	
-	private void updateClickMove() {
-	    float dx = mouseH.targetX - getWorldX();
-	    float dy = mouseH.targetY - getWorldY();
-	    float dist = (float) Math.sqrt(dx * dx + dy * dy);
-	    // Chọn hướng mặt
-	    if (Math.abs(dx) > Math.abs(dy)) { setDirection(dx < 0 ? "left" : "right"); } 
-	    else { setDirection(dy < 0 ? "up" : "down"); }
-
-	    if (dist > getSpeed()) {
-	        // Vị trí giả lập sau khi bước
-	        int nextWorldX = (int) (getWorldX() + (dx / dist * getSpeed()));
-	        int nextWorldY = (int) (getWorldY() + (dy / dist * getSpeed()));
-
-	        // Lấy collision area gốc
-	        Rectangle area = getCollisionArea();
-
-	        // Tính cạnh của vùng va chạm tại vị trí mới
-	        int leftWorldX = nextWorldX + area.x;
-	        int rightWorldX = nextWorldX + area.x + area.width;
-	        int topWorldY = nextWorldY + area.y;
-	        int bottomWorldY = nextWorldY + area.y + area.height;
-
-	        int tileSize = gp.getTileSize();
-
-	        int leftCol = leftWorldX / tileSize;
-	        int rightCol = rightWorldX / tileSize;
-	        int topRow = topWorldY / tileSize;
-	        int bottomRow = bottomWorldY / tileSize;
-	        boolean canMoveX = true;
-	        boolean canMoveY = true;
-	        // Kiểm tra va chạm trục X
-	        if (dx < 0) { // sang trái
-	            if (gp.getTileManager().getTile()[ gp.getTileManager().
-                          getMapTileNumber()[topRow][leftCol] ].isCollision() ||
-	                gp.getTileManager().getTile()[ gp.getTileManager().
-                          getMapTileNumber()[bottomRow][leftCol] ].isCollision()) {
-	                canMoveX = false;
-	            }
-	        } else if (dx > 0) { // sang phải
-	            if (gp.getTileManager().getTile()[ gp.getTileManager().
-                           getMapTileNumber()[topRow][rightCol] ].isCollision() ||
-	                gp.getTileManager().getTile()[ gp.getTileManager().
-                           getMapTileNumber()[bottomRow][rightCol] ].isCollision()) {
-	                canMoveX = false;
-	            }
-	        }
-	        // Kiểm tra va chạm trục Y
-	        if (dy < 0) { // lên
-	            if (gp.getTileManager().getTile()[ gp.getTileManager().
-                           getMapTileNumber()[topRow][leftCol]].isCollision() ||
-	                gp.getTileManager().getTile()[ gp.getTileManager().
-                           getMapTileNumber()[topRow][rightCol] ].isCollision()) {
-	                canMoveY = false;
-	            }
-	        } else if (dy > 0) { // xuống
-	            if (gp.getTileManager().getTile()[ gp.getTileManager().
-                           getMapTileNumber()[bottomRow][leftCol] ].isCollision() ||
-	                gp.getTileManager().getTile()[ gp.getTileManager().
-                           getMapTileNumber()[bottomRow][rightCol] ].isCollision()) {
-	                canMoveY = false;
-	            }
-	        }
-	        // Cập nhật vị trí chỉ khi không va chạm
-	        if (canMoveX) setWorldX(nextWorldX);
-	        if (canMoveY) setWorldY(nextWorldY);
-	    } else {
-	        // Nếu quá gần đích thì ghim luôn
-	        setWorldX(mouseH.targetX);
-	        setWorldY(mouseH.targetY);
-	        mouseH.moving = false;
-	    }
-	    checkAndChangeSpriteAnimation();
-	    // Nếu người chơi bấm phím, hủy auto-move
-	    if (keyH.isUpPressed() || keyH.isDownPressed() || keyH.isLeftPressed() || keyH.isRightPressed()) {
-	        mouseH.moving = false;
-	    }
-	}
-	
-	private void checkCollision() {
-		setCollisionOn(false);
-		gp.getCheckCollision().checkTile(this);
-        int objectIndex = gp.getCheckCollision().checkObject(this, true);
-        pickUpObject(objectIndex);
-	}
-	
-  private void pickUpObject(int index) { 
-	  if (index != 999) { }
-  }
-	
-	private void moveIfCollisionNotDetected() {
-		if(isCollisionOn() == false) {
-			switch(getDirection()) {
-			case "up": setWorldY(getWorldY() - getSpeed()); break;
-			case "down": setWorldY(getWorldY() + getSpeed()); break;
-			case "left": setWorldX(getWorldX() - getSpeed()); break;
-			case "right": setWorldX(getWorldX() + getSpeed()); break;
-			}
-		}
-	}
-	
-	private void checkAndChangeSpriteAnimation() {
-		setSpriteCouter(getSpriteCouter() + 1);
-		if(getSpriteCouter() > 10) {
-			if(getSpriteNum() == 1) { setSpriteNum(2); }
-			else if(getSpriteNum() == 2) { setSpriteNum(1); }
-			setSpriteCouter(0);
-		}
-	}
-	
-	// Resest sprite khi đứng im
-	private void resestSpriteToDefault() {
-		resestTime++;
-		if(resestTime == 20) { setSpriteNum(1); resestTime = 0; }
-	}
+//  private void pickUpObject(int index) { 
+//	  if (index != 999) { }
+//  }
 	
 	@Override
 	public void draw(Graphics2D g2) {
@@ -222,12 +109,6 @@ public class Player extends Entity implements DrawableEntity {
         g2.setColor(Color.BLUE);
         g2.drawRect(x+getCollisionArea().x, y + getCollisionArea().y, 
         		getCollisionArea().width, getCollisionArea().height);
-	}
-	
-	@Override
-	public int getFootY(){
-		int chaFoot = getWorldY() + getCollisionArea().y;
-		return chaFoot;
 	}
 	
 	//Kiểm tra màn hình có bị tràn ra khỏi bản đồ theo trục ngang không
