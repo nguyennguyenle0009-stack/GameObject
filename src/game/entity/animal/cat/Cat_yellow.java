@@ -13,11 +13,9 @@ import game.util.CameraHelper;
 import game.util.UtilityTool;
 
 public class Cat_yellow extends Entity {
-
+	GamePanel gp;
     public Cat_yellow(GamePanel gp) {
         super(gp);
-        this.setWorldX(200);
-        this.setWorldY(200);
         this.setSpeed(1);
         this.setDirection("down");
         this.setCollisionArea(new Rectangle( 19, 38, 10, 10));
@@ -45,14 +43,14 @@ public class Cat_yellow extends Entity {
 
 	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
-		Point Po = new CameraHelper().worldToScreen(getWorldX(), getWorldY(), gp);
+		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
 
         if(UtilityTool.isInsidePlayerView(getWorldX(), getWorldY(), gp)) {
 	        
-	        g2.drawImage(getDirectionImage(), Po.x, Po.y, gp.getTileSize(), gp.getTileSize(), null);
+	        g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, gp.getTileSize(), gp.getTileSize(), null);
 
 	        g2.setColor(Color.RED);
-	        g2.drawRect(Po.x + getCollisionArea().x, Po.y + getCollisionArea().y,
+	        g2.drawRect(screenPos.x + getCollisionArea().x, screenPos.y + getCollisionArea().y,
 	                    getCollisionArea().width, getCollisionArea().height);
 	    }
 	}

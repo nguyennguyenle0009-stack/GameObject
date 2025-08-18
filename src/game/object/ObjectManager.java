@@ -20,8 +20,8 @@ public class ObjectManager {
         tree.setIndex(0);
         
         SuperObject house = new OBJ_House_1();
-        house.setWorldX(3 * gp.getTileSize()); //Vị trí trên trục X
-        house.setWorldY(4 * gp.getTileSize()); //Vị trí trên trục Y
+        house.setWorldX(6 * gp.getTileSize()); //Vị trí trên trục X
+        house.setWorldY(3 * gp.getTileSize()); //Vị trí trên trục Y
         house.setScaleObjectWidth(4);	//Tỉ lệ chiều cao * 48
         house.setScaleObjectHeight(4);	//Tỉ lệ chiều rộng * 48
         house.setIndex(1);
@@ -35,12 +35,19 @@ public class ObjectManager {
 
         gp.getObjects()[0] = tree1;
 //        gp.getObjects()[1] = tree;
-//        gp.getObjects()[2] = house;
+        gp.getObjects()[2] = house;
     }
     
     public void setEntity(){
         Entity cat1 = new Cat_yellow(gp);
+        cat1.setWorldX(7 * 48);
+        cat1.setWorldY(7 * 48);
+        
+        Entity cat2 = new Cat_yellow(gp);
+        cat2.setWorldX(6 * 48);
+        cat2.setWorldY(7 * 48);
         gp.getNpc()[0] = cat1;
+        gp.getNpc()[1] = cat2;
     }
 }
 

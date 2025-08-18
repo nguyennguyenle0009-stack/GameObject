@@ -47,5 +47,11 @@
 
 - Mouse (Chưa sửa)
 
+- Va chạm npc với npc thêm (target != entity) để tránh npc va chạm với chính nó (đã làm)
+
+- Va chạm npc với player (đã làm)
+
+- va chạm player với npc (đã làm)
+
 
 

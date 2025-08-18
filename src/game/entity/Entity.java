@@ -42,6 +42,8 @@ public abstract class Entity implements DrawableEntity {
 		setCollisionOn(false);
 		gp.getCheckCollision().checkTile(this);
         gp.getCheckCollision().checkObject(this, false);
+        gp.getCheckCollision().checkEntity(this, gp.getNpc());
+        gp.getCheckCollision().checkPlayer(this);
 	}
 	
 	public void moveIfCollisionNotDetected() {

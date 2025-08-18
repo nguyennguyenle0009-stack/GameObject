@@ -85,6 +85,14 @@ public class Player extends Entity implements DrawableEntity {
 		else { resestSpriteToDefault(); }
 	}
 	
+	@Override
+	public void checkCollision() {
+		setCollisionOn(false);
+		gp.getCheckCollision().checkTile(this);
+        gp.getCheckCollision().checkObject(this, false);
+        gp.getCheckCollision().checkEntity(this, gp.getNpc());
+	}
+	
 //  private void pickUpObject(int index) { 
 //	  if (index != 999) { }
 //  }

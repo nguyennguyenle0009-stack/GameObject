@@ -100,6 +100,60 @@ public class CollisionChecker {
 	    }
 	    return index;
 	}
+	
+	public int checkEntity(Entity entity, Entity[] targets) {
+		int index = 999;
+		for(Entity target : targets) {
+			if(target != null && target != entity) {
+				Rectangle entityArea = new Rectangle(
+						entity.getWorldX() + entity.getCollisionArea().x,
+						entity.getWorldY() + entity.getCollisionArea().y,
+						entity.getCollisionArea().width,
+						entity.getCollisionArea().height
+				);
+				Rectangle targetArea = new Rectangle(
+						target.getWorldX() + target.getCollisionArea().x,
+						target.getWorldY() + target.getCollisionArea().y,
+						target.getCollisionArea().width,
+						target.getCollisionArea().height
+				);
+		        switch (entity.getDirection()) {
+	            case "up" -> entityArea.y -= entity.getSpeed();
+	            case "down" -> entityArea.y += entity.getSpeed();
+	            case "left" -> entityArea.x -= entity.getSpeed();
+	            case "right" -> entityArea.x += entity.getSpeed();
+		        }
+		        if (entityArea.intersects(targetArea)) {
+		            entity.setCollisionOn(true);
+		        }
+			}
+		}
+		return index;
+	}
+	
+	public void checkPlayer(Entity entity) {
+		Rectangle entityArea = new Rectangle(
+				entity.getWorldX() + entity.getCollisionArea().x,
+				entity.getWorldY() + entity.getCollisionArea().y,
+				entity.getCollisionArea().width,
+				entity.getCollisionArea().height
+		);
+		Rectangle playerArea = new Rectangle(
+				gp.getPlayer().getWorldX() + gp.getPlayer().getCollisionArea().x,
+				gp.getPlayer().getWorldY() + gp.getPlayer().getCollisionArea().y,
+				gp.getPlayer().getCollisionArea().width,
+				gp.getPlayer().getCollisionArea().height
+		);
+        switch (entity.getDirection()) {
+        case "up" -> entityArea.y -= entity.getSpeed();
+        case "down" -> entityArea.y += entity.getSpeed();
+        case "left" -> entityArea.x -= entity.getSpeed();
+        case "right" -> entityArea.x += entity.getSpeed();
+        }
+        if (entityArea.intersects(playerArea)) {
+            entity.setCollisionOn(true);
+        }
+	}
 }
 
 
