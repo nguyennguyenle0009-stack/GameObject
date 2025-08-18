@@ -45,8 +45,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private final Player player = new Player(this, keyH, mounseH);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
-    private final SuperObject[] obj = new SuperObject[10];
-    private final Entity[] npc = new Entity[10];
+	private final List<SuperObject> objects = new ArrayList<>();
+	private final List<Entity> npcs = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
 	
 	public GamePanel() {
@@ -92,13 +92,11 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 	
-	public void update() { 
-		player.update();
-        for (Entity npc : npc) {
-            if (npc != null) {
-                npc.update();
-            }
-        }
+	public void update() {
+	    player.update();
+	    for (Entity npc : npcs) {
+	        npc.update();
+	    }
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -111,16 +109,13 @@ public class GamePanel extends JPanel implements Runnable {
 		tileManager.draw(g2);
 		//Check object
 		List<DrawableEntity> drawList = new ArrayList<>();
-		for(SuperObject obj : getObjects()) {
-		    if (obj != null) drawList.add(obj);
-		}
-        for (Entity npc : getNpc()) {
-            if (npc != null) {
-            	drawList.add(npc);
-            }
-        }
-		drawList.add(getPlayer());
+
+		drawList.addAll(objects);
+		drawList.addAll(npcs);
+		drawList.add(player);
+
 		drawList.sort(Comparator.comparingInt(DrawableEntity::getFootY));
+
 		for (DrawableEntity entity : drawList) {
 		    entity.draw(g2, this);
 		}
@@ -146,9 +141,9 @@ public class GamePanel extends JPanel implements Runnable {
 	public Player getPlayer() { return player; }
 	public TileManager getTileManager() { return tileManager; }
 	public CollisionChecker getCheckCollision() { return checkCollision; }
-	public SuperObject[] getObjects() { return obj; }
 	public ObjectManager getObjectManager() { return objectManager; } 
-	public Entity[] getNpc() { return npc; }
+	public List<SuperObject> getObjects() { return objects; }
+	public List<Entity> getNpcs() { return npcs; }
 }
 
 

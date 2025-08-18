@@ -33,9 +33,9 @@ public class ObjectManager {
         tree1.setScaleObjectHeight(2);	//Tỉ lệ chiều rộng * 48
         tree1.setIndex(2);
 
-        gp.getObjects()[0] = tree1;
+        gp.getObjects().add(tree1);
 //        gp.getObjects()[1] = tree;
-        gp.getObjects()[2] = house;
+        gp.getObjects().add(house);
     }
     
     public void setEntity(){
@@ -46,8 +46,8 @@ public class ObjectManager {
         Entity cat2 = new Cat_yellow(gp);
         cat2.setWorldX(6 * 48);
         cat2.setWorldY(7 * 48);
-        gp.getNpc()[0] = cat1;
-        gp.getNpc()[1] = cat2;
+        gp.getNpcs().add(cat1);
+        gp.getNpcs().add(cat2);
     }
 }
 

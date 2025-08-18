@@ -1,6 +1,7 @@
 package game.check;
 
 import java.awt.Rectangle;
+import java.util.List;
 
 import game.entity.Entity;
 import game.main.GamePanel;
@@ -101,7 +102,7 @@ public class CollisionChecker {
 	    return index;
 	}
 	
-	public int checkEntity(Entity entity, Entity[] targets) {
+	public int checkEntity(Entity entity, List<Entity> targets) {
 		int index = 999;
 		for(Entity target : targets) {
 			if(target != null && target != entity) {

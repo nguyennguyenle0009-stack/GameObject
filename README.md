@@ -19,10 +19,33 @@
 
 ### Lỗi 
 
+- Vấn đề trong code
+	
+	Mảng fixed size
+	
+	private final SuperObject[] obj = new SuperObject[10];
+	private final Entity[] npc = new Entity[10];
+	
+	→ Hạn chế số lượng object và NPC (ví dụ nếu cần 50 NPC thì phải đổi tất cả code liên quan).
+	
+	Null check nhiều lần
+	Ở update() và khi build drawList, bạn phải check if (npc != null) lặp đi lặp lại.
+	
+	Khó mở rộng
+	Object và NPC đang lưu ở 2 mảng riêng biệt → lúc render phải merge thủ công vào drawList.
+
 ### Sửa lỗi
 
 ### PS
 
+- Kết quả
+
+	Dễ mở rộng số lượng NPC/Objects (chỉ cần list.add()).
+	
+	Bớt code rườm rà (null check, index thủ công).
+	
+	Dễ tổ chức hơn nếu sau này chia map thành nhiều loại entity khác nhau.
+	
 ### Comment
 
 - Thiết lập khung hình và đối tượng
@@ -52,6 +75,8 @@
 - Va chạm npc với player (đã làm)
 
 - va chạm player với npc (đã làm)
+
+- 
 
 
 
