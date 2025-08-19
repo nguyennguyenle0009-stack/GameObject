@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.List;
 
 import game.entity.Entity;
 import game.main.GamePanel;
@@ -33,15 +34,7 @@ public class Ui {
     	this.g2 = g2;
 		g2.setColor(Color.white);
 		if (gp.getGameState() == gp.getPlayState()) {
-//		    int npcIndex = gp.getCheckCollision().checkInteraction(gp.getPlayer(), gp.getNpcs(), 48);
-//		    if (npcIndex != 999) {
-//		        String npcName = gp.getNpcs().get(npcIndex).getName();
-//		        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
-//		        g2.setColor(Color.YELLOW);
-//	            g2.setColor(new Color(0, 0, 0, 150)); // nền mờ
-//		        g2.drawString(npcName, gp.getScreenWidth() - 250, 30);
-//		    }
-			drawInteractionHint1(g2);
+			drawInteractionHint(g2);
 		}
 		if(gp.getGameState() == gp.getPauseState()) {
 			drawPauseScreen();
@@ -50,45 +43,50 @@ public class Ui {
 			drawDialogueScreen();
 		}
 	}
-    
-	private void drawInteractionHint1(Graphics2D g2) {
-	    int npcIndex = gp.getCheckCollision().checkInteraction(gp.getPlayer(), gp.getNpcs(), 48);
-	    if (npcIndex != 999) {
-            String text = gp.getNpcs().get(npcIndex).getName();
-            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
-            g2.setColor(new Color(0, 0, 0, 150)); // nền mờ
-            int textWidth = g2.getFontMetrics().stringWidth(text);
-            int x = gp.getScreenWidth() - textWidth - 30;
-            int y = 40;
-
-            // Vẽ nền khung
-            g2.fillRoundRect(x - 10, y - 20, textWidth + 20, 30, 10, 10);
-
-            // Vẽ chữ
-            g2.setColor(Color.white);
-            g2.drawString(text, x, y);
-        }
-    }
-    
-    // Không dùng
-    @SuppressWarnings("unused")
+//    private void aa (Graphics2D g2) {
+//        List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
+//        if (!nearbyNpcs.isEmpty()) {
+//            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
+//            g2.setColor(Color.YELLOW);
+//
+//            int startY = 30;
+//            for (Entity npc : nearbyNpcs) {
+//                g2.drawString(npc.getName(), gp.getScreenWidth() - 250, startY);
+//                startY += 25; // xuống dòng cho NPC tiếp theo
+//            }
+//        }
+//    }
 	private void drawInteractionHint(Graphics2D g2) {
-        Entity npc = gp.getPlayer().getClosestNPCInRange(gp.getNpcs());
-        if (npc != null) {
-            String text = npc.getName();
-            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
-            g2.setColor(new Color(0, 0, 0, 150)); // nền mờ
-            int textWidth = g2.getFontMetrics().stringWidth(text);
-            int x = gp.getScreenWidth() - textWidth - 30;
-            int y = 40;
+		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
+		if (!nearbyNpcs.isEmpty()) {
+		    g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
 
-            // Vẽ nền khung
-            g2.fillRoundRect(x - 10, y - 20, textWidth + 20, 30, 10, 10);
+		    // Tính toán kích thước khung dựa theo số lượng NPC
+		    int padding = 10;
+		    int lineHeight = 25;
+		    int boxWidth = 200;
+		    int boxHeight = nearbyNpcs.size() * lineHeight + padding * 2;
 
-            // Vẽ chữ
-            g2.setColor(Color.white);
-            g2.drawString(text, x, y);
-        }
+		    int boxX = gp.getScreenWidth() - boxWidth - 20; // cách mép phải 20px
+		    int boxY = 20; // cách mép trên 20px
+
+		    // Vẽ nền mờ mờ
+		    g2.setColor(new Color(0, 0, 0, 150)); // đen trong suốt
+		    g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 15, 15);
+
+		    // Vẽ viền
+		    g2.setColor(Color.YELLOW);
+		    g2.setStroke(new BasicStroke(2));
+		    g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 15, 15);
+
+		    // Vẽ tên NPC
+		    g2.setColor(Color.WHITE);
+		    int startY = boxY + padding + 20;
+		    for (Entity npc : nearbyNpcs) {
+		        g2.drawString(npc.getName(), boxX + padding, startY);
+		        startY += lineHeight;
+		    }
+		}
     }
     
     private void drawPauseScreen() {

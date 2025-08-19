@@ -112,7 +112,7 @@ public class Player extends Entity implements DrawableEntity {
         interactWithNPC(npcIndex);
 	}
 	
-	// Không dùng
+	// check NPC trong phạm vi
 	public Entity getClosestNPCInRange(List<Entity> npcs) {
 	    for (Entity npc : npcs) {
 	        if (npc != null) {
@@ -128,19 +128,35 @@ public class Player extends Entity implements DrawableEntity {
 	    return null;
 	}
 	
-//  private void pickUpObject(int index) { 
-//	  if (index != 999) { }
-//  }
-	
-	private void interactWithNPC(int index) {
-	    if (index != 999) {
-	        if (gp.keyH.isDialoguePressed()) {
-	            gp.setGameState(gp.getDialogueState());
-	            gp.getNpcs().get(index).speak();
+	//check NPC gần nhất, chưa dùng
+	public Entity getClosestNPCInRange1(List<Entity> npcs) {
+	    Entity closestNpc = null;
+	    double minDistance = Double.MAX_VALUE;
+
+	    for (Entity npc : npcs) {
+	        if (npc != null) {
+	            int dx = this.getWorldX() - npc.getWorldX();
+	            int dy = this.getWorldY() - npc.getWorldY();
+	            double distance = Math.sqrt(dx * dx + dy * dy);
+
+	            if (distance < INTERACTION_RANGE && distance < minDistance) {
+	                minDistance = distance;
+	                closestNpc = npc;
+	            }
 	        }
 	    }
-	    // Reset để không bị giữ nút
-	    gp.keyH.setDialoguePressed(false);
+
+	    return closestNpc;
+	}
+	
+	private void interactWithNPC(int index) {
+		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(this, gp.getNpcs(), 48);
+		if (!nearbyNpcs.isEmpty() && gp.keyH.isDialoguePressed()) {
+		    Entity npc = nearbyNpcs.get(0); // lấy NPC đầu tiên (bạn có thể chọn theo khoảng cách gần nhất)
+		    gp.setGameState(gp.getDialogueState());
+		    npc.speak();
+		    gp.keyH.setDialoguePressed(false);
+		}
 	}
 	
 	@Override

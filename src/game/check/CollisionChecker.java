@@ -1,6 +1,7 @@
 package game.check;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.List;
 
 import game.entity.Entity;
@@ -174,6 +175,22 @@ public class CollisionChecker {
 	        }
 	    }
 	    return 999;
+	}
+	
+	// Lấy tất cả entity trong phạm vi
+	public List<Entity> getEntitiesInRange(Entity entity, List<Entity> targets, int range) {
+	    List<Entity> result = new ArrayList<>();
+	    for (Entity target : targets) {
+	        if (target != null && target != entity) {
+	            int dx = Math.abs(entity.getWorldX() - target.getWorldX());
+	            int dy = Math.abs(entity.getWorldY() - target.getWorldY());
+
+	            if (dx < range && dy < range) {
+	                result.add(target);
+	            }
+	        }
+	    }
+	    return result;
 	}
 }
 
