@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ public class Player extends Entity implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
+    private static final int INTERACTION_RANGE = 80;
 
 	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
 		super(gp);
@@ -72,17 +74,32 @@ public class Player extends Entity implements DrawableEntity {
 	}
 	
 	private void updateKeyboard() {
-		if(keyH.isUpPressed() == true || keyH.isDownPressed() == true 
-				|| keyH.isLeftPressed() == true || keyH.isRightPressed() == true) {
-			if(keyH.isUpPressed() == true) {  setDirection("up"); }
-			if(keyH.isDownPressed() == true) {  setDirection("down"); }
-			if(keyH.isLeftPressed() == true) {  setDirection("left"); }
-			if(keyH.isRightPressed() == true) {  setDirection("right"); }
-			checkCollision();
-			moveIfCollisionNotDetected();
-			checkAndChangeSpriteAnimation();
-		} 
-		else { resestSpriteToDefault(); }
+	    boolean moving = keyH.isUpPressed() || keyH.isDownPressed() 
+	                  || keyH.isLeftPressed() || keyH.isRightPressed();
+
+	    // Nếu có di chuyển → xử lý di chuyển
+	    if (moving) {
+	        if (keyH.isUpPressed())    setDirection("up");
+	        if (keyH.isDownPressed())  setDirection("down");
+	        if (keyH.isLeftPressed())  setDirection("left");
+	        if (keyH.isRightPressed()) setDirection("right");
+
+	        checkCollision();
+	        moveIfCollisionNotDetected();
+	        checkAndChangeSpriteAnimation();
+	    } else {
+	        resestSpriteToDefault();
+	    }
+
+	    // Xử lý đối thoại riêng, KHÔNG phụ thuộc di chuyển
+	    if (keyH.isDialoguePressed()) {
+	        Entity npc = getClosestNPCInRange(gp.getNpcs());
+	        if (npc != null) {
+	            gp.setGameState(gp.getDialogueState());
+	            npc.speak();
+	        }
+	        keyH.setDialoguePressed(false); // reset flag
+	    }
 	}
 	
 	@Override
@@ -91,11 +108,40 @@ public class Player extends Entity implements DrawableEntity {
 		gp.getCheckCollision().checkTile(this);
         gp.getCheckCollision().checkObject(this, false);
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
+        int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
+        interactWithNPC(npcIndex);
+	}
+	
+	// Không dùng
+	public Entity getClosestNPCInRange(List<Entity> npcs) {
+	    for (Entity npc : npcs) {
+	        if (npc != null) {
+	            int dx = Math.abs(this.getWorldX() - npc.getWorldX());
+	            int dy = Math.abs(this.getWorldY() - npc.getWorldY());
+	            double distance = Math.sqrt(dx * dx + dy * dy);
+
+	            if (distance < INTERACTION_RANGE) {
+	                return npc;
+	            }
+	        }
+	    }
+	    return null;
 	}
 	
 //  private void pickUpObject(int index) { 
 //	  if (index != 999) { }
 //  }
+	
+	private void interactWithNPC(int index) {
+	    if (index != 999) {
+	        if (gp.keyH.isDialoguePressed()) {
+	            gp.setGameState(gp.getDialogueState());
+	            gp.getNpcs().get(index).speak();
+	        }
+	    }
+	    // Reset để không bị giữ nút
+	    gp.keyH.setDialoguePressed(false);
+	}
 	
 	@Override
 	public void draw(Graphics2D g2) {
@@ -151,6 +197,9 @@ public class Player extends Entity implements DrawableEntity {
 
 	public int getScreenX() { return screenX; }
 	public int getScreenY() { return screenY; }
+
+	public static int getInteractionRange() { return INTERACTION_RANGE; }
+	
 }
 
 

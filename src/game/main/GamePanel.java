@@ -19,6 +19,7 @@ import game.mouseclick.MouseHandler;
 import game.object.ObjectManager;
 import game.object.SuperObject;
 import game.tile.TileManager;
+import game.ui.Ui;
 
 public class GamePanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -48,6 +49,13 @@ public class GamePanel extends JPanel implements Runnable {
 	private final List<SuperObject> objects = new ArrayList<>();
 	private final List<Entity> npcs = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
+    private final Ui ui = new Ui(this);
+    
+    // GAME STATE
+    private int gameState;
+    private final int playState = 1;
+    private final int pauseState = 2;
+    private final int dialogueState = 3;
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -61,6 +69,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public void setUpGame() { 
 		objectManager.setObject(); 
 		objectManager.setEntity();
+		gameState = playState;
 	}
 	
 	public void startGame() { this.thread = new Thread(this); thread.start(); }
@@ -93,10 +102,13 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void update() {
-	    player.update();
-	    for (Entity npc : npcs) {
-	        npc.update();
-	    }
+		if(gameState == playState) {
+		    player.update();
+		    for (Entity npc : npcs) {
+		        npc.update();
+		    }
+		}
+		if(gameState == pauseState) {}
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -119,6 +131,7 @@ public class GamePanel extends JPanel implements Runnable {
 		for (DrawableEntity entity : drawList) {
 		    entity.draw(g2, this);
 		}
+		getUi().draw(g2);
 		if(keyH.isCheckDrawTime() == true) {
 			long drawEnd = System.nanoTime();
 			long passedTime = drawEnd - drawStart;
@@ -144,6 +157,14 @@ public class GamePanel extends JPanel implements Runnable {
 	public ObjectManager getObjectManager() { return objectManager; } 
 	public List<SuperObject> getObjects() { return objects; }
 	public List<Entity> getNpcs() { return npcs; }
+
+	public int getGameState() { return gameState; }
+	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
+	public int getPlayState() { return playState; }
+	public int getPauseState() { return pauseState; }
+	public int getDialogueState() { return dialogueState; }
+	public Ui getUi() { return ui; }
+	
 }
 
 

@@ -14,6 +14,7 @@ public class CollisionChecker {
 		this.gp = gp;
 	}
 	
+	// Check entity, player với tile
 	public void checkTile(Entity entity) {
 		//Tính tọa độ tuyệt đối của 4 cạnh vùng va chạm trong một entity
 		int entityLeftWorldX = entity.getWorldX() + entity.getCollisionArea().x;
@@ -66,6 +67,7 @@ public class CollisionChecker {
         }
 	}
 	
+	// Check entity, player với object
 	public int checkObject(Entity entity, boolean isPlayer) {
 	    int index = 999;
 	    for (SuperObject object : gp.getObjects()) {
@@ -102,36 +104,39 @@ public class CollisionChecker {
 	    return index;
 	}
 	
+	// Check entity với entity, check player với entity
 	public int checkEntity(Entity entity, List<Entity> targets) {
-		int index = 999;
-		for(Entity target : targets) {
-			if(target != null && target != entity) {
-				Rectangle entityArea = new Rectangle(
-						entity.getWorldX() + entity.getCollisionArea().x,
-						entity.getWorldY() + entity.getCollisionArea().y,
-						entity.getCollisionArea().width,
-						entity.getCollisionArea().height
-				);
-				Rectangle targetArea = new Rectangle(
-						target.getWorldX() + target.getCollisionArea().x,
-						target.getWorldY() + target.getCollisionArea().y,
-						target.getCollisionArea().width,
-						target.getCollisionArea().height
-				);
-		        switch (entity.getDirection()) {
-	            case "up" -> entityArea.y -= entity.getSpeed();
-	            case "down" -> entityArea.y += entity.getSpeed();
-	            case "left" -> entityArea.x -= entity.getSpeed();
-	            case "right" -> entityArea.x += entity.getSpeed();
-		        }
-		        if (entityArea.intersects(targetArea)) {
-		            entity.setCollisionOn(true);
-		        }
-			}
-		}
-		return index;
+	    int index = 999;
+	    for (Entity target : targets) {
+	        if (target != null && target != entity) {
+	            Rectangle entityArea = new Rectangle(
+	                    entity.getWorldX() + entity.getCollisionArea().x,
+	                    entity.getWorldY() + entity.getCollisionArea().y,
+	                    entity.getCollisionArea().width,
+	                    entity.getCollisionArea().height
+	            );
+	            Rectangle targetArea = new Rectangle(
+	                    target.getWorldX() + target.getCollisionArea().x,
+	                    target.getWorldY() + target.getCollisionArea().y,
+	                    target.getCollisionArea().width,
+	                    target.getCollisionArea().height
+	            );
+                switch (entity.getDirection()) {
+                    case "up" -> entityArea.y -= entity.getSpeed();
+                    case "down" -> entityArea.y += entity.getSpeed();
+                    case "left" -> entityArea.x -= entity.getSpeed();
+                    case "right" -> entityArea.x += entity.getSpeed();
+                }
+                if (entityArea.intersects(targetArea)) {
+                    entity.setCollisionOn(true);
+                    index = target.getIndex();
+                }
+	        }
+	    }
+	    return index;
 	}
 	
+	// Check entity với player
 	public void checkPlayer(Entity entity) {
 		Rectangle entityArea = new Rectangle(
 				entity.getWorldX() + entity.getCollisionArea().x,
@@ -154,6 +159,21 @@ public class CollisionChecker {
         if (entityArea.intersects(playerArea)) {
             entity.setCollisionOn(true);
         }
+	}
+	
+	// Check phạm vi tương tác
+	public int checkInteraction(Entity entity, List<Entity> targets, int range) {
+	    for (Entity target : targets) {
+	        if (target != null && target != entity) {
+	            int dx = Math.abs(entity.getWorldX() - target.getWorldX());
+	            int dy = Math.abs(entity.getWorldY() - target.getWorldY());
+
+	            if (dx < range && dy < range) {
+	                return target.getIndex();
+	            }
+	        }
+	    }
+	    return 999;
 	}
 }
 

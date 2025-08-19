@@ -26,6 +26,7 @@ public class Cat_yellow extends Entity {
         this.setSpriteCouter(0);
 
         getImageCat();
+        setDialogue();
     }
     
 	public void getImageCat() {
@@ -110,4 +111,16 @@ public class Cat_yellow extends Entity {
 	        setActionLockCounter(0);
 	    }
 	}
+	
+
+    public void setDialogue() {
+        getDialogues()[0] = "Meow meow";
+//        getDialogues()[1] = "";
+//        getDialogues()[2] = "";
+//        getDialogues()[3] = "";
+    }
+    @Override
+    public void speak() {
+        super.speak();
+    }
 }

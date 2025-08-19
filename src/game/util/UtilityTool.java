@@ -16,9 +16,14 @@ public class UtilityTool {
     
     //Objet được vẽ cách ngoài biên màn hình 2 * gp.getTileSize()
     public static boolean isInsidePlayerView(int worldX, int worldY, GamePanel gp) {
-        return worldX + 2 * gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() && 
-	           worldX - 2 * gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
-	           worldY + 2 * gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() && 
-	           worldY - 2 * gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
+        return worldX + 4 * gp.getTileSize() > gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() && 
+	           worldX - 4 * gp.getTileSize() < gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX() &&
+	           worldY + 4 * gp.getTileSize() > gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() && 
+	           worldY - 4 * gp.getTileSize() < gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
+    }
+    
+    public static int getXForCenterOfText(String text, GamePanel gamePanel, Graphics2D graphics2D) {
+        int length = (int) graphics2D.getFontMetrics().getStringBounds(text, graphics2D).getWidth();
+        return gamePanel.getScreenWidth() / 2 - length / 2;
     }
 }

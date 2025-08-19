@@ -31,6 +31,10 @@ public abstract class Entity implements DrawableEntity {
     private int actionLockCounter;
     private int scaleEntityX;
     private int scaleEntityY;
+    private String[] dialogues = new String[20];
+    private int dialogueIndex = 0;
+    private int index;
+    private String name = "nguyen";
 	
 	public Entity(GamePanel gp) {
 		this.gp = gp;
@@ -39,6 +43,21 @@ public abstract class Entity implements DrawableEntity {
 	public abstract  void  update();
 	public abstract  void draw(Graphics2D g2);
 	
+	   public void speak() {
+	        if (dialogues[dialogueIndex] == null) {
+	            setDialogueIndex(0);
+	        }
+
+	        gp.getUi().setCurrentDialogue(getDialogues()[dialogueIndex]);
+	        dialogueIndex++;
+
+	        switch (gp.getPlayer().getDirection()) {
+	            case "up" -> setDirection("down");
+	            case "down" -> setDirection("up");
+	            case "left" -> setDirection("right");
+	            case "right" -> setDirection("left");
+	        }
+	    }
 	
 	public void checkCollision() {
 		setCollisionOn(false);
@@ -55,6 +74,7 @@ public abstract class Entity implements DrawableEntity {
 			case "down": setWorldY(getWorldY() + getSpeed()); break;
 			case "left": setWorldX(getWorldX() - getSpeed()); break;
 			case "right": setWorldX(getWorldX() + getSpeed()); break;
+			
 			}
 		}
 	}
@@ -135,4 +155,13 @@ public abstract class Entity implements DrawableEntity {
 	public Entity setScaleEntityX(int scaleEntityX) { this.scaleEntityX = scaleEntityX; return this; }
 	public int getScaleEntityY() { return scaleEntityY; }
 	public Entity setScaleEntityY(int scaleEntityY) { this.scaleEntityY = scaleEntityY; return this; }
+	public String[] getDialogues() { return dialogues; } 
+	public Entity setDialogues(String[] dialogues) { this.dialogues = dialogues; return this; } 
+	public int getDialogueIndex() { return dialogueIndex; } 
+	public Entity setDialogueIndex(int dialogueIndex) { this.dialogueIndex = dialogueIndex; return this; }
+	public int getIndex() { return index; } 
+	public Entity setIndex(int index) { this.index = index; return this; }
+	public String getName() { return name; }
+	public Entity setName(String name) { this.name = name; return this; }
+	
 }
