@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import game.main.GamePanel;
 
 public class KeyHandler implements KeyListener {
-	private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed, attackPressed;
+	private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed;
 	private boolean checkDrawTime = false;
 	private boolean drawRect = false;
 	GamePanel gp;
@@ -33,22 +33,15 @@ public class KeyHandler implements KeyListener {
                 rightPressed = true;
             }
             if (code == KeyEvent.VK_P) {
-                dialoguePressed = true;
+                gp.setGameState(gp.getPauseState());
             }
-//            if (code == KeyEvent.VK_B) {
-//                gp.setGameState(gp.getCharacterState());
-//            }            
-            if (code == KeyEvent.VK_J) {
-                attackPressed = true;
+            if (code == KeyEvent.VK_R) {
+            	dialoguePressed = true;
             }
         } else if (gp.getGameState() == gp.getPauseState()) {
             if (code == KeyEvent.VK_P) {
                 gp.setGameState(gp.getPlayState());
             }
-//        } else if (gp.getGameState() == gp.getCharacterState()) {
-//            if (code == KeyEvent.VK_B) {
-//                gp.setGameState(gp.getPlayState());
-//            }
         } else if (gp.getGameState() == gp.getDialogueState()) {
             if (code == KeyEvent.VK_R) {
                 gp.setGameState(gp.getPlayState());
@@ -71,7 +64,6 @@ public class KeyHandler implements KeyListener {
 			if(drawRect == false) { drawRect = true; }
 			else { drawRect = false; }
 		}
-		if(code == KeyEvent.VK_J) { attackPressed = false; }
 	}
 
 	public boolean isUpPressed() { return upPressed; }
@@ -88,6 +80,5 @@ public class KeyHandler implements KeyListener {
 	public KeyHandler setDrawRect(boolean drawRect) { this.drawRect = drawRect; return this; }
 	public boolean isDialoguePressed() { return dialoguePressed; }
 	public KeyHandler setDialoguePressed(boolean dialoguePressed) { this.dialoguePressed = dialoguePressed; return this; }
-    public boolean isAttackPressed() { return attackPressed; }
-    public KeyHandler setAttackPressed(boolean attackPressed) { this.attackPressed = attackPressed; return this; }
+	
 }

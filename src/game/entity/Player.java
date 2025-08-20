@@ -12,9 +12,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import game.interfaces.DrawableEntity;
-import game.keyhandler.KeyHandler;
 import game.main.GamePanel;
-import game.mouseclick.MouseHandler;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 
@@ -103,7 +101,7 @@ public class Player extends Entity implements DrawableEntity {
 		gp.getCheckCollision().checkTile(this);
         gp.getCheckCollision().checkObject(this, false);
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
-        int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
+        List<Entity> npcIndex = gp.getCheckCollision().getEntitiesInRange(this, gp.getNpcs(), 48);
         interactWithNPC(npcIndex);
 	}
 	
@@ -144,7 +142,7 @@ public class Player extends Entity implements DrawableEntity {
 	    return closestNpc;
 	}
 	
-	private void interactWithNPC(int index) {
+	private void interactWithNPC(List<Entity> npcIndex) {
 		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(this, gp.getNpcs(), 48);
 		if (!nearbyNpcs.isEmpty() && gp.keyH.isDialoguePressed()) {
 		    Entity npc = nearbyNpcs.get(0); // lấy NPC đầu tiên (bạn có thể chọn theo khoảng cách gần nhất)

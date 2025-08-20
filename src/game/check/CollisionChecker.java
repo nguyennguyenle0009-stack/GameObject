@@ -162,21 +162,6 @@ public class CollisionChecker {
         }
 	}
 	
-	// Check phạm vi tương tác
-	public int checkInteraction(Entity entity, List<Entity> targets, int range) {
-	    for (Entity target : targets) {
-	        if (target != null && target != entity) {
-	            int dx = Math.abs(entity.getWorldX() - target.getWorldX());
-	            int dy = Math.abs(entity.getWorldY() - target.getWorldY());
-
-	            if (dx < range && dy < range) {
-	                return target.getIndex();
-	            }
-	        }
-	    }
-	    return 999;
-	}
-	
 	// Lấy tất cả entity trong phạm vi
 	public List<Entity> getEntitiesInRange(Entity entity, List<Entity> targets, int range) {
 	    List<Entity> result = new ArrayList<>();
