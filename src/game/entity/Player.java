@@ -17,7 +17,7 @@ import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 
-public class Player extends Entity implements DrawableEntity {
+public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
@@ -30,6 +30,18 @@ public class Player extends Entity implements DrawableEntity {
         setCollision();
 		setDefaultValue();
 		getImagePlayer();
+
+	}
+	public void setDefaultValue() {
+		setWorldX(100); 
+		setWorldY(100);
+		setSpeed(4);
+		setDirection("down");
+		setSpriteCouter(0);
+		setSpriteNum(1);
+		atts().set(game.enums.Attr.HEALTH, 100);
+		atts().set(game.enums.Attr.ATTACK, 5);
+		atts().set(game.enums.Attr.DEF, 4);
 	}
 	
     private void setCollision() {
@@ -51,15 +63,6 @@ public class Player extends Entity implements DrawableEntity {
 		}catch (Exception e) {
 			e.getStackTrace();
 		}
-	}
-	
-	public void setDefaultValue() {
-		setWorldX(100); 
-		setWorldY(100);
-		setSpeed(4);
-		setDirection("down");
-		setSpriteCouter(0);
-		setSpriteNum(1);
 	}
 	
 	@Override

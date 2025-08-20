@@ -42,7 +42,27 @@ public class Ui {
 		if(gp.getGameState() == gp.getDialogueState()) {
 			drawDialogueScreen();
 		}
+		if(gp.keyH.isiPressed() == true) {
+			characterScreen(g2);
+		}
 	}
+    
+    private void characterScreen(Graphics2D g2) {
+    	int x = gp.getTileSize();
+    	int y = gp.getTileSize();
+    	int width = x * 6;
+    	int height = y * 8;
+    	drawSubWindow(x, y, width, height, g2);
+    	g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
+    	int textX = x + gp.getTileSize();
+    	int textY = y + gp.getTileSize();
+    	
+    	var attrs = gp.getPlayer().atts();
+    	for(game.enums.Attr a : game.enums.Attr.values()) {
+    		g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
+    		textY += 30;
+    	}
+    }
     
 	private void drawInteractionHint(Graphics2D g2) {
 		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);

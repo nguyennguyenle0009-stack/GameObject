@@ -1,0 +1,17 @@
+package game.enums;
+
+// thuộc tính
+public enum Attr {
+	HEALTH("Health"),// máu
+	ATTACK("Attack"),// tấn công
+	DEF("Def"),// phòng thủ
+	PEP("Pep"),// năng lượng
+	SPIRIT("Spirit"),// tinh thần
+	STRENGTH("Strength"),// sức mạnh
+	SOULD("Sould"),// linh hồn
+	PHYSIQUE("Physique");// thể chất
+	
+	private final String display;
+	Attr(String d) { this.display = d; }
+	public String displayerName() { return display; }
+}
