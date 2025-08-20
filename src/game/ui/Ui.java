@@ -43,19 +43,7 @@ public class Ui {
 			drawDialogueScreen();
 		}
 	}
-//    private void aa (Graphics2D g2) {
-//        List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
-//        if (!nearbyNpcs.isEmpty()) {
-//            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
-//            g2.setColor(Color.YELLOW);
-//
-//            int startY = 30;
-//            for (Entity npc : nearbyNpcs) {
-//                g2.drawString(npc.getName(), gp.getScreenWidth() - 250, startY);
-//                startY += 25; // xuống dòng cho NPC tiếp theo
-//            }
-//        }
-//    }
+    
 	private void drawInteractionHint(Graphics2D g2) {
 		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
 		if (!nearbyNpcs.isEmpty()) {

@@ -12,25 +12,19 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import game.interfaces.DrawableEntity;
-import game.keyhandler.KeyHandler;
+
 import game.main.GamePanel;
-import game.mouseclick.MouseHandler;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 
 public class Player extends Entity implements DrawableEntity {
-	// Dùng để xử lý bàn phím và chuột
-	KeyHandler keyH = new KeyHandler(gp);
-	MouseHandler mouseH = new MouseHandler(gp);
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
     private static final int INTERACTION_RANGE = 80;
 
-	public Player(GamePanel gp, KeyHandler keyH, MouseHandler mounseH) {
+	public Player(GamePanel gp) {
 		super(gp);
-		this.keyH = keyH;
-		this.mouseH = mounseH;
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
         this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
         setCollision();
@@ -74,15 +68,15 @@ public class Player extends Entity implements DrawableEntity {
 	}
 	
 	private void updateKeyboard() {
-	    boolean moving = keyH.isUpPressed() || keyH.isDownPressed() 
-	                  || keyH.isLeftPressed() || keyH.isRightPressed();
+	    boolean moving = gp.keyH.isUpPressed() || gp.keyH.isDownPressed() 
+	                  || gp.keyH.isLeftPressed() || gp.keyH.isRightPressed();
 
 	    // Nếu có di chuyển → xử lý di chuyển
 	    if (moving) {
-	        if (keyH.isUpPressed())    setDirection("up");
-	        if (keyH.isDownPressed())  setDirection("down");
-	        if (keyH.isLeftPressed())  setDirection("left");
-	        if (keyH.isRightPressed()) setDirection("right");
+	        if (gp.keyH.isUpPressed())    setDirection("up");
+	        if (gp.keyH.isDownPressed())  setDirection("down");
+	        if (gp.keyH.isLeftPressed())  setDirection("left");
+	        if (gp.keyH.isRightPressed()) setDirection("right");
 
 	        checkCollision();
 	        moveIfCollisionNotDetected();
@@ -92,13 +86,13 @@ public class Player extends Entity implements DrawableEntity {
 	    }
 
 	    // Xử lý đối thoại riêng, KHÔNG phụ thuộc di chuyển
-	    if (keyH.isDialoguePressed()) {
+	    if (gp.keyH.isDialoguePressed()) {
 	        Entity npc = getClosestNPCInRange(gp.getNpcs());
 	        if (npc != null) {
 	            gp.setGameState(gp.getDialogueState());
 	            npc.speak();
 	        }
-	        keyH.setDialoguePressed(false); // reset flag
+	        gp.keyH.setDialoguePressed(false); // reset flag
 	    }
 	}
 	
@@ -172,7 +166,7 @@ public class Player extends Entity implements DrawableEntity {
 	public void draw(Graphics2D g2, GamePanel gp) {
 		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
 		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
-		if(keyH.isDrawRect() == true) {
+		if(gp.keyH.isDrawRect() == true) {
 	        g2.setColor(Color.BLUE);
 	        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
 	        		getCollisionArea().width, getCollisionArea().height);
