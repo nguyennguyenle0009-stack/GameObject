@@ -56,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final int playState = 1;
     private final int pauseState = 2;
     private final int dialogueState = 3;
+    private final int characterState = 4;
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -158,6 +159,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public List<SuperObject> getObjects() { return objects; }
 	public List<Entity> getNpcs() { return npcs; }
 
+	public int getCharacterState() { return characterState; }
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
 	public int getPlayState() { return playState; }

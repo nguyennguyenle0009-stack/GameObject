@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import game.main.GamePanel;
 
 public class KeyHandler implements KeyListener {
-	private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed;
+	private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed, bPressed;
 	private boolean checkDrawTime = false;
 	private boolean drawRect = false;
 	GamePanel gp;
@@ -37,6 +37,14 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_R) {
             	dialoguePressed = true;
+            }
+            if (code == KeyEvent.VK_B) {
+            	if(bPressed == false) {
+            		bPressed = true;
+            	}
+            	else {
+            		bPressed = false;
+            	}
             }
         } else if (gp.getGameState() == gp.getPauseState()) {
             if (code == KeyEvent.VK_P) {
@@ -80,5 +88,12 @@ public class KeyHandler implements KeyListener {
 	public KeyHandler setDrawRect(boolean drawRect) { this.drawRect = drawRect; return this; }
 	public boolean isDialoguePressed() { return dialoguePressed; }
 	public KeyHandler setDialoguePressed(boolean dialoguePressed) { this.dialoguePressed = dialoguePressed; return this; }
+	public boolean isbPressed() {
+		return bPressed;
+	}
+	public KeyHandler setbPressed(boolean bPressed) {
+		this.bPressed = bPressed;
+		return this;
+	}
 	
 }
