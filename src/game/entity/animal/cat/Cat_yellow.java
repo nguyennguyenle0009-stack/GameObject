@@ -13,11 +13,9 @@ import game.util.CameraHelper;
 import game.util.UtilityTool;
 
 public class Cat_yellow extends Entity {
-    GamePanel gp;
-    private int health = 3;
+	GamePanel gp;
     public Cat_yellow(GamePanel gp) {
         super(gp);
-        
         this.setSpeed(1);
         this.setDirection("down");
         this.setScaleEntityX(24);
@@ -117,14 +115,12 @@ public class Cat_yellow extends Entity {
 
     public void setDialogue() {
         getDialogues()[0] = "Meow meow";
+//        getDialogues()[1] = "";
+//        getDialogues()[2] = "";
+//        getDialogues()[3] = "";
     }
     @Override
     public void speak() {
         super.speak();
-    }
-    
-    public void takeDamage(int amount) {
-        health -= amount;
-        System.out.println("Cat_yellow health: " + health);
     }
 }

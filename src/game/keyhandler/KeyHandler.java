@@ -35,9 +35,9 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_P) {
                 dialoguePressed = true;
             }
-            if (code == KeyEvent.VK_B) {
-                gp.setGameState(gp.getCharacterState());
-            }            
+//            if (code == KeyEvent.VK_B) {
+//                gp.setGameState(gp.getCharacterState());
+//            }            
             if (code == KeyEvent.VK_J) {
                 attackPressed = true;
             }
@@ -45,10 +45,10 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_P) {
                 gp.setGameState(gp.getPlayState());
             }
-        } else if (gp.getGameState() == gp.getCharacterState()) {
-            if (code == KeyEvent.VK_B) {
-                gp.setGameState(gp.getPlayState());
-            }
+//        } else if (gp.getGameState() == gp.getCharacterState()) {
+//            if (code == KeyEvent.VK_B) {
+//                gp.setGameState(gp.getPlayState());
+//            }
         } else if (gp.getGameState() == gp.getDialogueState()) {
             if (code == KeyEvent.VK_R) {
                 gp.setGameState(gp.getPlayState());

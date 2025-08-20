@@ -5,11 +5,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.List;
-import java.util.Map;
 
 import game.entity.Entity;
 import game.main.GamePanel;
-import game.object.SuperObject;
 import game.util.UtilityTool;
 
 public class Ui {
@@ -38,56 +36,13 @@ public class Ui {
 		if (gp.getGameState() == gp.getPlayState()) {
 			drawInteractionHint(g2);
 		}
-        if(gp.getGameState() == gp.getPauseState()) {
-            drawPauseScreen();
-	    }
-	    if(gp.getGameState() == gp.getDialogueState()) {
-            drawDialogueScreen();
-	    }
-	    if(gp.getGameState() == gp.getCharacterState()) {
-            drawCharacterScreen();
-	    }
+		if(gp.getGameState() == gp.getPauseState()) {
+			drawPauseScreen();
+		}
+		if(gp.getGameState() == gp.getDialogueState()) {
+			drawDialogueScreen();
+		}
 	}
-	
-    private void drawCharacterScreen() {
-        int frameX = gp.getTileSize();
-        int frameY = gp.getTileSize();
-        int frameWidth = gp.getTileSize() * 6;
-        int frameHeight = gp.getTileSize() * 8;
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight, g2);
-
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
-        int textX = frameX + gp.getTileSize() / 2;
-        int textY = frameY + gp.getTileSize();
-        for (Map.Entry<String, Integer> entry : gp.getPlayer().getAttributes().getAll().entrySet()) {
-            g2.drawString(entry.getKey() + ": " + entry.getValue(), textX, textY);
-            textY += 30;
-        }
-
-        int invX = frameX + frameWidth + gp.getTileSize();
-        int invY = frameY;
-        int invWidth = gp.getTileSize() * 6;
-        int invHeight = gp.getTileSize() * 8;
-        drawSubWindow(invX, invY, invWidth, invHeight, g2);
-
-        g2.drawString("Inventory", invX + gp.getTileSize() / 2, invY + gp.getTileSize());
-        int itemY = invY + gp.getTileSize() * 2;
-        for (SuperObject item : gp.getPlayer().getInventory().getItems()) {
-            g2.drawString(item.getName(), invX + gp.getTileSize() / 2, itemY);
-            itemY += 30;
-        }
-
-        itemY += 10;
-        g2.drawString("Weapons", invX + gp.getTileSize() / 2, itemY);
-        itemY += 30;
-        SuperObject[] slots = gp.getPlayer().getInventory().getWeaponSlots();
-        for (int i = 0; i < slots.length; i++) {
-            String name = (slots[i] != null) ? slots[i].getName() : "Empty";
-            g2.drawString("Slot " + (i + 1) + ": " + name, invX + gp.getTileSize() / 2, itemY);
-            itemY += 30;
-        }
-    }
-    
 	private void drawInteractionHint(Graphics2D g2) {
 		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
 		if (!nearbyNpcs.isEmpty()) {
