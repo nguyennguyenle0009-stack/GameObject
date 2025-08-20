@@ -28,6 +28,13 @@ public class Player extends Entity implements DrawableEntity {
     private final Inventory inventory;
     private final List<String> skills = new ArrayList<>();
     private final List<String> techniques = new ArrayList<>();
+    
+    private boolean attacking = false;
+    private BufferedImage attack1, attack2, attack3;
+    private int attackSpriteCounter;
+    private int attackSpriteNum;
+    private Rectangle attackArea = new Rectangle(0, 0, 36, 36);
+    private boolean damageApplied;
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -57,6 +64,10 @@ public class Player extends Entity implements DrawableEntity {
 			setLeft2(setup("/data/player/kh_left_2")); 
 			setRight1(setup("/data/player/kh_right_1")); 
 			setRight2(setup("/data/player/kh_right_2")); 
+			
+            setAttack1(setup("/data/player/t1"));
+            setAttack2(setup("/data/player/t2"));
+            setAttack3(setup("/data/player/t3"));
 		}catch (Exception e) {
 			e.getStackTrace();
 		}
@@ -72,9 +83,20 @@ public class Player extends Entity implements DrawableEntity {
 	}
 	
 	@Override
-	public void update() {
-	    updateKeyboard();
-	}
+    public void update() {
+    if (attacking) {
+        handleAttack();
+    } else {
+        updateKeyboard();
+        if (gp.keyH.isAttackPressed()) {
+            attacking = true;
+            attackSpriteCounter = 0;
+            attackSpriteNum = 1;
+            damageApplied = false;
+            gp.keyH.setAttackPressed(false);
+        }
+    }
+}
 	
 	private void updateKeyboard() {
 	    boolean moving = gp.keyH.isUpPressed() || gp.keyH.isDownPressed() 
@@ -104,6 +126,77 @@ public class Player extends Entity implements DrawableEntity {
 	        gp.keyH.setDialoguePressed(false); // reset flag
 	    }
 	}
+	
+	private void handleAttack() {
+        attackSpriteCounter++;
+        if (attackSpriteCounter <= 5) {
+            attackSpriteNum = 1;
+            performDash();
+        } else if (attackSpriteCounter <= 10) {
+            attackSpriteNum = 2;
+            if (!damageApplied) {
+                dealDamage();
+                damageApplied = true;
+            }
+        } else if (attackSpriteCounter <= 15) {
+            attackSpriteNum = 3;
+        } else {
+            attackSpriteCounter = 0;
+            attackSpriteNum = 1;
+            attacking = false;
+        }
+    }
+
+    private void performDash() {
+        int originalSpeed = getSpeed();
+        setSpeed(originalSpeed * 2);
+        checkCollision();
+        moveIfCollisionNotDetected();
+        setSpeed(originalSpeed);
+    }
+
+    private Rectangle getAttackRectangle() {
+        int x = getWorldX();
+        int y = getWorldY();
+        int size = gp.getTileSize();
+        int aw = attackArea.width;
+        int ah = attackArea.height;
+        switch (getDirection()) {
+            case "up" -> {
+                y -= ah;
+                x += (size - aw) / 2;
+            }
+            case "down" -> {
+                y += size;
+                x += (size - aw) / 2;
+            }
+            case "left" -> {
+                x -= aw;
+                y += (size - ah) / 2;
+            }
+            case "right" -> {
+                x += size;
+                y += (size - ah) / 2;
+            }
+        }
+        return new Rectangle(x, y, aw, ah);
+    }
+
+    private void dealDamage() {
+        Rectangle attackRect = getAttackRectangle();
+        for (Entity npc : gp.getNpcs()) {
+            if (npc != null) {
+                Rectangle npcRect = new Rectangle(
+                        npc.getWorldX() + npc.getCollisionArea().x,
+                        npc.getWorldY() + npc.getCollisionArea().y,
+                        npc.getCollisionArea().width,
+                        npc.getCollisionArea().height);
+                if (attackRect.intersects(npcRect) && npc instanceof game.entity.animal.cat.Cat_yellow cat) {
+                    cat.takeDamage(1);
+                }
+            }
+        }
+    }
 	
 	@Override
 	public void checkCollision() {
@@ -174,13 +267,30 @@ public class Player extends Entity implements DrawableEntity {
 	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
 		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
+		BufferedImage image = attacking ? getAttackImage() : getDirectionImage();
+        g2.drawImage(image, screenPos.x, screenPos.y, null);
 		if(gp.keyH.isDrawRect() == true) {
-	        g2.setColor(Color.BLUE);
-	        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
-	        		getCollisionArea().width, getCollisionArea().height);
+            g2.setColor(Color.BLUE);
+            g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y,
+                            getCollisionArea().width, getCollisionArea().height);
+            if (attacking) {
+                Rectangle attackRect = getAttackRectangle();
+                Point atkScreen = CameraHelper.worldToScreen(attackRect.x, attackRect.y, gp);
+                g2.setColor(Color.RED);
+                g2.drawRect(atkScreen.x, atkScreen.y, attackRect.width, attackRect.height);
+            }
 		}
-	}
+    }
+	
+    private BufferedImage getAttackImage() {
+        if (attackSpriteNum == 1) {
+            return attack1;
+        } else if (attackSpriteNum == 2) {
+            return attack2;
+        } else {
+            return attack3;
+        }
+    }
 
 	private BufferedImage getDirectionImage() {
 		BufferedImage image = null;
@@ -246,6 +356,13 @@ public class Player extends Entity implements DrawableEntity {
     public boolean canUseTechnique(String technique, int weaponSlot) {
         return techniques.contains(technique) && inventory.getWeapon(weaponSlot) != null;
     }
+    
+    public BufferedImage getAttack1() { return attack1; }
+    public Player setAttack1(BufferedImage attack1) { this.attack1 = attack1; return this; }
+    public BufferedImage getAttack2() { return attack2; }
+    public Player setAttack2(BufferedImage attack2) { this.attack2 = attack2; return this; }
+    public BufferedImage getAttack3() { return attack3; }
+    public Player setAttack3(BufferedImage attack3) { this.attack3 = attack3; return this; }
 }
 
 

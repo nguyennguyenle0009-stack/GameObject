@@ -42,10 +42,10 @@ public class Ui {
             drawPauseScreen();
 	    }
 	    if(gp.getGameState() == gp.getDialogueState()) {
-	            drawDialogueScreen();
+            drawDialogueScreen();
 	    }
 	    if(gp.getGameState() == gp.getCharacterState()) {
-	            drawCharacterScreen();
+            drawCharacterScreen();
 	    }
 	}
 	
