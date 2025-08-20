@@ -11,6 +11,8 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import game.entity.LV.Cultivation;
+import game.enums.MajorRealm;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
@@ -19,10 +21,14 @@ public class Player extends GameActor {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);
     private final int screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);
+    
     private static final int INTERACTION_RANGE = 80;
+    
+    private final Cultivation cultivation;
 
 	public Player(GamePanel gp, String name, StatGrowth growth, int level) {
 		super(gp, growth, level);
+		this.cultivation = new Cultivation(MajorRealm.LUYEN_KHI, 1); // bắt đầu từ Luyện khí 1
         setCollision();
 		setDefaultValue();
 		getImagePlayer();
@@ -200,6 +206,23 @@ public class Player extends GameActor {
         } 
         catch (IOException e) { e.printStackTrace(); }
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
+    }
+    
+    // constructor ngắn gọn
+    public Player(GamePanel gp) {
+        this(gp, "Ash", GrowthPresets.WARRIOR, 1);
+    }
+
+    public Cultivation cultivation() { return cultivation; }
+
+    // Gọi khi gây sát thương
+    public void onDealDamage(int damage) {
+        cultivation.gainCombatXpFromDamage(damage);
+    }
+
+    // Gọi trong update() khi đang tu luyện (đứng thiền, ngồi luyện…)
+    public void cultivateTick() {
+        cultivation.gainSpirit(1); // ví dụ mỗi tick +1, hoặc theo thời gian/thế đứng/buff
     }
 
 	public int getScreenX() { return screenX; }

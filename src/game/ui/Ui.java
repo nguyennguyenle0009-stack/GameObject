@@ -54,22 +54,44 @@ public class Ui {
 	}
     
     private void drawCharacterScreen(Graphics2D g2) {
-        int frameX = gp.getTileSize();
-        int frameY = gp.getTileSize();
+    	var cul = gp.getPlayer().cultivation();
+        int x = gp.getTileSize();
+        int y = gp.getTileSize();
         int frameWidth = gp.getTileSize() * 6;
         int frameHeight = gp.getTileSize() * 8;
 
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight, g2);
+        drawSubWindow(x, y, frameWidth, frameHeight, g2);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
 
-        int textX = frameX + gp.getTileSize() / 2;
-        int textY = frameY + gp.getTileSize();
+        int textX = x + gp.getTileSize() / 2;
+        int textY = y + gp.getTileSize();
 
         game.entity.Attributes attrs = gp.getPlayer().atts(); // nếu bạn đặt lại tên
         for (Attr a : Attr.values()) {
             g2.drawString(a.displayName() + ": " + attrs.get(a), textX, textY);
             textY += 30;
         }
+        
+     // Tiêu đề
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 24f));
+        g2.drawString("Tu luyện", x, y); y += 0;
+
+        // Cảnh giới hiện tại
+        var st = cul.stage();
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20f));
+        g2.drawString(st.realm.display + " - Tiểu cảnh giới " + st.stage, x, y); y += 26;
+
+        // SPIRIT
+        g2.drawString("SPIRIT: " + cul.spirit() + "/" + cul.spiritMax(), x, y); y += 22;
+
+        // PEP
+        g2.drawString("PEP: " + cul.pep(), x, y); y += 22;
+
+        // Combat XP
+        g2.drawString("Combat XP: " + cul.combatXp() + "/" + cul.combatXpRequired(), x, y); y += 22;
+
+        // Công pháp
+        g2.drawString("Công pháp: " + (cul.hasTechniqueForCurrentRealm() ? "Đã học" : "Chưa học"), x, y);
     }
     
     // Vẽ khung hình tên đối tượng
