@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import game.check.CollisionChecker;
 import game.entity.Entity;
+import game.entity.GrowthPresets;
 import game.entity.Player;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
@@ -43,7 +44,12 @@ public class GamePanel extends JPanel implements Runnable {
 	private int FPS = 60;
 	public KeyHandler keyH = new KeyHandler(this);
 	MouseHandler mounseH = new MouseHandler(this);
-	private final Player player = new Player(this);
+	private final Player player = new Player(
+		    this,
+		    "Ash",                       // tên hiển thị
+		    GrowthPresets.WARRIOR,       // preset tăng trưởng
+		    2                            // level khởi tạo
+		);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
 	private final List<SuperObject> objects = new ArrayList<>();

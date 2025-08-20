@@ -11,24 +11,22 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
-import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 
-public class Player extends Entity implements DrawableEntity {
+public class Player extends GameActor {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
-    private final int screenX;
-    private final int screenY;
+    private final int screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);
+    private final int screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);
     private static final int INTERACTION_RANGE = 80;
 
-	public Player(GamePanel gp) {
-		super(gp);
-        this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
-        this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
+	public Player(GamePanel gp, String name, StatGrowth growth, int level) {
+		super(gp, growth, level);
         setCollision();
 		setDefaultValue();
 		getImagePlayer();
+
 	}
 	
     private void setCollision() {

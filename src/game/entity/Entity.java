@@ -74,7 +74,6 @@ public abstract class Entity implements DrawableEntity {
 			case "down": setWorldY(getWorldY() + getSpeed()); break;
 			case "left": setWorldX(getWorldX() - getSpeed()); break;
 			case "right": setWorldX(getWorldX() + getSpeed()); break;
-			
 			}
 		}
 	}

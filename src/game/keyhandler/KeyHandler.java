@@ -88,12 +88,7 @@ public class KeyHandler implements KeyListener {
 	public KeyHandler setDrawRect(boolean drawRect) { this.drawRect = drawRect; return this; }
 	public boolean isDialoguePressed() { return dialoguePressed; }
 	public KeyHandler setDialoguePressed(boolean dialoguePressed) { this.dialoguePressed = dialoguePressed; return this; }
-	public boolean isbPressed() {
-		return bPressed;
-	}
-	public KeyHandler setbPressed(boolean bPressed) {
-		this.bPressed = bPressed;
-		return this;
-	}
+	public boolean isbPressed() { return bPressed; }
+	public KeyHandler setbPressed(boolean bPressed) { this.bPressed = bPressed; return this; }
 	
 }

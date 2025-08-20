@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 import game.entity.Entity;
-import game.entity.Item;
+import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.UtilityTool;
 
@@ -47,21 +47,29 @@ public class Ui {
 		if(gp.getGameState() == gp.getCharacterState()) {
 
 		}
+		// Bật balo
 		if(gp.keyH.isbPressed() == true) {
-			drawCharacterScreen();
+			drawCharacterScreen(g2);
 		}
 	}
     
-    private void drawCharacterScreen() {
-	    int frameX = 50;
-	    int frameY = 50;
-	    int frameWidth = 400;
-	    int frameHeight = 300;
+    private void drawCharacterScreen(Graphics2D g2) {
+        int frameX = gp.getTileSize();
+        int frameY = gp.getTileSize();
+        int frameWidth = gp.getTileSize() * 6;
+        int frameHeight = gp.getTileSize() * 8;
 
-	    g2.setColor(new Color(0, 0, 0, 200));
-	    g2.fillRect(frameX, frameY, frameWidth, frameHeight);
-	    g2.setColor(Color.WHITE);
-	    g2.drawRect(frameX, frameY, frameWidth, frameHeight);
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight, g2);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
+
+        int textX = frameX + gp.getTileSize() / 2;
+        int textY = frameY + gp.getTileSize();
+
+        game.entity.Attributes attrs = gp.getPlayer().atts(); // nếu bạn đặt lại tên
+        for (Attr a : Attr.values()) {
+            g2.drawString(a.displayName() + ": " + attrs.get(a), textX, textY);
+            textY += 30;
+        }
     }
     
     // Vẽ khung hình tên đối tượng
