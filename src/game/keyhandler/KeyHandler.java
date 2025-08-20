@@ -33,13 +33,17 @@ public class KeyHandler implements KeyListener {
                 rightPressed = true;
             }
             if (code == KeyEvent.VK_P) {
-                gp.setGameState(gp.getPauseState());
+                dialoguePressed = true;
             }
-            if (code == KeyEvent.VK_R) {
-            	dialoguePressed = true;
+            if (code == KeyEvent.VK_B) {
+                gp.setGameState(gp.getCharacterState());
             }
         } else if (gp.getGameState() == gp.getPauseState()) {
             if (code == KeyEvent.VK_P) {
+                gp.setGameState(gp.getPlayState());
+            }
+        } else if (gp.getGameState() == gp.getCharacterState()) {
+            if (code == KeyEvent.VK_B) {
                 gp.setGameState(gp.getPlayState());
             }
         } else if (gp.getGameState() == gp.getDialogueState()) {
