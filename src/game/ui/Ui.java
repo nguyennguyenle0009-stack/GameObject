@@ -19,10 +19,14 @@ public class Ui {
 	private int messageCouter;
 	private String currentDialogue = "";
 	
+	private final ItemGridUi itemGrid;
+	
 	public Ui(GamePanel gp) {
 		this.gp = gp;
 		this.arial_40 = new Font("Arial", Font.PLAIN, 40);
 		this.arial_80B = new Font("Arial", Font.BOLD, 80);
+		
+		this.itemGrid = new ItemGridUi(gp.getTileSize());
 	}
 	
     public void showMessage(String text) {
@@ -43,9 +47,15 @@ public class Ui {
 			drawDialogueScreen();
 		}
 		if(gp.keyH.isiPressed() == true) {
-			characterScreen(g2);
+			drawInventory(g2);
 		}
 	}
+    
+    private void drawInventory(Graphics2D g2) {
+    	int x = gp.getTileSize();
+    	int y = gp.getTileSize() * 6;
+    	itemGrid.draw(g2, x, y, gp.getPlayer().getBag().all());
+    }
     
     private void characterScreen(Graphics2D g2) {
     	int x = gp.getTileSize();
@@ -146,6 +156,13 @@ public class Ui {
 	public Ui setMessageCouter(int messageCouter) { this.messageCouter = messageCouter; return this; }
 	public String getCurrentDialogue() { return currentDialogue; }
 	public Ui setCurrentDialogue(String currentDialogue) { this.currentDialogue = currentDialogue; return this; }
+
+//	public Graphics2D getG2() { return g2; }
+//	public Ui setG2(Graphics2D g2) { this.g2 = g2; return this; }
+//	public GamePanel getGp() { return gp; }
+	
+	public ItemGridUi getItemGrid() { return itemGrid; }
+	
 }
 
 
