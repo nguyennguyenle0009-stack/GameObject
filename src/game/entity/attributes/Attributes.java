@@ -1,4 +1,4 @@
-package game.entity.nguyen;
+package game.entity.attributes;
 
 import java.util.EnumMap;
 import java.util.Map;

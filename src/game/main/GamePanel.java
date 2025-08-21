@@ -67,7 +67,11 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setUpGame() { 
-		objectManager.setObject(); 
+//		Item hp = new HealthPotion(30, 1);
+//		Player p = new Player(this);
+//		p.getBag().add(hp);
+//		p.useItem(hp);
+		objectManager.setObject();
 		objectManager.setEntity();
 		gameState = playState;
 	}

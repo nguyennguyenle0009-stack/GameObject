@@ -2,7 +2,7 @@ package game.entity;
 
 import java.awt.Graphics2D;
 
-import game.entity.nguyen.Attributes;
+import game.entity.attributes.Attributes;
 import game.interfaces.HasAttributes;
 import game.main.GamePanel;
 

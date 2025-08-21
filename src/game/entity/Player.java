@@ -11,6 +11,8 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import game.entity.inventory.Inventory;
+import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
 
 import game.main.GamePanel;
@@ -21,7 +23,10 @@ public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
+    
     private static final int INTERACTION_RANGE = 80;
+    
+    private final Inventory bag = new Inventory();
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -39,6 +44,7 @@ public class Player extends GameActor implements DrawableEntity {
 		setDirection("down");
 		setSpriteCouter(0);
 		setSpriteNum(1);
+		setName("Nguyeen pro");
 		atts().set(game.enums.Attr.HEALTH, 100);
 		atts().set(game.enums.Attr.ATTACK, 5);
 		atts().set(game.enums.Attr.DEF, 4);
@@ -125,27 +131,6 @@ public class Player extends GameActor implements DrawableEntity {
 	    return null;
 	}
 	
-	//check NPC gần nhất, chưa dùng
-	public Entity getClosestNPCInRange1(List<Entity> npcs) {
-	    Entity closestNpc = null;
-	    double minDistance = Double.MAX_VALUE;
-
-	    for (Entity npc : npcs) {
-	        if (npc != null) {
-	            int dx = this.getWorldX() - npc.getWorldX();
-	            int dy = this.getWorldY() - npc.getWorldY();
-	            double distance = Math.sqrt(dx * dx + dy * dy);
-
-	            if (distance < INTERACTION_RANGE && distance < minDistance) {
-	                minDistance = distance;
-	                closestNpc = npc;
-	            }
-	        }
-	    }
-
-	    return closestNpc;
-	}
-	
 	private void interactWithNPC(int index) {
 		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(this, gp.getNpcs(), 48);
 		if (!nearbyNpcs.isEmpty() && gp.keyH.isDialoguePressed()) {
@@ -157,13 +142,7 @@ public class Player extends GameActor implements DrawableEntity {
 	}
 	
 	@Override
-	public void draw(Graphics2D g2) {
-		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
-        g2.setColor(Color.BLUE);
-        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
-        		getCollisionArea().width, getCollisionArea().height);
-	}
+	public void draw(Graphics2D g2) { }
 	
 	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
@@ -207,12 +186,18 @@ public class Player extends GameActor implements DrawableEntity {
         catch (IOException e) { e.printStackTrace(); }
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
+    
+    // Sử dụng item
+    public void useItem(Item i) {
+    	i.use(this);
+    	if(i.getQuantity() == 0) bag.remove(i);
+    }
 
 	public int getScreenX() { return screenX; }
 	public int getScreenY() { return screenY; }
 
 	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	
+	public Inventory getBag() { return bag; } 
 }
 
 
