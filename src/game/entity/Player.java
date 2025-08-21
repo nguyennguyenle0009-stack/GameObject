@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -16,22 +17,29 @@ import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
+import game.cultivation.Cultivation;
+import game.skill.Skill;
+import game.skill.FireballSkill;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
     private static final int INTERACTION_RANGE = 80;
+    private final Cultivation cultivation;
+    private final List<Skill> skills = new ArrayList<>();
 
 	public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
         this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
+        this.cultivation = new Cultivation(this);
         setCollision();
-		setDefaultValue();
-		getImagePlayer();
+                setDefaultValue();
+                getImagePlayer();
+        learnSkill(new FireballSkill());
 
-	}
+        }
 	public void setDefaultValue() {
 		setWorldX(100); 
 		setWorldY(100);
@@ -48,6 +56,7 @@ public class Player extends GameActor implements DrawableEntity {
         setCollisionArea(new Rectangle( 16, 32, 16, 16));
         setCollisionDefaultX(getCollisionArea().x);
         setCollisionDefaultY(getCollisionArea().y);
+        setAttackArea(new Rectangle( 16, 32, 20, 20));
     }
 	
 	public void getImagePlayer() {
@@ -157,24 +166,30 @@ public class Player extends GameActor implements DrawableEntity {
 	}
 	
 	@Override
-	public void draw(Graphics2D g2) {
-		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
+        public void draw(Graphics2D g2) {
+                Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
+                g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
         g2.setColor(Color.BLUE);
-        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
-        		getCollisionArea().width, getCollisionArea().height);
-	}
+        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y,
+                        getCollisionArea().width, getCollisionArea().height);
+        g2.setColor(Color.ORANGE);
+        g2.drawRect(screenPos.x+getAttackArea().x, screenPos.y + getAttackArea().y,
+                        getAttackArea().width, getAttackArea().height);
+        }
 	
 	@Override
 	public void draw(Graphics2D g2, GamePanel gp) {
 		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
-		if(gp.keyH.isDrawRect() == true) {
-	        g2.setColor(Color.BLUE);
-	        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
-	        		getCollisionArea().width, getCollisionArea().height);
-		}
-	}
+                g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
+                if(gp.keyH.isDrawRect() == true) {
+                g2.setColor(Color.BLUE);
+                g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y,
+                                getCollisionArea().width, getCollisionArea().height);
+                g2.setColor(Color.ORANGE);
+                g2.drawRect(screenPos.x+getAttackArea().x, screenPos.y + getAttackArea().y,
+                                getAttackArea().width, getAttackArea().height);
+                }
+        }
 
 	private BufferedImage getDirectionImage() {
 		BufferedImage image = null;
@@ -203,16 +218,20 @@ public class Player extends GameActor implements DrawableEntity {
         BufferedImage image = null;
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
-        } 
+        }
         catch (IOException e) { e.printStackTrace(); }
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
 
-	public int getScreenX() { return screenX; }
-	public int getScreenY() { return screenY; }
+        public int getScreenX() { return screenX; }
+        public int getScreenY() { return screenY; }
 
-	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	
+        public static int getInteractionRange() { return INTERACTION_RANGE; }
+
+        public Cultivation getCultivation() { return cultivation; }
+        public List<Skill> getSkills() { return skills; }
+        public boolean learnSkill(Skill skill) { return cultivation.learnSkill(this, skill); }
+
 }
 
 

@@ -6,6 +6,7 @@ import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
 import game.object.tree.OBJ_Tree_da;
+import game.object.item.OBJ_SpiritHerb;
 
 public class ObjectManager {
     private final GamePanel gp; 
@@ -33,9 +34,14 @@ public class ObjectManager {
         tree1.setScaleObjectHeight(2);	//Tỉ lệ chiều rộng * 48
         tree1.setIndex(2);
 
+        SuperObject herb = new OBJ_SpiritHerb();
+        herb.setWorldX(8 * gp.getTileSize());
+        herb.setWorldY(8 * gp.getTileSize());
+        herb.setIndex(3);
+
         gp.getObjects().add(tree1);
-//        gp.getObjects()[1] = tree;
         gp.getObjects().add(house);
+        gp.getObjects().add(herb);
     }
     
     public void setEntity(){
