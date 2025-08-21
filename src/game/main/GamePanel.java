@@ -39,11 +39,14 @@ public class GamePanel extends JPanel implements Runnable {
 	private final int maxWorldRow = 50;
 	// Tổng số chiều rộng và chiều cao trong map(pixel)
 	private final int worldWidth = tileSize * maxWorldCol;//2400
-	private final int worldHeight = tileSize * maxWorldRow;
-	private Thread thread;
-	private int FPS = 60;
-	public KeyHandler keyH = new KeyHandler(this);
-	MouseHandler mounseH = new MouseHandler(this);
+        private final int worldHeight = tileSize * maxWorldRow;
+        private int cameraX, cameraY;
+        private final int cameraSpeed = 8;
+        private final int edgeMargin = 16;
+        private Thread thread;
+        private int FPS = 60;
+        public KeyHandler keyH = new KeyHandler(this);
+        MouseHandler mounseH = new MouseHandler(this);
 	private final Player player = new Player(
 		    this,
 		    "Ash",                       // tên hiển thị
@@ -69,15 +72,17 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setBackground(Color.white);
 		this.setDoubleBuffered(true);
 		this.addKeyListener(keyH);
-		this.addMouseListener(mounseH);
-		this.setFocusable(true);
-	}
+                this.addMouseListener(mounseH);
+                this.addMouseMotionListener(mounseH);
+                this.setFocusable(true);
+        }
 	
-	public void setUpGame() { 
-		objectManager.setObject(); 
-		objectManager.setEntity();
-		gameState = playState;
-	}
+        public void setUpGame() {
+                objectManager.setObject();
+                objectManager.setEntity();
+                gameState = playState;
+                updateCamera();
+        }
 	
 	public void startGame() { this.thread = new Thread(this); thread.start(); }
 	
@@ -108,15 +113,35 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 	
-	public void update() {
-		if(gameState == playState) {
-		    player.update();
-		    for (Entity npc : npcs) {
-		        npc.update();
-		    }
-		}
-		if(gameState == pauseState) {}
-	}
+        public void update() {
+                if(gameState == playState) {
+                    player.update();
+                    for (Entity npc : npcs) {
+                        npc.update();
+                    }
+                    updateCamera();
+                }
+                if(gameState == pauseState) {}
+        }
+
+        private void updateCamera() {
+                if(keyH.isCameraLocked()) {
+                        cameraX = player.getWorldX() - screenWidth / 2 + tileSize / 2;
+                        cameraY = player.getWorldY() - screenHeight / 2 + tileSize / 2;
+                }
+                else {
+                        int mx = mounseH.getMouseX();
+                        int my = mounseH.getMouseY();
+                        if(mx < edgeMargin) { cameraX -= cameraSpeed; }
+                        if(mx > screenWidth - edgeMargin) { cameraX += cameraSpeed; }
+                        if(my < edgeMargin) { cameraY -= cameraSpeed; }
+                        if(my > screenHeight - edgeMargin) { cameraY += cameraSpeed; }
+                }
+                if(cameraX < 0) cameraX = 0;
+                if(cameraY < 0) cameraY = 0;
+                if(cameraX > worldWidth - screenWidth) cameraX = worldWidth - screenWidth;
+                if(cameraY > worldHeight - screenHeight) cameraY = worldHeight - screenHeight;
+        }
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -156,9 +181,11 @@ public class GamePanel extends JPanel implements Runnable {
 	public int getScreenHeight() { return screenHeight; }
 	public int getMaxWorldCol() { return maxWorldCol; }
 	public int getMaxWorldRow() { return maxWorldRow; }
-	public int getWorldWidth() { return worldWidth; }
-	public int getWorldHeight() { return worldHeight; }
-	public Player getPlayer() { return player; }
+        public int getWorldWidth() { return worldWidth; }
+        public int getWorldHeight() { return worldHeight; }
+        public int getCameraX() { return cameraX; }
+        public int getCameraY() { return cameraY; }
+        public Player getPlayer() { return player; }
 	public TileManager getTileManager() { return tileManager; }
 	public CollisionChecker getCheckCollision() { return checkCollision; }
 	public ObjectManager getObjectManager() { return objectManager; } 
