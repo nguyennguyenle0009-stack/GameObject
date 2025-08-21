@@ -23,10 +23,11 @@ public class MouseHandler implements MouseListener {
 	        int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
 	        int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
 	        // Lưu điểm đích trong thế giới
-	        targetX = worldX;
-	        targetY = worldY;
-	        // Bật chế độ tự đi tới điểm đích
-	        moving = true;
+                targetX = worldX;
+                targetY = worldY;
+                gp.getPlayer().clearPath();
+                // Bật chế độ tự đi tới điểm đích
+                moving = true;
 	    }
 	}
 	@Override

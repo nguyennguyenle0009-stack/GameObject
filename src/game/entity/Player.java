@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -16,14 +17,16 @@ import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
+import game.pathfinding.Node;
 
 public class Player extends GameActor implements DrawableEntity {
-	// Vị trí nhân vật trên màn hình (luôn ở giữa)
+        // Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
     private static final int INTERACTION_RANGE = 80;
+    private List<Node> path = new ArrayList<>();
 
-	public Player(GamePanel gp) {
+        public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
         this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
@@ -66,11 +69,19 @@ public class Player extends GameActor implements DrawableEntity {
 	}
 	
 	@Override
-	public void update() {
-	    updateKeyboard();
-	}
-	
-	private void updateKeyboard() {
+        public void update() {
+            if (gp.getMouseH().isMoving()) {
+                updateMouseMovement();
+            } else {
+                updateKeyboard();
+            }
+        }
+
+        public void clearPath() {
+            path.clear();
+        }
+
+        private void updateKeyboard() {
 	    boolean moving = gp.keyH.isUpPressed() || gp.keyH.isDownPressed() 
 	                  || gp.keyH.isLeftPressed() || gp.keyH.isRightPressed();
 
@@ -89,15 +100,52 @@ public class Player extends GameActor implements DrawableEntity {
 	    }
 
 	    // Xử lý đối thoại riêng, KHÔNG phụ thuộc di chuyển
-	    if (gp.keyH.isDialoguePressed()) {
-	        Entity npc = getClosestNPCInRange(gp.getNpcs());
-	        if (npc != null) {
-	            gp.setGameState(gp.getDialogueState());
-	            npc.speak();
-	        }
-	        gp.keyH.setDialoguePressed(false); // reset flag
-	    }
-	}
+            if (gp.keyH.isDialoguePressed()) {
+                Entity npc = getClosestNPCInRange(gp.getNpcs());
+                if (npc != null) {
+                    gp.setGameState(gp.getDialogueState());
+                    npc.speak();
+                }
+                gp.keyH.setDialoguePressed(false); // reset flag
+            }
+        }
+
+        private void updateMouseMovement() {
+            if (path.isEmpty()) {
+                int startCol = getWorldX() / gp.getTileSize();
+                int startRow = getWorldY() / gp.getTileSize();
+                int goalCol = gp.getMouseH().getTargetX() / gp.getTileSize();
+                int goalRow = gp.getMouseH().getTargetY() / gp.getTileSize();
+                gp.getPathFinder().setNodes(startCol, startRow, goalCol, goalRow);
+                if (gp.getPathFinder().search()) {
+                    path = new ArrayList<>(gp.getPathFinder().getPathList());
+                } else {
+                    gp.getMouseH().setMoving(false);
+                }
+            }
+
+            if (!path.isEmpty()) {
+                Node next = path.get(0);
+                int nextX = next.col * gp.getTileSize();
+                int nextY = next.row * gp.getTileSize();
+
+                if (getWorldX() == nextX && getWorldY() == nextY) {
+                    path.remove(0);
+                    if (path.isEmpty()) {
+                        gp.getMouseH().setMoving(false);
+                    }
+                } else {
+                    if (getWorldX() < nextX) setDirection("right");
+                    if (getWorldX() > nextX) setDirection("left");
+                    if (getWorldY() < nextY) setDirection("down");
+                    if (getWorldY() > nextY) setDirection("up");
+
+                    checkCollision();
+                    moveIfCollisionNotDetected();
+                    checkAndChangeSpriteAnimation();
+                }
+            }
+        }
 	
 	@Override
 	public void checkCollision() {
@@ -199,12 +247,11 @@ public class Player extends GameActor implements DrawableEntity {
 		return image;
 	}
 	
-    public BufferedImage setup(String imagePath) {
+        public BufferedImage setup(String imagePath) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
-        } 
-        catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) { e.printStackTrace(); }
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
 
