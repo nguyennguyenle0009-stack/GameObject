@@ -6,6 +6,9 @@ import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
 import game.object.tree.OBJ_Tree_da;
+import game.object.item.OBJ_SkillBook;
+import game.object.item.OBJ_QiPill;
+import game.skill.DashSkill;
 
 public class ObjectManager {
     private final GamePanel gp; 
@@ -36,6 +39,18 @@ public class ObjectManager {
         gp.getObjects().add(tree1);
 //        gp.getObjects()[1] = tree;
         gp.getObjects().add(house);
+
+        SuperObject book = new OBJ_SkillBook(new DashSkill());
+        book.setWorldX(8 * gp.getTileSize());
+        book.setWorldY(2 * gp.getTileSize());
+        book.setIndex(3);
+        gp.getObjects().add(book);
+
+        SuperObject pill = new OBJ_QiPill(500);
+        pill.setWorldX(9 * gp.getTileSize());
+        pill.setWorldY(2 * gp.getTileSize());
+        pill.setIndex(4);
+        gp.getObjects().add(pill);
     }
     
     public void setEntity(){

@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -16,12 +17,19 @@ import game.interfaces.DrawableEntity;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
+import game.skill.Skill;
+import game.entity.nguyen.Cultivation;
+import game.object.SuperObject;
+import game.object.item.OBJ_SkillBook;
+import game.object.item.OBJ_QiPill;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
     private final int screenX;
     private final int screenY;
     private static final int INTERACTION_RANGE = 80;
+    private final List<Skill> skills = new ArrayList<>();
+    private final Cultivation cultivation = new Cultivation(this);
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -100,14 +108,15 @@ public class Player extends GameActor implements DrawableEntity {
 	}
 	
 	@Override
-	public void checkCollision() {
-		setCollisionOn(false);
-		gp.getCheckCollision().checkTile(this);
-        gp.getCheckCollision().checkObject(this, false);
+        public void checkCollision() {
+                setCollisionOn(false);
+                gp.getCheckCollision().checkTile(this);
+        int objIndex = gp.getCheckCollision().checkObject(this, true);
+        pickUpObject(objIndex);
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
         int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
         interactWithNPC(npcIndex);
-	}
+        }
 	
 	// check NPC trong phạm vi
 	public Entity getClosestNPCInRange(List<Entity> npcs) {
@@ -211,7 +220,34 @@ public class Player extends GameActor implements DrawableEntity {
 	public int getScreenX() { return screenX; }
 	public int getScreenY() { return screenY; }
 
-	public static int getInteractionRange() { return INTERACTION_RANGE; }
+        public static int getInteractionRange() { return INTERACTION_RANGE; }
+
+        public void learnSkill(Skill skill) {
+            if (!skills.contains(skill)) {
+                skills.add(skill);
+                skill.apply(this);
+            }
+        }
+
+        public List<Skill> getSkills() { return skills; }
+
+        public Cultivation getCultivation() { return cultivation; }
+
+        private void pickUpObject(int index) {
+            if (index == 999) return;
+            for (int i = 0; i < gp.getObjects().size(); i++) {
+                SuperObject obj = gp.getObjects().get(i);
+                if (obj != null && obj.getIndex() == index) {
+                    if (obj instanceof OBJ_SkillBook book) {
+                        learnSkill(book.getSkill());
+                    } else if (obj instanceof OBJ_QiPill pill) {
+                        cultivation.gainQi(pill.getQiAmount());
+                    }
+                    gp.getObjects().remove(i);
+                    break;
+                }
+            }
+        }
 	
 }
 
