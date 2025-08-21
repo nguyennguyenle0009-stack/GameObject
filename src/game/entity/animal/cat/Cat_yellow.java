@@ -21,6 +21,7 @@ public class Cat_yellow extends Entity {
         this.setScaleEntityX(24);
         this.setScaleEntityY(24);
         this.setCollisionArea(new Rectangle( 7, 14, 10, 10));
+        this.setAttackArea(new Rectangle(7, 14, 10, 10));
         
         this.setSpriteNum(1);
         this.setSpriteCouter(0);
@@ -50,14 +51,17 @@ public class Cat_yellow extends Entity {
 
         if(UtilityTool.isInsidePlayerView(getWorldX(), getWorldY(), gp)) {
 	        
-	        g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, getScaleEntityX(), getScaleEntityY(), null);
-			if(gp.keyH.isDrawRect() == true) {
-		        g2.setColor(Color.RED);
-		        g2.drawRect(screenPos.x + getCollisionArea().x, screenPos.y + getCollisionArea().y,
-		                    getCollisionArea().width, getCollisionArea().height);
-			}
-	    }
-	}
+                g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, getScaleEntityX(), getScaleEntityY(), null);
+                        if(gp.keyH.isDrawRect() == true) {
+                        g2.setColor(Color.RED);
+                        g2.drawRect(screenPos.x + getCollisionArea().x, screenPos.y + getCollisionArea().y,
+                                    getCollisionArea().width, getCollisionArea().height);
+                        g2.setColor(Color.ORANGE);
+                        g2.drawRect(screenPos.x + getAttackArea().x, screenPos.y + getAttackArea().y,
+                                    getAttackArea().width, getAttackArea().height);
+                        }
+            }
+        }
 	
 	private BufferedImage getDirectionImage() {
 		BufferedImage image = null;

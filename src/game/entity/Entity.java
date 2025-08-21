@@ -22,9 +22,11 @@ public abstract class Entity implements DrawableEntity {
 	private BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
 	private String direction;
 	private int spriteCouter;
-	private int spriteNum;
-	//Khu vựa va chạm
-	private Rectangle collisionArea;
+        private int spriteNum;
+        //Khu vựa va chạm
+        private Rectangle collisionArea;
+        //Khu vực sát thương
+        private Rectangle attackArea = new Rectangle(0, 0, 0, 0);
 	private boolean collisionOn = false;
 	private int collisionDefaultX, collisionDefaultY;
     private int resestTime;
@@ -154,14 +156,16 @@ public abstract class Entity implements DrawableEntity {
 	public int getScaleEntityX() { return scaleEntityX; }
 	public Entity setScaleEntityX(int scaleEntityX) { this.scaleEntityX = scaleEntityX; return this; }
 	public int getScaleEntityY() { return scaleEntityY; }
-	public Entity setScaleEntityY(int scaleEntityY) { this.scaleEntityY = scaleEntityY; return this; }
-	public String[] getDialogues() { return dialogues; } 
-	public Entity setDialogues(String[] dialogues) { this.dialogues = dialogues; return this; } 
-	public int getDialogueIndex() { return dialogueIndex; } 
-	public Entity setDialogueIndex(int dialogueIndex) { this.dialogueIndex = dialogueIndex; return this; }
-	public int getIndex() { return index; } 
-	public Entity setIndex(int index) { this.index = index; return this; }
-	public String getName() { return name; }
-	public Entity setName(String name) { this.name = name; return this; }
-	
+        public Entity setScaleEntityY(int scaleEntityY) { this.scaleEntityY = scaleEntityY; return this; }
+        public String[] getDialogues() { return dialogues; }
+        public Entity setDialogues(String[] dialogues) { this.dialogues = dialogues; return this; }
+        public int getDialogueIndex() { return dialogueIndex; }
+        public Entity setDialogueIndex(int dialogueIndex) { this.dialogueIndex = dialogueIndex; return this; }
+        public int getIndex() { return index; }
+        public Entity setIndex(int index) { this.index = index; return this; }
+        public String getName() { return name; }
+        public Entity setName(String name) { this.name = name; return this; }
+        public Rectangle getAttackArea() { return attackArea; }
+        public Entity setAttackArea(Rectangle attackArea) { this.attackArea = attackArea; return this; }
+
 }
