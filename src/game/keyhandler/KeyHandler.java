@@ -6,9 +6,10 @@ import java.awt.event.KeyListener;
 import game.main.GamePanel;
 
 public class KeyHandler implements KeyListener {
-	private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed, bPressed;
-	private boolean checkDrawTime = false;
-	private boolean drawRect = false;
+        private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed, bPressed;
+        private boolean checkDrawTime = false;
+        private boolean drawRect = false;
+        private boolean cameraLocked = true;
 	GamePanel gp;
 	
 	public KeyHandler(GamePanel gp) { this.gp = gp; }
@@ -64,15 +65,18 @@ public class KeyHandler implements KeyListener {
 		if(code == KeyEvent.VK_S) { downPressed = false; }
 		if(code == KeyEvent.VK_A) { leftPressed = false; }
 		if(code == KeyEvent.VK_D) { rightPressed = false; }
-		if(code == KeyEvent.VK_T) {
-			if(checkDrawTime == false) { checkDrawTime = true; }
-			else { checkDrawTime = false; }
-		}
-		if(code == KeyEvent.VK_Y) {
-			if(drawRect == false) { drawRect = true; }
-			else { drawRect = false; }
-		}
-	}
+                if(code == KeyEvent.VK_T) {
+                        if(checkDrawTime == false) { checkDrawTime = true; }
+                        else { checkDrawTime = false; }
+                }
+                if(code == KeyEvent.VK_U) {
+                        if(drawRect == false) { drawRect = true; }
+                        else { drawRect = false; }
+                }
+                if(code == KeyEvent.VK_Y) {
+                        cameraLocked = !cameraLocked;
+                }
+        }
 
 	public boolean isUpPressed() { return upPressed; }
 	public KeyHandler setUpPressed(boolean upPressed) { this.upPressed = upPressed; return this; }
@@ -84,10 +88,12 @@ public class KeyHandler implements KeyListener {
 	public KeyHandler setRightPressed(boolean rightPressed) { this.rightPressed = rightPressed; return this; }
 	public boolean isCheckDrawTime() { return checkDrawTime; }
 	public KeyHandler setCheckDrawTime(boolean checkDrawTime) { this.checkDrawTime = checkDrawTime; return this; }
-	public boolean isDrawRect() { return drawRect; }
-	public KeyHandler setDrawRect(boolean drawRect) { this.drawRect = drawRect; return this; }
-	public boolean isDialoguePressed() { return dialoguePressed; }
-	public KeyHandler setDialoguePressed(boolean dialoguePressed) { this.dialoguePressed = dialoguePressed; return this; }
+        public boolean isDrawRect() { return drawRect; }
+        public KeyHandler setDrawRect(boolean drawRect) { this.drawRect = drawRect; return this; }
+        public boolean isCameraLocked() { return cameraLocked; }
+        public KeyHandler setCameraLocked(boolean cameraLocked) { this.cameraLocked = cameraLocked; return this; }
+        public boolean isDialoguePressed() { return dialoguePressed; }
+        public KeyHandler setDialoguePressed(boolean dialoguePressed) { this.dialoguePressed = dialoguePressed; return this; }
 	public boolean isbPressed() { return bPressed; }
 	public KeyHandler setbPressed(boolean bPressed) { this.bPressed = bPressed; return this; }
 	
