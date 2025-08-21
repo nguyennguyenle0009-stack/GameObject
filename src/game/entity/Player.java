@@ -12,6 +12,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import game.interfaces.DrawableEntity;
+import game.item.Item;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -32,17 +33,18 @@ public class Player extends GameActor implements DrawableEntity {
 		getImagePlayer();
 
 	}
-	public void setDefaultValue() {
-		setWorldX(100); 
-		setWorldY(100);
-		setSpeed(4);
-		setDirection("down");
-		setSpriteCouter(0);
-		setSpriteNum(1);
-		atts().set(game.enums.Attr.HEALTH, 100);
-		atts().set(game.enums.Attr.ATTACK, 5);
-		atts().set(game.enums.Attr.DEF, 4);
-	}
+        public void setDefaultValue() {
+                setWorldX(100);
+                setWorldY(100);
+                setSpeed(4);
+                setDirection("down");
+                setSpriteCouter(0);
+                setSpriteNum(1);
+                atts().set(game.enums.Attr.HEALTH, 100);
+                atts().set(game.enums.Attr.ATTACK, 5);
+                atts().set(game.enums.Attr.DEF, 4);
+                inventory().add(new Item("Potion"));
+        }
 	
     private void setCollision() {
         setCollisionArea(new Rectangle( 16, 32, 16, 16));
