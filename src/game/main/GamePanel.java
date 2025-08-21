@@ -18,6 +18,7 @@ import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
 import game.object.ObjectManager;
 import game.object.SuperObject;
+import game.pathfinding.PathFinder;
 import game.tile.TileManager;
 import game.ui.Ui;
 
@@ -42,7 +43,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private Thread thread;
 	private int FPS = 60;
 	public KeyHandler keyH = new KeyHandler(this);
-	MouseHandler mounseH = new MouseHandler(this);
+        MouseHandler mounseH = new MouseHandler(this);
+        private final PathFinder pathFinder = new PathFinder(this);
 	private final Player player = new Player(this);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
@@ -153,10 +155,12 @@ public class GamePanel extends JPanel implements Runnable {
 	public int getWorldHeight() { return worldHeight; }
 	public Player getPlayer() { return player; }
 	public TileManager getTileManager() { return tileManager; }
-	public CollisionChecker getCheckCollision() { return checkCollision; }
-	public ObjectManager getObjectManager() { return objectManager; } 
-	public List<SuperObject> getObjects() { return objects; }
-	public List<Entity> getNpcs() { return npcs; }
+        public CollisionChecker getCheckCollision() { return checkCollision; }
+        public ObjectManager getObjectManager() { return objectManager; }
+        public List<SuperObject> getObjects() { return objects; }
+        public List<Entity> getNpcs() { return npcs; }
+        public MouseHandler getMouseH() { return mounseH; }
+        public PathFinder getPathFinder() { return pathFinder; }
 
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
