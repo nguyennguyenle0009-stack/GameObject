@@ -21,16 +21,16 @@ public class KeyHandler implements KeyListener {
 		int code = e.getKeyCode();
         if (gp.getGameState() == gp.getPlayState()) {
             if (code == KeyEvent.VK_W) {
-                upPressed = true;
+                if (iPressed) gp.getUi().moveCursor(0, -1); else upPressed = true;
             }
             if (code == KeyEvent.VK_S) {
-                downPressed = true;
+                if (iPressed) gp.getUi().moveCursor(0, 1); else downPressed = true;
             }
             if (code == KeyEvent.VK_A) {
-                leftPressed = true;
+                if (iPressed) gp.getUi().moveCursor(-1, 0); else leftPressed = true;
             }
             if (code == KeyEvent.VK_D) {
-                rightPressed = true;
+                if (iPressed) gp.getUi().moveCursor(1, 0); else rightPressed = true;
             }
             if (code == KeyEvent.VK_P) {
                 gp.setGameState(gp.getPauseState());
@@ -39,11 +39,14 @@ public class KeyHandler implements KeyListener {
             	dialoguePressed = true;
             }
             if (code == KeyEvent.VK_I) {
-            	if(iPressed == false) {
-            		iPressed = true;
-            	}else {
-            		iPressed = false;
-            	}
+                if(iPressed == false) {
+                        iPressed = true;
+                }else {
+                        iPressed = false;
+                }
+            }
+            if (code == KeyEvent.VK_ENTER && iPressed) {
+                gp.getUi().activateSelected();
             }
         } else if (gp.getGameState() == gp.getPauseState()) {
             if (code == KeyEvent.VK_P) {

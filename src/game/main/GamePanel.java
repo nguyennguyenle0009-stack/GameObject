@@ -14,6 +14,8 @@ import game.check.CollisionChecker;
 import game.entity.Entity;
 import game.entity.Player;
 import game.entity.item.elixir.HealthPotion;
+import game.entity.item.book.SpellBook;
+import game.entity.item.equipment.Armor;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -67,13 +69,15 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setFocusable(true);
 	}
 	
-	public void setUpGame() { 
-		player.getBag().add(new HealthPotion(30, 50));
-		player.getBag().add(new HealthPotion(30, 60));  // 50+60 => 100 trong ô đầu + 10 sang ô mới
-		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(30, 60));
+        public void setUpGame() {
+                player.getBag().add(new HealthPotion(30, 50));
+                player.getBag().add(new HealthPotion(30, 60));  // 50+60 => 100 trong ô đầu + 10 sang ô mới
+                player.getBag().add(new HealthPotion(50, 1));
+                player.getBag().add(new HealthPotion(50, 1));
+                player.getBag().add(new HealthPotion(50, 1));
+                player.getBag().add(new HealthPotion(30, 60));
+                player.getBag().add(new Armor("Giáp da"));
+                player.getBag().add(new SpellBook("Sách đệ phong"));
 		
 		objectManager.setObject();
 		objectManager.setEntity();

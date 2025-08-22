@@ -35,8 +35,8 @@ public class ItemGridUi {
 		return new Dimension(w, h);
 	}
 	
-	public void draw(Graphics2D g2, int x, int y, List<Item> items) {
-	    final int size = (items == null) ? 0 : items.size();
+        public void draw(Graphics2D g2, int x, int y, List<Item> items, int selectedIdx) {
+            final int size = (items == null) ? 0 : items.size();
 
 		Dimension d = getPreferredSize();
 		
@@ -59,10 +59,15 @@ public class ItemGridUi {
 	            g2.setColor(new Color(0,0,0,160));
 	            g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
 
-	            // lấy item
-	            int idx = r * cols + c;            // <— tính chỉ số tại chỗ
-	            Item it = (idx < size) ? items.get(idx) : null;
-	            if (it == null) continue;
+                    // lấy item
+                    int idx = r * cols + c;            // <— tính chỉ số tại chỗ
+                    if (idx == selectedIdx) {
+                        g2.setColor(new Color(200,200,0,200));
+                        g2.drawRoundRect(xx-2, yy-2, slotSize+4, slotSize+4, 12, 12);
+                    }
+
+                    Item it = (idx < size) ? items.get(idx) : null;
+                    if (it == null) continue;
 
 	            // icon
 	            BufferedImage icon = it.getIcon();
@@ -85,10 +90,26 @@ public class ItemGridUi {
 	}
 
 	public int getCols() { return cols; }
-	public int getRows() { return rows; }
-	public int getSlotSize() { return slotSize; }
-	public int getGap() { return gap; }
-	public int getPadding() { return padding; } 
+        public int getRows() { return rows; }
+        public int getSlotSize() { return slotSize; }
+        public int getGap() { return gap; }
+        public int getPadding() { return padding; }
+
+        public int indexFromPoint(int mx, int my, int originX, int originY) {
+            int relX = mx - originX - padding;
+            int relY = my - originY - padding;
+            if (relX < 0 || relY < 0) return -1;
+            for (int r = 0; r < rows; r++) {
+                int yy = r * (slotSize + gap);
+                for (int c = 0; c < cols; c++) {
+                    int xx = c * (slotSize + gap);
+                    if (relX >= xx && relX < xx + slotSize && relY >= yy && relY < yy + slotSize) {
+                        return r * cols + c;
+                    }
+                }
+            }
+            return -1;
+        }
 	
 }
 

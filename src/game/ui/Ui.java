@@ -4,9 +4,14 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import game.entity.Entity;
+import game.entity.item.Item;
+import game.entity.item.ItemAction;
 import game.main.GamePanel;
 import game.util.UtilityTool;
 
@@ -19,7 +24,11 @@ public class Ui {
 	private int messageCouter;
 	private String currentDialogue = "";
 	
-	private final ItemGridUi itemGrid;
+        private final ItemGridUi itemGrid;
+        private int selectedIndex = -1;
+        private boolean menuVisible = false;
+        private int menuX, menuY, menuSlotIdx;
+        private List<ItemAction> menuActions = new ArrayList<>();
 	
 	public Ui(GamePanel gp) {
 		this.gp = gp;
@@ -52,11 +61,25 @@ public class Ui {
 	}
     
     private void drawInventory(Graphics2D g2) {
-    	int x = gp.getTileSize();
-    	int y = gp.getTileSize() * 6;
-    	
-    	var items = gp.getPlayer().getBag().all();
-    	itemGrid.draw(g2, x, y, items );
+        int x = gp.getTileSize();
+        int y = gp.getTileSize() * 6;
+
+        var items = gp.getPlayer().getBag().all();
+        itemGrid.draw(g2, x, y, items, selectedIndex);
+
+        Point mp = gp.getMousePosition();
+        int hoverIdx = -1;
+        if (mp != null) {
+            hoverIdx = itemGrid.indexFromPoint(mp.x, mp.y, x, y);
+            if (hoverIdx >= 0) selectedIndex = hoverIdx;
+        }
+        int infoIdx = hoverIdx >= 0 ? hoverIdx : selectedIndex;
+        if (infoIdx >= 0 && infoIdx < items.size()) {
+            drawItemInfo(g2, items.get(infoIdx), mp != null ? mp.x : x, mp != null ? mp.y : y);
+        }
+        if (menuVisible) {
+            drawContextMenu(g2);
+        }
     }
     
     private void characterScreen(Graphics2D g2) {
@@ -148,7 +171,7 @@ public class Ui {
         g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
     }
 	
-	public boolean isMessageOn() { return messageOn; }
+        public boolean isMessageOn() { return messageOn; }
 	public Ui setMessageOn(boolean messageOn) { this.messageOn = messageOn; return this; }
 	public Font getArial_40() { return arial_40; }
 	public Font getArial_80B() { return arial_80B; }
@@ -163,7 +186,97 @@ public class Ui {
 //	public Ui setG2(Graphics2D g2) { this.g2 = g2; return this; }
 //	public GamePanel getGp() { return gp; }
 	
-	public ItemGridUi getItemGrid() { return itemGrid; }
+        public ItemGridUi getItemGrid() { return itemGrid; }
+
+        public void moveCursor(int dx, int dy) {
+            int cols = itemGrid.getCols();
+            int rows = itemGrid.getRows();
+            if (selectedIndex < 0) selectedIndex = 0;
+            int col = selectedIndex % cols;
+            int row = selectedIndex / cols;
+            col = Math.max(0, Math.min(cols - 1, col + dx));
+            row = Math.max(0, Math.min(rows - 1, row + dy));
+            selectedIndex = row * cols + col;
+        }
+
+        public void activateSelected() {
+            var items = gp.getPlayer().getBag().all();
+            if (selectedIndex >= 0 && selectedIndex < items.size()) {
+                Item it = items.get(selectedIndex);
+                it.perform(gp.getPlayer(), it.actions().get(0));
+            }
+        }
+
+        public void handleMouse(MouseEvent e) {
+            int x = gp.getTileSize();
+            int y = gp.getTileSize() * 6;
+            var items = gp.getPlayer().getBag().all();
+            int slot = itemGrid.indexFromPoint(e.getX(), e.getY(), x, y);
+            if (slot >= 0 && slot < items.size()) {
+                selectedIndex = slot;
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    menuVisible = true;
+                    menuX = e.getX();
+                    menuY = e.getY();
+                    menuSlotIdx = slot;
+                    menuActions = new ArrayList<>(items.get(slot).actions());
+                } else if (e.getButton() == MouseEvent.BUTTON1 && menuVisible) {
+                    handleMenuClick(e.getX(), e.getY());
+                }
+            } else {
+                menuVisible = false;
+            }
+        }
+
+        private void handleMenuClick(int mx, int my) {
+            int w = 120;
+            int lineH = 20;
+            int h = lineH * menuActions.size();
+            if (mx < menuX || mx > menuX + w || my < menuY || my > menuY + h) {
+                menuVisible = false;
+                return;
+            }
+            int idx = (my - menuY) / lineH;
+            if (idx >= 0 && idx < menuActions.size()) {
+                Item it = gp.getPlayer().getBag().all().get(menuSlotIdx);
+                it.perform(gp.getPlayer(), menuActions.get(idx));
+                menuVisible = false;
+            }
+        }
+
+        private void drawItemInfo(Graphics2D g2, Item item, int x, int y) {
+            String text = item.getName() + "\n" + item.getDecription();
+            String[] lines = text.split("\n");
+            int padding = 8;
+            int width = 0;
+            int lineH = g2.getFontMetrics().getHeight();
+            for (String line : lines) {
+                width = Math.max(width, g2.getFontMetrics().stringWidth(line));
+            }
+            int height = lineH * lines.length + padding * 2;
+            HUDUtils.drawSubWindow(g2, x, y, width + padding * 2, height,
+                    new Color(40,40,40,200), new Color(200,200,200));
+            int yy = y + padding + g2.getFontMetrics().getAscent();
+            for (String line : lines) {
+                g2.setColor(Color.WHITE);
+                g2.drawString(line, x + padding, yy);
+                yy += lineH;
+            }
+        }
+
+        private void drawContextMenu(Graphics2D g2) {
+            int w = 120;
+            int lineH = 20;
+            int h = lineH * menuActions.size();
+            HUDUtils.drawSubWindow(g2, menuX, menuY, w, h,
+                    new Color(50,50,50,220), new Color(200,200,200));
+            int yy = menuY + lineH - 5;
+            for (ItemAction act : menuActions) {
+                g2.setColor(Color.WHITE);
+                g2.drawString(act.label(), menuX + 5, yy);
+                yy += lineH;
+            }
+        }
 	
 }
 
