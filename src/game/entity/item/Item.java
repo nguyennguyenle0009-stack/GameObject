@@ -1,5 +1,7 @@
 package game.entity.item;
 
+import java.awt.image.BufferedImage;
+
 import game.entity.Player;
 
 public abstract class Item {
@@ -19,6 +21,9 @@ public abstract class Item {
 	
 	// Mỗi item định nghĩa cách dùng riêng
 	public abstract void use(Player p);
+	
+	// Mỗi item có hình ảnh riêng
+	public abstract BufferedImage getIcon();
 	
 	public String getName() { return name; }
 	public String getDecription() { return decription; }

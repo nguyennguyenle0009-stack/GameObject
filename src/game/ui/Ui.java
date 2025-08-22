@@ -54,7 +54,9 @@ public class Ui {
     private void drawInventory(Graphics2D g2) {
     	int x = gp.getTileSize();
     	int y = gp.getTileSize() * 6;
-    	itemGrid.draw(g2, x, y, gp.getPlayer().getBag().all());
+    	
+    	var items = gp.getPlayer().getBag().all();
+    	itemGrid.draw(g2, x, y, items );
     }
     
     private void characterScreen(Graphics2D g2) {

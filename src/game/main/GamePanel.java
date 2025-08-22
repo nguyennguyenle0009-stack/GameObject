@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import game.check.CollisionChecker;
 import game.entity.Entity;
 import game.entity.Player;
+import game.entity.item.elixir.HealthPotion;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -67,10 +68,18 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setUpGame() { 
-//		Item hp = new HealthPotion(30, 1);
-//		Player p = new Player(this);
-//		p.getBag().add(hp);
-//		p.useItem(hp);
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(50, 1));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(50, 1));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(50, 1));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(50, 1));
 		objectManager.setObject();
 		objectManager.setEntity();
 		gameState = playState;
