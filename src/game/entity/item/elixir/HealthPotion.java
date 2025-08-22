@@ -34,8 +34,18 @@ public class HealthPotion extends Item {
 	public void use(Player p) {
 		p.atts().add(Attr.HEALTH, healthAmount);
 		decreaseQuantity(1);
-		System.out.println(p.getName() + " đã sử dụng " + getName());
 	}
+	
+   @Override
+    public Item copyWithQuantity(int qty) {
+        return new HealthPotion(healthAmount, qty);
+    }
+	
+   @Override
+    public boolean isSameStack(Item other) {
+        if (!(other instanceof HealthPotion hp)) return false;
+        return this.getName().equals(other.getName()) && this.healthAmount == hp.healthAmount;
+    }
 
 	@Override
 	public BufferedImage getIcon() {

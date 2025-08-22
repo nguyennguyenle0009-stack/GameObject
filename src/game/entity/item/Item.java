@@ -25,6 +25,17 @@ public abstract class Item {
 		quantity = Math.max(0, quantity - amount);
 	}
 	
+    // So sánh xem hai item có gộp chung 1 stack được không
+    public boolean isSameStack(Item other) {
+        // Mặc định: cùng class + cùng tên -> gộp
+        return other != null
+            && this.getClass() == other.getClass()
+            && this.name.equals(other.name);
+    }
+
+    // Tạo bản sao cùng loại với số lượng chỉ định (để chia stack)
+    public abstract Item copyWithQuantity(int qty);
+	
 	// Mỗi item định nghĩa cách dùng riêng
 	public abstract void use(Player p);
 	
