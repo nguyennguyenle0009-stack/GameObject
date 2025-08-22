@@ -25,7 +25,8 @@ public class HealthPotion extends Item {
 		super(
 				"Đan dược hồi máu", 
 				"Dùng để hồi máu", 
-				quantity);
+				quantity,
+				100);
 		this.healthAmount = healthAmount;
 	}
 

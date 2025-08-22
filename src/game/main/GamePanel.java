@@ -68,18 +68,13 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setUpGame() { 
-		player.getBag().add(new HealthPotion(30, 3));
-		player.getBag().add(new HealthPotion(30, 3));
+		player.getBag().add(new HealthPotion(30, 50));
+		player.getBag().add(new HealthPotion(30, 60));  // 50+60 => 100 trong ô đầu + 10 sang ô mới
 		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(30, 3));
-		player.getBag().add(new HealthPotion(30, 3));
 		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(30, 3));
-		player.getBag().add(new HealthPotion(30, 3));
 		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(30, 3));
-		player.getBag().add(new HealthPotion(30, 3));
-		player.getBag().add(new HealthPotion(50, 1));
+		player.getBag().add(new HealthPotion(30, 60));
+		
 		objectManager.setObject();
 		objectManager.setEntity();
 		gameState = playState;

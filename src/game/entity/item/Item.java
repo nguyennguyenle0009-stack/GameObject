@@ -8,15 +8,21 @@ public abstract class Item {
 	private final String name;
 	private final String decription;
 	private int quantity;
+	private final int maxStack;
 	
-	public Item(String name, String decription, int quantity) {
+	public Item(String name, String decription, int quantity, int maxStack) {
 		this.name = name;
 		this.decription = decription;
 		this.quantity = quantity;
+		this.maxStack = maxStack;
+	}
+	
+	public void increaseQuantity(int amount) {
+		quantity = Math.min(amount + quantity, maxStack);
 	}
 	
 	public void decreaseQuantity(int amount) {
-		quantity = Math.max(0,quantity - amount);
+		quantity = Math.max(0, quantity - amount);
 	}
 	
 	// Mỗi item định nghĩa cách dùng riêng
@@ -28,4 +34,6 @@ public abstract class Item {
 	public String getName() { return name; }
 	public String getDecription() { return decription; }
 	public int getQuantity() { return quantity; }
+	public Item setQuantity(int quantity) { this.quantity = quantity; return this; }
+	public int getMaxStack() { return maxStack; }
 }
