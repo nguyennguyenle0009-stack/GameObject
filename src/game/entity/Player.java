@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.level.LevelState;
+import game.entity.level.Physique;
 import game.interfaces.DrawableEntity;
 
 import game.main.GamePanel;
@@ -26,7 +28,12 @@ public class Player extends GameActor implements DrawableEntity {
     
     private static final int INTERACTION_RANGE = 80;
     
+    /** Túi đồ của người chơi */
     private final Inventory bag = new Inventory();
+    /** Trạng thái cấp độ của người chơi */
+    private final LevelState level = new LevelState();
+    /** Thể chất hiện tại */
+    private Physique physique = Physique.NORMAL;
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -197,7 +204,19 @@ public class Player extends GameActor implements DrawableEntity {
 	public int getScreenY() { return screenY; }
 
 	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	public Inventory getBag() { return bag; } 
+    public Inventory getBag() { return bag; }
+    /**
+     * @return trạng thái cấp độ của người chơi
+     */
+    public LevelState getLevel() { return level; }
+    /**
+     * @return thể chất hiện tại của người chơi
+     */
+    public Physique getPhysique() { return physique; }
+    /**
+     * Cập nhật thể chất của người chơi
+     */
+    public void setPhysique(Physique physique) { this.physique = physique; }
 }
 
 

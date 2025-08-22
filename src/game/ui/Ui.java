@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 import game.entity.Entity;
+import game.entity.item.Item;
 import game.main.GamePanel;
 import game.util.UtilityTool;
 
@@ -46,17 +47,59 @@ public class Ui {
 		if(gp.getGameState() == gp.getDialogueState()) {
 			drawDialogueScreen();
 		}
-		if(gp.keyH.isiPressed() == true) {
-			drawInventory(g2);
-		}
+                if(gp.keyH.isiPressed() == true) {
+                        drawInventory(g2);
+                        characterScreen(g2);
+                }
 	}
     
     private void drawInventory(Graphics2D g2) {
-    	int x = gp.getTileSize();
-    	int y = gp.getTileSize() * 6;
-    	
-    	var items = gp.getPlayer().getBag().all();
-    	itemGrid.draw(g2, x, y, items );
+        int x = gp.getTileSize();
+        int y = gp.getTileSize() * 6;
+
+        var items = gp.getPlayer().getBag().all();
+        itemGrid.draw(g2, x, y, items );
+
+        // Tooltip khi rê chuột
+        var mh = gp.getMouseH();
+        int mx = mh.getMouseX();
+        int my = mh.getMouseY();
+        var hover = getItemAt(mx, my, x, y, items);
+        if (hover != null) {
+            int w = 200; int h = 60;
+            drawSubWindow(mx, my - h, w, h, g2);
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
+            g2.drawString(hover.getName(), mx + 10, my - h + 20);
+            g2.drawString(hover.getDecription(), mx + 10, my - h + 40);
+        }
+
+        // Menu ngữ cảnh "Sử dụng"
+        if (mh.isShowContext()) {
+            int cx = mh.getContextX();
+            int cy = mh.getContextY();
+            drawSubWindow(cx, cy, 60, 20, g2);
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 14f));
+            g2.drawString("Sử dụng", cx + 5, cy + 15);
+        }
+    }
+
+    /** Lấy item tại vị trí chuột trong bảng kho */
+    private Item getItemAt(int mx, int my, int x, int y, java.util.List<Item> items) {
+        int cols = itemGrid.getCols();
+        int rows = itemGrid.getRows();
+        int slot = itemGrid.getSlotSize();
+        int gap = itemGrid.getGap();
+        int pad = itemGrid.getPadding();
+        int width = cols * slot + (cols - 1) * gap + pad * 2;
+        int height = rows * slot + (rows - 1) * gap + pad * 2;
+        if (mx < x || mx > x + width || my < y || my > y + height) return null;
+        int relX = mx - x - pad;
+        int relY = my - y - pad;
+        int col = relX / (slot + gap);
+        int row = relY / (slot + gap);
+        if (col < 0 || col >= cols || row < 0 || row >= rows) return null;
+        int idx = row * cols + col;
+        return (idx < items.size()) ? items.get(idx) : null;
     }
     
     private void characterScreen(Graphics2D g2) {
