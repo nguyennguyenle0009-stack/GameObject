@@ -1,0 +1,4 @@
+Nhục thể cảnh: 20 tiểu cảnh giới, cần đan dược khai mở đan điền để vào. Mỗi cấp tăng máu*1.2, tấn công*1.2, phòng thủ*2, các thuộc tính khác +10%. BUG: hiện tại chỉ +5%.
+Luyện khí kỳ: đột phá từ nhục thể cảnh sau 10 tiểu cảnh giới, thuộc tính nhân 2. Mỗi tiểu cảnh giới tăng giống nhục thể cảnh.
+Trúc cơ: đột phá sau luyện khí kỳ, thuộc tính nhân 3. Mỗi tiểu cảnh giới máu*1.5, tấn công*1.2, phòng thủ*1.5, các thuộc tính khác +20%.
+Các chức năng: mở đan điền, sử dụng đan tăng chỉ số, giới hạn số đan theo thể chất, hiển thị kho đồ và bảng thuộc tính khi bấm I, menu chuột phải để "Sử dụng" item.

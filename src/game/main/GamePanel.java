@@ -43,7 +43,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private Thread thread;
 	private int FPS = 60;
 	public KeyHandler keyH = new KeyHandler(this);
-	MouseHandler mounseH = new MouseHandler(this);
+        /** Xử lý chuột */
+        MouseHandler mounseH = new MouseHandler(this);
 	private final Player player = new Player(this);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
@@ -63,7 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setBackground(Color.white);
 		this.setDoubleBuffered(true);
 		this.addKeyListener(keyH);
-		this.addMouseListener(mounseH);
+                this.addMouseListener(mounseH);
+                this.addMouseMotionListener(mounseH);
 		this.setFocusable(true);
 	}
 	
@@ -73,8 +75,11 @@ public class GamePanel extends JPanel implements Runnable {
 		player.getBag().add(new HealthPotion(50, 1));
 		player.getBag().add(new HealthPotion(50, 1));
 		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(30, 60));
-		player.getBag().add(new HealthPotion(390, 60));
+                player.getBag().add(new HealthPotion(30, 60));
+                player.getBag().add(new HealthPotion(390, 60));
+                // Thêm đan dược mới để test
+                player.getBag().add(new game.entity.item.elixir.DantianPill(1));
+                player.getBag().add(new game.entity.item.elixir.StatBoostPill(game.enums.Attr.ATTACK, 5, 3));
 		
 		objectManager.setObject();
 		objectManager.setEntity();
@@ -172,7 +177,11 @@ public class GamePanel extends JPanel implements Runnable {
 	public int getPlayState() { return playState; }
 	public int getPauseState() { return pauseState; }
 	public int getDialogueState() { return dialogueState; }
-	public Ui getUi() { return ui; }
+    public Ui getUi() { return ui; }
+        /**
+         * @return mouse handler hiện tại
+         */
+        public MouseHandler getMouseH() { return mounseH; }
 	
 }
 
