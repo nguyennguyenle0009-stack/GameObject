@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
+import game.entity.level.LevelSystem;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -25,8 +26,11 @@ public class Player extends GameActor implements DrawableEntity {
     private final int screenY;
     
     private static final int INTERACTION_RANGE = 80;
-    
+
+    // Túi đồ của nhân vật
     private final Inventory bag = new Inventory();
+    // Hệ thống cảnh giới của nhân vật
+    private final LevelSystem level = new LevelSystem(this);
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -197,7 +201,9 @@ public class Player extends GameActor implements DrawableEntity {
 	public int getScreenY() { return screenY; }
 
 	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	public Inventory getBag() { return bag; } 
+    public Inventory getBag() { return bag; }
+    // Trả về hệ thống cảnh giới
+    public LevelSystem getLevel(){ return level; }
 }
 
 

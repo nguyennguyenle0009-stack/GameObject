@@ -1,0 +1,10 @@
+Dai canh gioi hien tai duoc ho tro:
+1. Nhuc the canh (BODY): 20 tieu canh gioi, moi tieu canh gioi mau x1.2, tan cong x1.2, phong thu x2, thuoc tinh khac +10%.
+2. Luyen khi ky (QI): khi dot pha tu nhuc the canh, tat ca thuoc tinh nhan 2. Moi tieu canh gioi tang giong nhuc the canh.
+3. Truc co (FOUNDATION): dot pha tu luyen khi ky nhan 3. Moi tieu canh gioi mau x1.5, tan cong x1.2, phong thu x1.5, thuoc tinh khac +20%.
+
+Chuc nang hien tai:
+- Khai mo dan dien bang item Dan khai mo dan dien.
+- Tang thuoc tinh bang item AttributePill.
+- Bam I hien thi bang thuoc tinh va kho do.
+- BUG: Dan khai mo dan dien khong mat so luong sau khi dung.

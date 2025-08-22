@@ -64,6 +64,9 @@ public class Ui {
         int x = gp.getTileSize();
         int y = gp.getTileSize() * 6;
 
+        // Vẽ bảng thuộc tính
+        characterScreen(g2);
+
         var items = gp.getPlayer().getBag().all();
         itemGrid.draw(g2, x, y, items, selectedIndex);
 
