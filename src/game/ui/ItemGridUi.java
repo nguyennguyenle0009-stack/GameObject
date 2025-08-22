@@ -60,16 +60,26 @@ public class ItemGridUi {
 	            g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
 
 	            // lấy item
-	            int idx = r * cols + c;            
+	            int idx = r * cols + c;            // <— tính chỉ số tại chỗ
 	            Item it = (idx < size) ? items.get(idx) : null;
-	            if  (it == null) continue;
-	            
+	            if (it == null) continue;
+
 	            // icon
 	            BufferedImage icon = it.getIcon();
 	            if (icon != null) {
 	                int pad = 6, iw = slotSize - pad*2, ih = slotSize - pad*2;
 	                g2.drawImage(icon, xx + pad, yy + pad, iw, ih, null);
 	            }
+
+	            // số lượng
+	            String q = String.valueOf(it.getQuantity());
+	            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 14f));
+	            FontMetrics fm = g2.getFontMetrics();
+	            int tw = fm.stringWidth(q), th = fm.getAscent();
+	            g2.setColor(new Color(0,0,0,160));
+	            g2.fillRoundRect(xx + slotSize - tw - 10, yy + slotSize - th - 6, tw + 8, th + 4, 8, 8);
+	            g2.setColor(Color.WHITE);
+	            g2.drawString(q, xx + slotSize - tw - 6, yy + slotSize - 8 + th);
 	        }
 	    }
 	}
