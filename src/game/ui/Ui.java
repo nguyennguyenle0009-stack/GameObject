@@ -63,17 +63,21 @@ public class Ui {
             }
 	    }
 	
-	private void drawInventory(Graphics2D g2) {
+        /**
+         * Draw the inventory panel next to the character info.
+         * Inventory slots are arranged vertically.
+         */
+        private void drawInventory(Graphics2D g2) {
         // Draw character information on the left
         characterScreen(g2);
 
         // Position inventory to the right of the character panel
-        int x = gp.getTileSize() * 7;
+        int x = gp.getTileSize() * 8;
         int y = gp.getTileSize();
-	
-	    var items = gp.getPlayer().getBag().all();
-	    handleInventoryInput(items, x, y);
-	    itemGrid.draw(g2, x, y, items );
+
+            var items = gp.getPlayer().getBag().all();
+            handleInventoryInput(items, x, y);
+            itemGrid.draw(g2, x, y, items );
 	    Dimension d = itemGrid.getPreferredSize();
 	    hoverSlot = computeSlotIndex(x, y, gp.getMousePosition());
 	
@@ -189,7 +193,7 @@ public class Ui {
 	    contextVisible = true;
 	}
 
-	public boolean handleInventoryMousePress(int mx, int my, int button) {
+        public boolean handleInventoryMousePress(int mx, int my, int button) {
         int baseX = gp.getTileSize() * 8;
         int baseY = gp.getTileSize();
 	    int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
