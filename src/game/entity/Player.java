@@ -27,6 +27,8 @@ public class Player extends GameActor implements DrawableEntity {
     private static final int INTERACTION_RANGE = 80;
     
     private final Inventory bag = new Inventory();
+    private int level;
+    private int exp;
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -44,10 +46,12 @@ public class Player extends GameActor implements DrawableEntity {
 		setDirection("down");
 		setSpriteCouter(0);
 		setSpriteNum(1);
-		setName("Nguyeen pro");
-		atts().set(game.enums.Attr.HEALTH, 100);
-		atts().set(game.enums.Attr.ATTACK, 5);
-		atts().set(game.enums.Attr.DEF, 4);
+                setName("Nguyeen pro");
+                atts().set(game.enums.Attr.HEALTH, 100);
+                atts().set(game.enums.Attr.ATTACK, 5);
+                atts().set(game.enums.Attr.DEF, 4);
+                level = 1;
+                exp = 0;
 	}
 	
     private void setCollision() {
@@ -193,11 +197,15 @@ public class Player extends GameActor implements DrawableEntity {
     	if(i.getQuantity() == 0) bag.remove(i);
     }
 
-	public int getScreenX() { return screenX; }
-	public int getScreenY() { return screenY; }
+        public int getScreenX() { return screenX; }
+        public int getScreenY() { return screenY; }
 
-	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	public Inventory getBag() { return bag; } 
+        public static int getInteractionRange() { return INTERACTION_RANGE; }
+        public Inventory getBag() { return bag; }
+        public int getLevel() { return level; }
+        public void setLevel(int level) { this.level = level; }
+        public int getExp() { return exp; }
+        public void setExp(int exp) { this.exp = exp; }
 }
 
 
