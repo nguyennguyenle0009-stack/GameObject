@@ -22,6 +22,7 @@ public class Ui {
     private String message;
     private int messageCouter;
     private String currentDialogue = "";
+    private int damageCounter = 0;
 
     private final InventoryUi inventory;
     private final GameHUD hud;
@@ -55,6 +56,11 @@ public class Ui {
             inventory.draw(g2);
         }
         hud.draw(g2);
+        if (damageCounter > 0) {
+            g2.setColor(new Color(255, 0, 0, 100));
+            g2.fillRect(0, 0, gp.getScreenWidth(), gp.getScreenHeight());
+            damageCounter--;
+        }
     }
 
     public boolean handleInventoryMousePress(int mx, int my, int button) {
@@ -139,4 +145,6 @@ public class Ui {
     public Ui setCurrentDialogue(String currentDialogue) { this.currentDialogue = currentDialogue; return this; }
 
     public InventoryUi getInventory() { return inventory; }
+
+    public void triggerDamageEffect() { damageCounter = 10; }
 }

@@ -47,8 +47,9 @@ public class GamePanel extends JPanel implements Runnable {
 	private final Player player = new Player(this);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
-	private final List<SuperObject> objects = new ArrayList<>();
-	private final List<Entity> npcs = new ArrayList<>();
+        private final List<SuperObject> objects = new ArrayList<>();
+        private final List<Entity> npcs = new ArrayList<>();
+    private final List<Entity> monsters = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
     private final Ui ui = new Ui(this);
     
@@ -76,8 +77,9 @@ public class GamePanel extends JPanel implements Runnable {
 		player.getBag().add(new HealthPotion(30, 60));
 		player.getBag().add(new HealthPotion(390, 60));
 		
-		objectManager.setObject();
-		objectManager.setEntity();
+                objectManager.setObject();
+                objectManager.setEntity();
+                objectManager.setMonsters();
 		gameState = playState;
 	}
 	
@@ -112,10 +114,13 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	public void update() {
 		if(gameState == playState) {
-		    player.update();
-		    for (Entity npc : npcs) {
-		        npc.update();
-		    }
+                    player.update();
+                    for (Entity npc : npcs) {
+                        npc.update();
+                    }
+                    for (Entity m : monsters) {
+                        m.update();
+                    }
 		}
 		if(gameState == pauseState) {}
 	}
@@ -132,8 +137,9 @@ public class GamePanel extends JPanel implements Runnable {
 		List<DrawableEntity> drawList = new ArrayList<>();
 
 		drawList.addAll(objects);
-		drawList.addAll(npcs);
-		drawList.add(player);
+                drawList.addAll(npcs);
+                drawList.addAll(monsters);
+                drawList.add(player);
 
 		drawList.sort(Comparator.comparingInt(DrawableEntity::getFootY));
 
@@ -165,7 +171,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker getCheckCollision() { return checkCollision; }
 	public ObjectManager getObjectManager() { return objectManager; } 
 	public List<SuperObject> getObjects() { return objects; }
-	public List<Entity> getNpcs() { return npcs; }
+        public List<Entity> getNpcs() { return npcs; }
+    public List<Entity> getMonsters() { return monsters; }
 
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }

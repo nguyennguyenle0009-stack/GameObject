@@ -2,6 +2,7 @@ package game.object;
 
 import game.entity.Entity;
 import game.entity.animal.cat.Cat_yellow;
+import game.entity.monster.GreenSlime;
 import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
@@ -48,6 +49,13 @@ public class ObjectManager {
         cat2.setWorldY(7 * 48);
         gp.getNpcs().add(cat1);
         gp.getNpcs().add(cat2);
+    }
+
+    public void setMonsters(){
+        Entity slime = new GreenSlime(gp);
+        slime.setWorldX(10 * gp.getTileSize());
+        slime.setWorldY(10 * gp.getTileSize());
+        gp.getMonsters().add(slime);
     }
 }
 
