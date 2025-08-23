@@ -12,7 +12,7 @@ import java.util.List;
 import game.entity.item.Item;
 
 public class ItemGridUi {
-	private final int cols = 8;
+        private final int cols = 6;
 	private final int rows = 3;
 	private final int slotSize;
 	private final int gap = 6;
@@ -43,7 +43,7 @@ public class ItemGridUi {
 
                 // Khung lớn
                 HUDUtils.drawSubWindow(g2, x, y, d.width, d.height,
-                                new Color(40, 40, 40, 180), new Color(200, 200, 200));
+                                new Color(20, 120, 20, 180), new Color(0, 70, 0));
 
             int startX = x + padding;
             int startY = y + padding;
@@ -110,5 +110,4 @@ public class ItemGridUi {
 	public int getPadding() { return padding; } 
 	
 }
-
 

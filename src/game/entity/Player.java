@@ -43,12 +43,14 @@ public class Player extends GameActor implements DrawableEntity {
 		setSpeed(4);
 		setDirection("down");
 		setSpriteCouter(0);
-		setSpriteNum(1);
-		setName("Nguyeen pro");
-		atts().set(game.enums.Attr.HEALTH, 100);
-		atts().set(game.enums.Attr.ATTACK, 5);
-		atts().set(game.enums.Attr.DEF, 4);
-	}
+                setSpriteNum(1);
+                setName("Nguyeen pro");
+                atts().set(game.enums.Attr.HEALTH, 100);
+                atts().set(game.enums.Attr.PEP, 100);
+                atts().set(game.enums.Attr.SPIRIT, 0);
+                atts().set(game.enums.Attr.ATTACK, 5);
+                atts().set(game.enums.Attr.DEF, 4);
+        }
 	
     private void setCollision() {
         setCollisionArea(new Rectangle( 16, 32, 16, 16));

@@ -33,22 +33,37 @@ public class InventoryUi {
     }
 
     public void draw(Graphics2D g2) {
+        int charH = gp.getTileSize() * 8;
+        Dimension d = itemGrid.getPreferredSize();
+        int gridX = gp.getTileSize() * 8; // default position with one tile gap after character panel
+        int gridY = gp.getTileSize();
+        // ensure grid within screen
+        if (gridX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
+            gridX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
+        }
+
+        int outerX = gp.getTileSize() / 2;
+        int outerY = gp.getTileSize() / 2;
+        int outerW = gridX + d.width + gp.getTileSize() / 2 - outerX;
+        int outerH = Math.max(charH, d.height) + gp.getTileSize();
+        HUDUtils.drawSubWindow(g2, outerX, outerY, outerW, outerH,
+                new Color(40,40,40,180), Color.YELLOW);
+
         // Draw character panel on the left
         characterScreen(g2);
 
-        int x = gp.getTileSize() * 8; // leave one tile gap after character panel
-        int y = gp.getTileSize();
-
         var items = gp.getPlayer().getBag().all();
-        handleInventoryInput(items, x, y);
-        hoverSlot = computeSlotIndex(x, y, gp.getMousePosition());
+        handleInventoryInput(items, gridX, gridY);
+        hoverSlot = computeSlotIndex(gridX, gridY, gp.getMousePosition());
 
-        itemGrid.draw(g2, x, y, items, selectedSlot, hoverSlot);
-        Dimension d = itemGrid.getPreferredSize();
+        itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot);
 
         int infoIdx = hoverSlot >= 0 ? hoverSlot : selectedSlot;
         if (infoIdx >= 0 && infoIdx < items.size()) {
-            drawItemTooltip(g2, x + d.width + 10, y, items.get(infoIdx));
+            Point m = gp.getMousePosition();
+            int tipX = (m != null ? m.x + 15 : gridX + d.width + 10);
+            int tipY = (m != null ? m.y + 15 : gridY);
+            drawItemTooltip(g2, tipX, tipY, items.get(infoIdx));
         }
 
         drawContextMenu(g2);
@@ -155,6 +170,12 @@ public class InventoryUi {
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
         int width = Math.max(g2.getFontMetrics().stringWidth(line1), g2.getFontMetrics().stringWidth(line2)) + padding * 2;
         int height = 40 + padding * 2;
+        if (x + width > gp.getScreenWidth()) {
+            x = gp.getScreenWidth() - width - 10;
+        }
+        if (y + height > gp.getScreenHeight()) {
+            y = gp.getScreenHeight() - height - 10;
+        }
         HUDUtils.drawSubWindow(g2, x, y, width, height, new Color(40,40,40,200), new Color(200, 200, 200));
         g2.setColor(Color.WHITE);
         g2.drawString(line1, x + padding, y + padding + 15);
@@ -190,7 +211,11 @@ public class InventoryUi {
     }
 
     public boolean handleMousePress(int mx, int my, int button) {
-        int baseX = gp.getTileSize() * 7;
+        int baseX = gp.getTileSize() * 8;
+        Dimension d = itemGrid.getPreferredSize();
+        if (baseX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
+            baseX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
+        }
         int baseY = gp.getTileSize();
         int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
