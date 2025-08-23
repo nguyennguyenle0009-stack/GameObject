@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Random;
 
-import game.entity.GameActor;
 import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -14,27 +13,35 @@ import game.util.CameraHelper;
 /**
  * Simple wandering monster. Damages the player on contact.
  */
-public class GreenSlime extends GameActor {
+public class GreenSlime extends Monster {
+    /** Random generator for wandering movement */
     private final Random random = new Random();
+    /** Reference to game panel */
     private final GamePanel gp;
 
+    /** Rectangle representing attack area */
     private final Rectangle attackArea;
+    /** Whether slime is currently attacking */
     private boolean attacking = false;
+    /** Attack duration counter */
     private int attackCounter = 0;
+    /** Cooldown timer between attacks */
     private int attackCooldown = 0;
+    /** Cooldown duration after an attack */
     private static final int ATTACK_COOLDOWN = 60;
+    /** How long an attack animation lasts */
     private static final int ATTACK_DURATION = 20;
+    /** Damage dealt to the player */
     private final int attackDamage = 1;
 
     public GreenSlime(GamePanel gp) {
-        super(gp);
+        super(gp, 10);
         this.gp = gp;
         setSpeed(1);
         setDirection("down");
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
         setCollisionArea(new Rectangle(8, 16, 32, 32));
-        atts().set(Attr.HEALTH, 10);
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
     }
 
@@ -45,6 +52,7 @@ public class GreenSlime extends GameActor {
         moveIfCollisionNotDetected();
         checkAndChangeSpriteAnimation();
         handleAttack();
+        updateHealthBar();
     }
 
     private void setAction() {
@@ -130,6 +138,7 @@ public class GreenSlime extends GameActor {
             g2.setColor(Color.RED);
             g2.drawRect(attackScreen.x, attackScreen.y, attackRect.width, attackRect.height);
         }
+        drawHealthBar(g2);
     }
 
     @Override
