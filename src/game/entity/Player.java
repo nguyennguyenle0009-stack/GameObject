@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
+import game.entity.monster.Monster;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -159,23 +160,40 @@ public class Player extends GameActor implements DrawableEntity {
             return new Rectangle(attackX, attackY, attackArea.width, attackArea.height);
         }
 
+        /**
+         * Kiểm tra va chạm của đòn đánh và gây sát thương cho quái vật.
+         */
         private void physicalAttack() {
+            // Vùng tấn công của người chơi
             Rectangle attackRect = getAttackRectangle();
+            // Duyệt qua toàn bộ quái vật
             for (int i = 0; i < gp.getMonsters().size(); i++) {
                 Entity monster = gp.getMonsters().get(i);
                 if (monster == null) continue;
+                // Vùng va chạm của quái vật
                 Rectangle monsterRect = new Rectangle(
                         monster.getWorldX() + monster.getCollisionArea().x,
                         monster.getWorldY() + monster.getCollisionArea().y,
                         monster.getCollisionArea().width,
                         monster.getCollisionArea().height
                 );
-                if (attackRect.intersects(monsterRect) && monster instanceof GameActor m) {
+                // Nếu đòn đánh trúng quái
+                if (attackRect.intersects(monsterRect)) {
                     int damage = atts().get(game.enums.Attr.ATTACK);
-                    m.atts().add(game.enums.Attr.HEALTH, -damage);
-                    if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
-                        gp.getMonsters().remove(i);
-                        i--;
+                    if (monster instanceof Monster m) {
+                        // Quái vật có quản lý máu riêng
+                        if (m.takeDamage(damage)) {
+                            m.dropItem();
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
+                    } else if (monster instanceof GameActor m) {
+                        // Quái vật cũ chỉ trừ máu đơn giản
+                        m.atts().add(game.enums.Attr.HEALTH, -damage);
+                        if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
                     }
                 }
             }
