@@ -11,11 +11,16 @@ import java.util.List;
 import game.entity.item.Item;
 
 public class ItemGridUi {
-	private final int cols = 8;
-	private final int rows = 3;
-	private final int slotSize;
-	private final int gap = 6;
-	private final int padding; // Viền trong của khung lớn
+        /** number of columns in the inventory grid */
+        private final int cols = 3;
+        /** number of rows in the inventory grid */
+        private final int rows = 8;
+        /** size of each slot in pixels */
+        private final int slotSize;
+        /** gap between slots */
+        private final int gap = 6;
+        /** inner padding of the outer frame */
+        private final int padding; // Viền trong của khung lớn
 	
 	public ItemGridUi(int tileSize) {
 		this.slotSize = tileSize;
@@ -29,11 +34,11 @@ public class ItemGridUi {
 //Dùng int idx = r * cols + c; và so sánh với size trước khi get.
 //inventory.all() trả về danh sách immutable (OK), nhưng vẫn phải kiểm tra chỉ số.
 //Thử thay đoạn vẽ theo code trên—lỗi sẽ hết. Nếu vẫn gặp lỗi, gửi mình dòng code hiện tại của ItemGridUi.java:54 để mình chỉnh đúng chỗ nhé.
-	public Dimension getPreferredSize() {
-		int w = cols * slotSize + (cols - 1) * gap + padding * 2;
-		int h = rows * slotSize + (cols - 1) * gap + padding * 2;
-		return new Dimension(w, h);
-	}
+        public Dimension getPreferredSize() {
+                int w = cols * slotSize + (cols - 1) * gap + padding * 2;
+                int h = rows * slotSize + (rows - 1) * gap + padding * 2;
+                return new Dimension(w, h);
+        }
 	
 	public void draw(Graphics2D g2, int x, int y, List<Item> items) {
 	    final int size = (items == null) ? 0 : items.size();
@@ -71,18 +76,21 @@ public class ItemGridUi {
 	                g2.drawImage(icon, xx + pad, yy + pad, iw, ih, null);
 	            }
 
-	            // số lượng
-	            String q = String.valueOf(it.getQuantity());
-	            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 14f));
-	            FontMetrics fm = g2.getFontMetrics();
-	            int tw = fm.stringWidth(q), th = fm.getAscent();
-	            g2.setColor(new Color(0,0,0,160));
-	            g2.fillRoundRect(xx + slotSize - tw - 10, yy + slotSize - th - 6, tw + 8, th + 4, 8, 8);
-	            g2.setColor(Color.WHITE);
-	            g2.drawString(q, xx + slotSize - tw - 6, yy + slotSize - 8 + th);
-	        }
-	    }
-	}
+                    // item quantity
+                    String q = String.valueOf(it.getQuantity());
+                    g2.setFont(g2.getFont().deriveFont(Font.BOLD, 14f));
+                    FontMetrics fm = g2.getFontMetrics();
+                    int tw = fm.stringWidth(q);
+                    int th = fm.getAscent();
+                    int qx = xx + slotSize - tw - 6;
+                    int qy = yy + slotSize - 6;
+                    g2.setColor(new Color(0,0,0,160));
+                    g2.fillRoundRect(qx - 2, qy - th, tw + 4, th + 4, 8, 8);
+                    g2.setColor(Color.WHITE);
+                    g2.drawString(q, qx, qy);
+                }
+            }
+        }
 
 	public int getCols() { return cols; }
 	public int getRows() { return rows; }

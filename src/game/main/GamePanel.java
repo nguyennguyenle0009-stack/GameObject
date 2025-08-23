@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import javax.swing.JPanel;
 
@@ -14,49 +13,79 @@ import game.check.CollisionChecker;
 import game.entity.Entity;
 import game.entity.Player;
 import game.entity.item.elixir.HealthPotion;
-import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
 import game.object.ObjectManager;
 import game.object.SuperObject;
+import game.render.Renderer;
 import game.tile.TileManager;
 import game.ui.Ui;
 
 public class GamePanel extends JPanel implements Runnable {
-	private static final long serialVersionUID = 1L;
-	private final int originalTileSize = 16;
-	private final int scale = 3;
-	//Độ dài tile
-	private final int tileSize = originalTileSize * scale;//48
-	//Tổng số cột hàng trong khung hình
-	private final int maxScreenCol = 16;
-	private final int maxScreenRow = 12;
-	//Tổng số độ dài khung hình hiển thị
-	private final int screenWidth = tileSize * maxScreenCol;//768
-	private final int screenHeight = tileSize * maxScreenRow;//576
-	// Tổng cột và hàng trong map
-	private final int maxWorldCol = 50;
-	private final int maxWorldRow = 50;
-	// Tổng số chiều rộng và chiều cao trong map(pixel)
-	private final int worldWidth = tileSize * maxWorldCol;//2400
-	private final int worldHeight = tileSize * maxWorldRow;
-	private Thread thread;
-	private int FPS = 60;
-	public KeyHandler keyH = new KeyHandler(this);
-	MouseHandler mounseH = new MouseHandler(this);
-	private final Player player = new Player(this);
-	private final TileManager tileManager = new TileManager(this);
-	private final CollisionChecker checkCollision = new CollisionChecker(this);
-	private final List<SuperObject> objects = new ArrayList<>();
-	private final List<Entity> npcs = new ArrayList<>();
-    private final ObjectManager objectManager = new ObjectManager(this);
-    private final Ui ui = new Ui(this);
-    
-    // GAME STATE
-    private int gameState;
-    private final int playState = 1;
-    private final int pauseState = 2;
-    private final int dialogueState = 3;
+        private static final long serialVersionUID = 1L;
+
+        // --- BASIC CONFIGURATION ---
+        /** original pixel size of a tile */
+        private final int originalTileSize = 16;
+        /** scale factor applied to each tile */
+        private final int scale = 3;
+        /** actual size of a tile in the game world */
+        private final int tileSize = originalTileSize * scale; // 48
+        /** number of columns on the visible screen */
+        private final int maxScreenCol = 16;
+        /** number of rows on the visible screen */
+        private final int maxScreenRow = 12;
+        /** total width of the visible screen */
+        private final int screenWidth = tileSize * maxScreenCol; // 768
+        /** total height of the visible screen */
+        private final int screenHeight = tileSize * maxScreenRow; // 576
+        /** total columns in the world map */
+        private final int maxWorldCol = 50;
+        /** total rows in the world map */
+        private final int maxWorldRow = 50;
+        /** width of the entire world in pixels */
+        private final int worldWidth = tileSize * maxWorldCol; // 2400
+        /** height of the entire world in pixels */
+        private final int worldHeight = tileSize * maxWorldRow;
+
+        /** game loop thread */
+        private Thread thread;
+        /** target frames per second */
+        private int FPS = 60;
+
+        // --- INPUT HANDLERS ---
+        /** keyboard input handler */
+        public KeyHandler keyH = new KeyHandler(this);
+        /** mouse input handler */
+        MouseHandler mounseH = new MouseHandler(this);
+
+        // --- GAME ENTITIES & SYSTEMS ---
+        /** the player character */
+        private final Player player = new Player(this);
+        /** tile manager for drawing tiles */
+        private final TileManager tileManager = new TileManager(this);
+        /** collision checker */
+        private final CollisionChecker checkCollision = new CollisionChecker(this);
+        /** list of static objects in the world */
+        private final List<SuperObject> objects = new ArrayList<>();
+        /** list of NPC entities */
+        private final List<Entity> npcs = new ArrayList<>();
+        /** helper to spawn objects and entities */
+        private final ObjectManager objectManager = new ObjectManager(this);
+        /** user interface manager */
+        private final Ui ui = new Ui(this);
+        /** renderer responsible for all drawing */
+        private final Renderer renderer = new Renderer(this);
+
+        // --- GAME STATE ---
+        /** current game state */
+        private int gameState;
+        /** id of play state */
+        private final int playState = 1;
+        /** id of pause state */
+        private final int pauseState = 2;
+        /** id of dialogue state */
+        private final int dialogueState = 3;
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -120,36 +149,13 @@ public class GamePanel extends JPanel implements Runnable {
 		if(gameState == pauseState) {}
 	}
 	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		long drawStart = 0;
-		if(keyH.isCheckDrawTime() == true) {
-			drawStart = System.nanoTime();
-		}
-		Graphics2D g2 = (Graphics2D)g;
-		tileManager.draw(g2);
-		//Check object
-		List<DrawableEntity> drawList = new ArrayList<>();
-
-		drawList.addAll(objects);
-		drawList.addAll(npcs);
-		drawList.add(player);
-
-		drawList.sort(Comparator.comparingInt(DrawableEntity::getFootY));
-
-		for (DrawableEntity entity : drawList) {
-		    entity.draw(g2, this);
-		}
-		getUi().draw(g2);
-		if(keyH.isCheckDrawTime() == true) {
-			long drawEnd = System.nanoTime();
-			long passedTime = drawEnd - drawStart;
-			g2.setColor(Color.white);
-			g2.drawString("Draw Timn: " + passedTime, 10, 400);
-			System.out.println("Draw Timn: " + passedTime);
-		}
-		g2.dispose();
-	}
+        /**
+         * Delegate drawing to the {@link Renderer} so this class focuses on game logic.
+         */
+        public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                renderer.render((Graphics2D) g);
+        }
 	
     public int getTileSize() { return tileSize; }
 	public int getMaxScreenCol() { return maxScreenCol; }

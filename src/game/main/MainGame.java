@@ -1,19 +1,15 @@
 package game.main;
 
-import javax.swing.JFrame;
-
+/**
+ * Entry point of the application. It prepares the game panel, hands it to the
+ * {@link WindowManager} and starts the game loop.
+ */
 public class MainGame {
-	public static void main(String[] args) {
-		JFrame window = new JFrame("Game");
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setResizable(true);
-		window.setTitle("Game demo");
-		GamePanel game = new GamePanel();
-		window.add(game);
-		window.pack(); // Use the JPanel component to determine window configuration
-		window.setLocationRelativeTo(null);
-		window.setVisible(true);
-	    game.setUpGame();
-		game.startGame();
-	}
+        public static void main(String[] args) {
+                GamePanel game = new GamePanel();
+                WindowManager wm = new WindowManager("Game demo", game);
+                wm.show();
+                game.setUpGame();
+                game.startGame();
+        }
 }
