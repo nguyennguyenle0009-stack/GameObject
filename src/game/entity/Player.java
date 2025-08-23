@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.monster.Monster;
 import game.interfaces.DrawableEntity;
 
 import game.main.GamePanel;
@@ -161,21 +162,27 @@ public class Player extends GameActor implements DrawableEntity {
 
         private void physicalAttack() {
             Rectangle attackRect = getAttackRectangle();
+            // Duyệt qua toàn bộ quái trên bản đồ
             for (int i = 0; i < gp.getMonsters().size(); i++) {
                 Entity monster = gp.getMonsters().get(i);
                 if (monster == null) continue;
+
+                // Tạo vùng va chạm tạm thời của quái để kiểm tra
                 Rectangle monsterRect = new Rectangle(
                         monster.getWorldX() + monster.getCollisionArea().x,
                         monster.getWorldY() + monster.getCollisionArea().y,
                         monster.getCollisionArea().width,
                         monster.getCollisionArea().height
                 );
-                if (attackRect.intersects(monsterRect) && monster instanceof GameActor m) {
-                    int damage = atts().get(game.enums.Attr.ATTACK);
-                    m.atts().add(game.enums.Attr.HEALTH, -damage);
-                    if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
-                        gp.getMonsters().remove(i);
-                        i--;
+
+                // Nếu vùng tấn công của người chơi chạm vào quái và quái là lớp Monster
+                if (attackRect.intersects(monsterRect) && monster instanceof Monster m) {
+                    int damage = atts().get(game.enums.Attr.ATTACK); // sát thương của người chơi
+
+                    // takeDamage trả về true nếu quái đã chết
+                    if (m.takeDamage(damage)) {
+                        gp.getMonsters().remove(i); // loại bỏ khỏi danh sách quái
+                        i--; // điều chỉnh chỉ số do danh sách bị giảm
                     }
                 }
             }

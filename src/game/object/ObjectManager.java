@@ -3,6 +3,7 @@ package game.object;
 import game.entity.Entity;
 import game.entity.animal.cat.Cat_yellow;
 import game.entity.monster.GreenSlime;
+import game.entity.monster.Orc;
 import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
@@ -52,10 +53,17 @@ public class ObjectManager {
     }
     
     public void setMonsters(){
+        // Khởi tạo slime đơn giản có sẵn
         Entity slime = new GreenSlime(gp);
         slime.setWorldX(10 * gp.getTileSize());
         slime.setWorldY(10 * gp.getTileSize());
         gp.getMonsters().add(slime);
+
+        // Thêm quái Orc mới
+        Entity orc = new Orc(gp);
+        orc.setWorldX(12 * gp.getTileSize());
+        orc.setWorldY(8 * gp.getTileSize());
+        gp.getMonsters().add(orc);
     }
 }
 
