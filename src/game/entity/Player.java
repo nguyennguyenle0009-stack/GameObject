@@ -29,16 +29,23 @@ public class Player extends GameActor implements DrawableEntity {
     private final Inventory bag = new Inventory();
     private boolean invincible = false;
     private int invincibleCounter = 0;
+    private final Rectangle attackArea;
+    private boolean attacking = false;
+    private int attackCounter = 0;
+    private int attackCooldown = 0;
+    private static final int ATTACK_COOLDOWN = 20;
+    private static final int ATTACK_DURATION = 10;
 
 	public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
         this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
         setCollision();
-		setDefaultValue();
-		getImagePlayer();
+        setDefaultValue();
+        getImagePlayer();
+        attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
 
-	}
+        }
 	public void setDefaultValue() {
 		setWorldX(100); 
 		setWorldY(100);
@@ -52,6 +59,8 @@ public class Player extends GameActor implements DrawableEntity {
                 atts().set(game.enums.Attr.SPIRIT, 0);
                 atts().set(game.enums.Attr.ATTACK, 5);
                 atts().set(game.enums.Attr.DEF, 4);
+        setScaleEntityX(gp.getTileSize());
+        setScaleEntityY(gp.getTileSize());
         }
 	
     private void setCollision() {
@@ -86,6 +95,7 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
             updateKeyboard();
+            handleAttack();
         }
 
 	
@@ -107,16 +117,69 @@ public class Player extends GameActor implements DrawableEntity {
 	        resestSpriteToDefault();
 	    }
 
-	    // Xử lý đối thoại riêng, KHÔNG phụ thuộc di chuyển
-	    if (gp.keyH.isDialoguePressed()) {
-	        Entity npc = getClosestNPCInRange(gp.getNpcs());
+            // Xử lý đối thoại riêng, KHÔNG phụ thuộc di chuyển
+            if (gp.keyH.isDialoguePressed()) {
+                Entity npc = getClosestNPCInRange(gp.getNpcs());
 	        if (npc != null) {
 	            gp.setGameState(gp.getDialogueState());
 	            npc.speak();
 	        }
 	        gp.keyH.setDialoguePressed(false); // reset flag
-	    }
-	}
+            }
+        }
+
+        private void handleAttack() {
+            if (attacking) {
+                attackCounter++;
+                if (attackCounter == 1) {
+                    physicalAttack();
+                }
+                if (attackCounter > ATTACK_DURATION) {
+                    attacking = false;
+                    attackCounter = 0;
+                    attackCooldown = ATTACK_COOLDOWN;
+                }
+            } else {
+                if (attackCooldown > 0) attackCooldown--;
+                if (gp.keyH.isAttackPressed() && attackCooldown == 0) {
+                    attacking = true;
+                }
+            }
+        }
+
+        private Rectangle getAttackRectangle() {
+            int attackX = getWorldX();
+            int attackY = getWorldY();
+            switch (getDirection()) {
+                case "up" -> attackY -= attackArea.height;
+                case "down" -> attackY += getScaleEntityY();
+                case "left" -> attackX -= attackArea.width;
+                case "right" -> attackX += getScaleEntityX();
+            }
+            return new Rectangle(attackX, attackY, attackArea.width, attackArea.height);
+        }
+
+        private void physicalAttack() {
+            Rectangle attackRect = getAttackRectangle();
+            for (int i = 0; i < gp.getMonsters().size(); i++) {
+                Entity monster = gp.getMonsters().get(i);
+                if (monster == null) continue;
+                Rectangle monsterRect = new Rectangle(
+                        monster.getWorldX() + monster.getCollisionArea().x,
+                        monster.getWorldY() + monster.getCollisionArea().y,
+                        monster.getCollisionArea().width,
+                        monster.getCollisionArea().height
+                );
+                if (attackRect.intersects(monsterRect) && monster instanceof GameActor m) {
+                    int damage = atts().get(game.enums.Attr.ATTACK);
+                    m.atts().add(game.enums.Attr.HEALTH, -damage);
+                    if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                        gp.getMonsters().remove(i);
+                        i--;
+                    }
+                }
+            }
+        }
 	
 	@Override
 	public void checkCollision() {

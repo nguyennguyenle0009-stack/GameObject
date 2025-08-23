@@ -8,6 +8,7 @@ import game.main.GamePanel;
 public class KeyHandler implements KeyListener {
     private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed, iPressed;
     private boolean enterPressed;
+    private boolean attackPressed;
     private boolean checkDrawTime = false;
     private boolean drawRect = false;
     GamePanel gp;
@@ -49,6 +50,9 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ENTER) {
             enterPressed = true;
         }
+        if (code == KeyEvent.VK_F) {
+            attackPressed = true;
+        }
     } else if (gp.getGameState() == gp.getPauseState()) {
         if (code == KeyEvent.VK_P) {
             gp.setGameState(gp.getPlayState());
@@ -68,6 +72,7 @@ public class KeyHandler implements KeyListener {
             if(code == KeyEvent.VK_A) { leftPressed = false; }
             if(code == KeyEvent.VK_D) { rightPressed = false; }
             if(code == KeyEvent.VK_ENTER) { enterPressed = false; }
+            if(code == KeyEvent.VK_F) { attackPressed = false; }
             if(code == KeyEvent.VK_T) {
                     if(checkDrawTime == false) { checkDrawTime = true; }
                     else { checkDrawTime = false; }
@@ -99,5 +104,7 @@ public class KeyHandler implements KeyListener {
     public KeyHandler setiPressed(boolean iPressed) { this.iPressed = iPressed; return this; }
     public boolean isEnterPressed() { return enterPressed; }
     public KeyHandler setEnterPressed(boolean enterPressed) { this.enterPressed = enterPressed; return this; }
+    public boolean isAttackPressed() { return attackPressed; }
+    public KeyHandler setAttackPressed(boolean attackPressed) { this.attackPressed = attackPressed; return this; }
 
 }
