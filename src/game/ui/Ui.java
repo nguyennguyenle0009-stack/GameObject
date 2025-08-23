@@ -24,12 +24,14 @@ public class Ui {
     private String currentDialogue = "";
 
     private final InventoryUi inventory;
+    private final GameHUD hud;
 
     public Ui(GamePanel gp) {
         this.gp = gp;
         this.arial_40 = new Font("Arial", Font.PLAIN, 40);
         this.arial_80B = new Font("Arial", Font.BOLD, 80);
         this.inventory = new InventoryUi(gp);
+        this.hud = new GameHUD(gp);
     }
 
     public void showMessage(String text) {
@@ -40,6 +42,7 @@ public class Ui {
     public void draw(Graphics2D g2) {
         this.g2 = g2;
         g2.setColor(Color.white);
+        hud.draw(g2);
         if (gp.getGameState() == gp.getPlayState()) {
             drawInteractionHint(g2);
         }
