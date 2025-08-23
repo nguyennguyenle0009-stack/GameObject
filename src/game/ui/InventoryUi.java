@@ -49,7 +49,7 @@ public class InventoryUi {
 
         var items = gp.getPlayer().getBag().all();
         handleInventoryInput(items, x, y);
-        hoverSlot = computeSlotIndex(x, y, gp.getMousePosition());
+        hoverSlot = computeSlotIndex(x, y, gp.getMouseH().getMousePoint());
 
         itemGrid.draw(g2, x, y, items, selectedSlot, hoverSlot);
         Dimension d = itemGrid.getPreferredSize();
