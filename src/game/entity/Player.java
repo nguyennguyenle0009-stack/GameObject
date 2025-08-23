@@ -25,8 +25,10 @@ public class Player extends GameActor implements DrawableEntity {
     private final int screenY;
     
     private static final int INTERACTION_RANGE = 80;
-    
+
     private final Inventory bag = new Inventory();
+    private boolean invincible = false;
+    private int invincibleCounter = 0;
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -76,6 +78,13 @@ public class Player extends GameActor implements DrawableEntity {
 	@Override
         public void update() {
             if (gp.keyH.isiPressed()) return;
+            if (invincible) {
+                invincibleCounter++;
+                if (invincibleCounter > 60) {
+                    invincible = false;
+                    invincibleCounter = 0;
+                }
+            }
             updateKeyboard();
         }
 
@@ -117,6 +126,13 @@ public class Player extends GameActor implements DrawableEntity {
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
         int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
         interactWithNPC(npcIndex);
+
+        int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
+        if (monsterIndex != 999 && !invincible) {
+            atts().add(game.enums.Attr.HEALTH, -1);
+            gp.getUi().triggerDamageEffect();
+            invincible = true;
+        }
 	}
 	
 	// check NPC trong phạm vi
