@@ -72,9 +72,11 @@ public class Player extends GameActor implements DrawableEntity {
 	}
 	
 	@Override
-	public void update() {
-	    updateKeyboard();
-	}
+        public void update() {
+            if (gp.keyH.isiPressed()) return;
+            updateKeyboard();
+        }
+
 	
 	private void updateKeyboard() {
 	    boolean moving = gp.keyH.isUpPressed() || gp.keyH.isDownPressed() 
@@ -199,18 +201,3 @@ public class Player extends GameActor implements DrawableEntity {
 	public static int getInteractionRange() { return INTERACTION_RANGE; }
 	public Inventory getBag() { return bag; } 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
