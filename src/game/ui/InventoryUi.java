@@ -32,12 +32,20 @@ public class InventoryUi {
         this.itemGrid = new ItemGridUi(gp.getTileSize());
     }
 
+    private int inventoryBaseX() {
+        return gp.getTileSize() * 8;
+    }
+
+    private int inventoryBaseY() {
+        return gp.getTileSize();
+    }
+
     public void draw(Graphics2D g2) {
         // Draw character panel on the left
         characterScreen(g2);
 
-        int x = gp.getTileSize() * 8; // leave one tile gap after character panel
-        int y = gp.getTileSize();
+        int x = inventoryBaseX(); // leave one tile gap after character panel
+        int y = inventoryBaseY();
 
         var items = gp.getPlayer().getBag().all();
         handleInventoryInput(items, x, y);
@@ -190,8 +198,8 @@ public class InventoryUi {
     }
 
     public boolean handleMousePress(int mx, int my, int button) {
-        int baseX = gp.getTileSize() * 7;
-        int baseY = gp.getTileSize();
+        int baseX = inventoryBaseX();
+        int baseY = inventoryBaseY();
         int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
         if (idx >= 0 && idx < itemGrid.getCols() * itemGrid.getRows()) {
