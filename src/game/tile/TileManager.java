@@ -74,15 +74,14 @@ public class TileManager {
     }
 	
     public void loadMap(String mapPath) {
-        try {
-            InputStream inputStream = getClass().getResourceAsStream(mapPath);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        try (InputStream inputStream = getClass().getResourceAsStream(mapPath);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             int col = 0;
             int row = 0;
             while (col < gp.getMaxWorldCol() && row < gp.getMaxWorldRow()) {
                 String line = bufferedReader.readLine();
+                String[] numbers = line.split(" ");
                 while (col < gp.getMaxWorldCol()) {
-                    String[] numbers = line.split(" ");
                     int number = Integer.parseInt(numbers[col]);
                     mapTileNumber[col][row] = number;
                     col++;
@@ -92,68 +91,81 @@ public class TileManager {
                     row++;
                 }
             }
-            bufferedReader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 	
    public void draw(Graphics2D graphics2D) {
-	   // Thứ tự của tile trên hàng và cột trong thế giới
+           // Thứ tự của tile trên hàng và cột trong thế giới
         int worldCol = 0;
         int worldRow = 0;
+        int tileSize = gp.getTileSize();
+        int screenWidth = gp.getScreenWidth();
+        int screenHeight = gp.getScreenHeight();
+        int worldWidth = gp.getWorldWidth();
+        int worldHeight = gp.getWorldHeight();
+        var player = gp.getPlayer();
+        int playerWorldX = player.getWorldX();
+        int playerWorldY = player.getWorldY();
+        int playerScreenX = player.getScreenX();
+        int playerScreenY = player.getScreenY();
         while(worldCol < gp.getMaxWorldCol() && worldRow < gp.getMaxWorldRow()) {
-        	int tileNumber = mapTileNumber[worldCol][worldRow];
-        	// Vị trí thực tế của tile trong thế giới
-        	int worldX = worldCol * gp.getTileSize();
-        	int worldY = worldRow * gp.getTileSize();
-        	// Vị trí tile trên màn hình, tính theo vị trí người chơi
-            int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
-            int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
-            int rightOffset = gp.getScreenWidth() - gp.getPlayer().getScreenX();
-            screenX = checkIfAtEdgeOfXAxis(worldX, screenX, rightOffset);
-            int bottomOffset = gp.getScreenHeight() - gp.getPlayer().getScreenY();
-            screenY = checkIfAtEdgeOfYAxis(worldY, screenY, bottomOffset);
+                int tileNumber = mapTileNumber[worldCol][worldRow];
+                // Vị trí thực tế của tile trong thế giới
+                int worldX = worldCol * tileSize;
+                int worldY = worldRow * tileSize;
+                // Vị trí tile trên màn hình, tính theo vị trí người chơi
+            int screenX = worldX - playerWorldX + playerScreenX;
+            int screenY = worldY - playerWorldY + playerScreenY;
+            int rightOffset = screenWidth - playerScreenX;
+            screenX = checkIfAtEdgeOfXAxis(worldX, screenX, rightOffset, playerWorldX, playerScreenX, worldWidth, screenWidth);
+            int bottomOffset = screenHeight - playerScreenY;
+            screenY = checkIfAtEdgeOfYAxis(worldY, screenY, bottomOffset, playerWorldY, playerScreenY, worldHeight, screenHeight);
             // Tối ưu hiệu suất, bản đồ không được vẽ khi ngoài màn hình
             if(UtilityTool.isInsidePlayerView(worldX, worldY, gp)) {
                 graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, null);
-            } 
-            else if (gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX() || 
-            		 gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY() || 
-            		 rightOffset > gp.getWorldWidth() - gp.getPlayer().getWorldX() || 
-                     bottomOffset > gp.getWorldHeight() - gp.getPlayer().getWorldY()) {
-            	graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, null);
             }
-			if(gp.keyH.isDrawRect() == true) {
+            else if (playerScreenX > playerWorldX ||
+                         playerScreenY > playerWorldY ||
+                         rightOffset > worldWidth - playerWorldX ||
+                     bottomOffset > worldHeight - playerWorldY) {
+                graphics2D.drawImage(tile[tileNumber].getImage(), screenX, screenY, null);
+            }
+                        if(gp.keyH.isDrawRect()) {
                 graphics2D.setColor(Color.BLUE);
-                graphics2D.drawRect(screenX, screenY, gp.getTileSize(), gp.getTileSize());
-			}
+                graphics2D.drawRect(screenX, screenY, tileSize, tileSize);
+                        }
             worldCol++;
             if(worldCol == gp.getMaxWorldCol()) {
-            	worldCol = 0;
-            	worldRow++;
+                worldCol = 0;
+                worldRow++;
             }
         }
     }
    
-   private int checkIfAtEdgeOfXAxis(int worldX, int screenX, int rightOffSet) {
-	   if(gp.getPlayer().getScreenX() > gp.getPlayer().getWorldX()) {
-		   return worldX;
-	   }
-	   if(rightOffSet > gp.getWorldWidth() - gp.getPlayer().getWorldX()) {
-		   return gp.getScreenWidth() - (gp.getWorldWidth() - worldX);
-	   }
-	   return screenX;
+   private int checkIfAtEdgeOfXAxis(int worldX, int screenX, int rightOffSet,
+                                   int playerWorldX, int playerScreenX,
+                                   int worldWidth, int screenWidth) {
+           if(playerScreenX > playerWorldX) {
+                   return worldX;
+           }
+           if(rightOffSet > worldWidth - playerWorldX) {
+                   return screenWidth - (worldWidth - worldX);
+           }
+           return screenX;
    }
-   
-   private int checkIfAtEdgeOfYAxis(int worldY, int screenY, int botOffSet) {
-	   if(gp.getPlayer().getScreenY() > gp.getPlayer().getWorldY()) {
-		   return worldY;
-	   }
-	   if(botOffSet > gp.getWorldHeight() - gp.getPlayer().getWorldY()) {
-		   return gp.getScreenHeight() - (gp.getWorldHeight() - worldY);
-	   }
-	   return screenY;
+
+   private int checkIfAtEdgeOfYAxis(int worldY, int screenY, int botOffSet,
+                                   int playerWorldY, int playerScreenY,
+                                   int worldHeight, int screenHeight) {
+           if(playerScreenY > playerWorldY) {
+                   return worldY;
+           }
+           if(botOffSet > worldHeight - playerWorldY) {
+                   return screenHeight - (worldHeight - worldY);
+           }
+           return screenY;
    }
    
    public Tile[] getTile() { return tile; }
