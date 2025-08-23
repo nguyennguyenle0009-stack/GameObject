@@ -5,26 +5,26 @@ import java.awt.image.BufferedImage;
 import game.entity.Player;
 
 public abstract class Item {
-	private final String name;
-	private final String decription;
-	private int quantity;
-	private final int maxStack;
-	
-	public Item(String name, String decription, int quantity, int maxStack) {
-		this.name = name;
-		this.decription = decription;
-		this.quantity = quantity;
-		this.maxStack = maxStack;
-	}
-	
-	public void increaseQuantity(int amount) {
-		quantity = Math.min(amount + quantity, maxStack);
-	}
-	
-	public void decreaseQuantity(int amount) {
-		quantity = Math.max(0, quantity - amount);
-	}
-	
+        private final String name;
+        private final String decription;
+        private int quantity;
+        private final int maxStack;
+
+        public Item(String name, String decription, int quantity, int maxStack) {
+                this.name = name;
+                this.decription = decription;
+                this.quantity = quantity;
+                this.maxStack = maxStack;
+        }
+
+        public void increaseQuantity(int amount) {
+                quantity = Math.min(amount + quantity, maxStack);
+        }
+
+        public void decreaseQuantity(int amount) {
+                quantity = Math.max(0, quantity - amount);
+        }
+
     // So sánh xem hai item có gộp chung 1 stack được không
     public boolean isSameStack(Item other) {
         // Mặc định: cùng class + cùng tên -> gộp
@@ -35,16 +35,33 @@ public abstract class Item {
 
     // Tạo bản sao cùng loại với số lượng chỉ định (để chia stack)
     public abstract Item copyWithQuantity(int qty);
-	
-	// Mỗi item định nghĩa cách dùng riêng
-	public abstract void use(Player p);
-	
-	// Mỗi item có hình ảnh riêng
-	public abstract BufferedImage getIcon();
-	
-	public String getName() { return name; }
-	public String getDecription() { return decription; }
-	public int getQuantity() { return quantity; }
-	public Item setQuantity(int quantity) { this.quantity = quantity; return this; }
-	public int getMaxStack() { return maxStack; }
+
+        // Mỗi item định nghĩa cách dùng riêng
+        public abstract void use(Player p);
+
+        // Danh sách hành động có thể thực hiện với item
+        public String[] getActions() {
+            return new String[] { "Use", "Drop" };
+        }
+
+        // Thực hiện hành động tương ứng
+        public void performAction(Player p, String action) {
+            if ("Use".equalsIgnoreCase(action)) {
+                use(p);
+                if (getQuantity() == 0) {
+                    p.getBag().remove(this);
+                }
+            } else if ("Drop".equalsIgnoreCase(action)) {
+                p.getBag().remove(this);
+            }
+        }
+
+        // Mỗi item có hình ảnh riêng
+        public abstract BufferedImage getIcon();
+
+        public String getName() { return name; }
+        public String getDecription() { return decription; }
+        public int getQuantity() { return quantity; }
+        public Item setQuantity(int quantity) { this.quantity = quantity; return this; }
+        public int getMaxStack() { return maxStack; }
 }

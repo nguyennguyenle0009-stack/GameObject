@@ -72,9 +72,11 @@ public class Player extends GameActor implements DrawableEntity {
 	}
 	
 	@Override
-	public void update() {
-	    updateKeyboard();
-	}
+        public void update() {
+            if (gp.keyH.isiPressed()) return;
+            updateKeyboard();
+        }
+
 	
 	private void updateKeyboard() {
 	    boolean moving = gp.keyH.isUpPressed() || gp.keyH.isDownPressed() 
