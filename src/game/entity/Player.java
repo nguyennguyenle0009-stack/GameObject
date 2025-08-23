@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
+import game.interfaces.Damageable;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -170,12 +171,19 @@ public class Player extends GameActor implements DrawableEntity {
                         monster.getCollisionArea().width,
                         monster.getCollisionArea().height
                 );
-                if (attackRect.intersects(monsterRect) && monster instanceof GameActor m) {
+                if (attackRect.intersects(monsterRect)) {
                     int damage = atts().get(game.enums.Attr.ATTACK);
-                    m.atts().add(game.enums.Attr.HEALTH, -damage);
-                    if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
-                        gp.getMonsters().remove(i);
-                        i--;
+                    if (monster instanceof Damageable d) {
+                         d.takeDamage(damage);
+                        if (!gp.getMonsters().contains(monster)) {
+                            i--;
+                        }
+                    } else if (monster instanceof GameActor m) {
+                        m.atts().add(game.enums.Attr.HEALTH, -damage);
+                        if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
                     }
                 }
             }
