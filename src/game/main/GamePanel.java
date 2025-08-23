@@ -43,7 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private Thread thread;
 	private int FPS = 60;
 	public KeyHandler keyH = new KeyHandler(this);
-	MouseHandler mounseH = new MouseHandler(this);
+        MouseHandler mounseH = new MouseHandler(this);
 	private final Player player = new Player(this);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
@@ -62,10 +62,11 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setBackground(Color.white);
 		this.setDoubleBuffered(true);
-		this.addKeyListener(keyH);
-		this.addMouseListener(mounseH);
-		this.setFocusable(true);
-	}
+                this.addKeyListener(keyH);
+                this.addMouseListener(mounseH);
+                this.addMouseMotionListener(mounseH);
+                this.setFocusable(true);
+        }
 	
 	public void setUpGame() { 
 		player.getBag().add(new HealthPotion(30, 50));
@@ -167,12 +168,13 @@ public class GamePanel extends JPanel implements Runnable {
 	public List<SuperObject> getObjects() { return objects; }
 	public List<Entity> getNpcs() { return npcs; }
 
-	public int getGameState() { return gameState; }
-	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
-	public int getPlayState() { return playState; }
-	public int getPauseState() { return pauseState; }
-	public int getDialogueState() { return dialogueState; }
-	public Ui getUi() { return ui; }
+        public int getGameState() { return gameState; }
+        public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
+        public int getPlayState() { return playState; }
+        public int getPauseState() { return pauseState; }
+        public int getDialogueState() { return dialogueState; }
+        public Ui getUi() { return ui; }
+        public MouseHandler getMouseH() { return mounseH; }
 	
 }
 
