@@ -26,6 +26,7 @@ public class InventoryUi {
     private String[] contextOptions = new String[0];
     private int contextSelection = 0;
     private int contextX, contextY;
+    private int lastItemsX, lastItemsY;
 
     public InventoryUi(GamePanel gp) {
         this.gp = gp;
@@ -33,22 +34,47 @@ public class InventoryUi {
     }
 
     public void draw(Graphics2D g2) {
-        // Draw character panel on the left
-        characterScreen(g2);
+        int outerX = gp.getTileSize();
+        int outerY = gp.getTileSize();
+        int outerW = gp.getScreenWidth() - gp.getTileSize() * 2;
+        int outerH = gp.getScreenHeight() - gp.getTileSize() * 2;
+        g2.setColor(Color.YELLOW);
+        g2.setStroke(new BasicStroke(4f));
+        g2.drawRect(outerX, outerY, outerW, outerH);
 
-        int x = gp.getTileSize() * 8; // leave one tile gap after character panel
-        int y = gp.getTileSize();
+        int infoX = outerX + gp.getTileSize();
+        int infoY = outerY + gp.getTileSize();
+        int infoW = gp.getTileSize() * 6;
+        int infoH = outerH - gp.getTileSize() * 2;
+        HUDUtils.drawSubWindow(g2, infoX, infoY, infoW, infoH, new Color(0,0,0,200), Color.BLACK);
+
+        int itemsX = infoX + infoW + gp.getTileSize();
+        int itemsY = infoY;
+        int itemsW = outerW - (infoW + gp.getTileSize() * 2);
+        int itemsH = infoH;
+        HUDUtils.drawSubWindow(g2, itemsX, itemsY, itemsW, itemsH, new Color(0,0,0,200), Color.GREEN);
+        lastItemsX = itemsX;
+        lastItemsY = itemsY;
+
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
+        int textX = infoX + gp.getTileSize();
+        int textY = infoY + gp.getTileSize();
+        var attrs = gp.getPlayer().atts();
+        for (game.enums.Attr a : game.enums.Attr.values()) {
+            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
+            textY += 30;
+        }
 
         var items = gp.getPlayer().getBag().all();
-        handleInventoryInput(items, x, y);
-        hoverSlot = computeSlotIndex(x, y, gp.getMousePosition());
+        handleInventoryInput(items, itemsX, itemsY);
+        hoverSlot = computeSlotIndex(itemsX, itemsY, gp.getMousePosition());
 
-        itemGrid.draw(g2, x, y, items, selectedSlot, hoverSlot);
+        itemGrid.draw(g2, itemsX, itemsY, items, selectedSlot, hoverSlot);
         Dimension d = itemGrid.getPreferredSize();
 
         int infoIdx = hoverSlot >= 0 ? hoverSlot : selectedSlot;
         if (infoIdx >= 0 && infoIdx < items.size()) {
-            drawItemTooltip(g2, x + d.width + 10, y, items.get(infoIdx));
+            drawItemTooltip(g2, itemsX + d.width + 10, itemsY, items.get(infoIdx));
         }
 
         drawContextMenu(g2);
@@ -161,37 +187,9 @@ public class InventoryUi {
         g2.drawString(line2, x + padding, y + padding + 35);
     }
 
-    private void characterScreen(Graphics2D g2) {
-        int x = gp.getTileSize();
-        int y = gp.getTileSize();
-        int width = x * 6;
-        int height = y * 8;
-        drawSubWindow(x, y, width, height, g2);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
-        int textX = x + gp.getTileSize();
-        int textY = y + gp.getTileSize();
-
-        var attrs = gp.getPlayer().atts();
-        for(game.enums.Attr a : game.enums.Attr.values()) {
-            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
-            textY += 30;
-        }
-    }
-
-    private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
-        Color color = new Color(0, 0, 0, 210);
-        g2.setColor(color);
-        g2.fillRoundRect(x, y, width, height, 35, 35);
-
-        color = new Color(255, 255, 255);
-        g2.setColor(color);
-        g2.setStroke(new BasicStroke(5));
-        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
-    }
-
     public boolean handleMousePress(int mx, int my, int button) {
-        int baseX = gp.getTileSize() * 7;
-        int baseY = gp.getTileSize();
+        int baseX = lastItemsX;
+        int baseY = lastItemsY;
         int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
         if (idx >= 0 && idx < itemGrid.getCols() * itemGrid.getRows()) {
