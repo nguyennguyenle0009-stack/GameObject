@@ -170,10 +170,12 @@ public class Player extends GameActor implements DrawableEntity {
                         monster.getCollisionArea().width,
                         monster.getCollisionArea().height
                 );
-                if (attackRect.intersects(monsterRect) && monster instanceof GameActor m) {
+                // If the attack intersects a monster, apply damage using Monster interface
+                if (attackRect.intersects(monsterRect) && monster instanceof game.entity.monster.Monster m) {
                     int damage = atts().get(game.enums.Attr.ATTACK);
-                    m.atts().add(game.enums.Attr.HEALTH, -damage);
-                    if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                    m.takeDamage(damage);
+                    // Remove monster from list when it dies
+                    if (!m.isAlive()) {
                         gp.getMonsters().remove(i);
                         i--;
                     }
