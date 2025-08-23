@@ -73,7 +73,7 @@ public class ItemGridUi {
                         }
                     }
 
-                    // highlight
+                    // highlight first so quantity text draws over it
                     if (idx == selectedSlot) {
                         g2.setColor(Color.YELLOW);
                         g2.setStroke(new BasicStroke(3f));
@@ -83,6 +83,8 @@ public class ItemGridUi {
                         g2.setStroke(new BasicStroke(3f));
                         g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
                     }
+                    // reset stroke before drawing quantity
+                    g2.setStroke(new BasicStroke(1f));
 
                     // số lượng
                     if (it != null) {
@@ -90,10 +92,12 @@ public class ItemGridUi {
                         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 14f));
                         FontMetrics fm = g2.getFontMetrics();
                         int tw = fm.stringWidth(q), th = fm.getAscent();
+                        int boxX = xx + slotSize - tw - 12;
+                        int boxY = yy + slotSize - th - 8;
                         g2.setColor(new Color(0,0,0,160));
-                        g2.fillRoundRect(xx + slotSize - tw - 10, yy + slotSize - th - 6, tw + 8, th + 4, 8, 8);
+                        g2.fillRoundRect(boxX, boxY, tw + 8, th + 4, 8, 8);
                         g2.setColor(Color.WHITE);
-                        g2.drawString(q, xx + slotSize - tw - 6, yy + slotSize - 8 + th);
+                        g2.drawString(q, boxX + 4, boxY + th + 1);
                     }
                 }
             }

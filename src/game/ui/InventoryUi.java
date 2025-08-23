@@ -36,7 +36,7 @@ public class InventoryUi {
         // Draw character panel on the left
         characterScreen(g2);
 
-        int x = gp.getTileSize() * 7;
+        int x = gp.getTileSize() * 8; // leave one tile gap after character panel
         int y = gp.getTileSize();
 
         var items = gp.getPlayer().getBag().all();
