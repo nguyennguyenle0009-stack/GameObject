@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.monster.Monster;
 import game.interfaces.DrawableEntity;
 
 import game.main.GamePanel;
@@ -159,6 +160,9 @@ public class Player extends GameActor implements DrawableEntity {
             return new Rectangle(attackX, attackY, attackArea.width, attackArea.height);
         }
 
+        /**
+         * Performs a melee attack and damages monsters in range.
+         */
         private void physicalAttack() {
             Rectangle attackRect = getAttackRectangle();
             for (int i = 0; i < gp.getMonsters().size(); i++) {
@@ -170,10 +174,10 @@ public class Player extends GameActor implements DrawableEntity {
                         monster.getCollisionArea().width,
                         monster.getCollisionArea().height
                 );
-                if (attackRect.intersects(monsterRect) && monster instanceof GameActor m) {
+                if (attackRect.intersects(monsterRect) && monster instanceof Monster m) {
                     int damage = atts().get(game.enums.Attr.ATTACK);
-                    m.atts().add(game.enums.Attr.HEALTH, -damage);
-                    if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                    m.takeDamage(damage);
+                    if (m.isDead()) {
                         gp.getMonsters().remove(i);
                         i--;
                     }
