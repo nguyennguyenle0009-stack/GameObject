@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.enums.Attr;
 import game.interfaces.DrawableEntity;
 
 import game.main.GamePanel;
@@ -127,12 +128,7 @@ public class Player extends GameActor implements DrawableEntity {
         int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
         interactWithNPC(npcIndex);
 
-        int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
-        if (monsterIndex != 999 && !invincible) {
-            atts().add(game.enums.Attr.HEALTH, -1);
-            gp.getUi().triggerDamageEffect();
-            invincible = true;
-        }
+        gp.getCheckCollision().checkEntity(this, gp.getMonsters());
 	}
 	
 	// check NPC trong phạm vi
@@ -209,8 +205,16 @@ public class Player extends GameActor implements DrawableEntity {
     
     // Sử dụng item
     public void useItem(Item i) {
-    	i.use(this);
-    	if(i.getQuantity() == 0) bag.remove(i);
+        i.use(this);
+        if(i.getQuantity() == 0) bag.remove(i);
+    }
+
+    public void takeDamage(int amount) {
+        if (!invincible) {
+            atts().add(Attr.HEALTH, -amount);
+            gp.getUi().triggerDamageEffect();
+            invincible = true;
+        }
     }
 
 	public int getScreenX() { return screenX; }
