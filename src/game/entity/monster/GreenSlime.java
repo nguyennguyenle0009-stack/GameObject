@@ -6,8 +6,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Random;
 
-import game.entity.GameActor;
 import game.enums.Attr;
+
+import game.entity.GameActor;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 
@@ -16,6 +17,9 @@ import game.util.CameraHelper;
  */
 public class GreenSlime extends GameActor {
     private final Random random = new Random();
+    private final Rectangle attackArea;
+    private int attackCooldown = 0;
+    private static final int ATTACK_INTERVAL = 60;
 
     public GreenSlime(GamePanel gp) {
         super(gp);
@@ -25,6 +29,7 @@ public class GreenSlime extends GameActor {
         setScaleEntityY(gp.getTileSize());
         setCollisionArea(new Rectangle(8, 16, 32, 32));
         atts().set(Attr.HEALTH, 10);
+        attackArea = new Rectangle(-8, -8, gp.getTileSize() + 16, gp.getTileSize() + 16);
     }
 
     @Override
@@ -32,6 +37,7 @@ public class GreenSlime extends GameActor {
         setAction();
         checkCollision();
         moveIfCollisionNotDetected();
+        attackPlayer();
         checkAndChangeSpriteAnimation();
     }
 
@@ -52,10 +58,39 @@ public class GreenSlime extends GameActor {
         Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
         g2.setColor(Color.GREEN);
         g2.fillOval(screenPos.x, screenPos.y, getScaleEntityX(), getScaleEntityY());
+        if (gp.keyH.isDrawRect()) {
+            g2.setColor(Color.RED);
+            g2.drawRect(screenPos.x + attackArea.x, screenPos.y + attackArea.y,
+                    attackArea.width, attackArea.height);
+        }
     }
 
     @Override
     public void draw(Graphics2D g2) {
         // not used
+    }
+
+    private void attackPlayer() {
+        if (attackCooldown > 0) {
+            attackCooldown--;
+            return;
+        }
+
+        Rectangle attackZone = new Rectangle(
+                getWorldX() + attackArea.x,
+                getWorldY() + attackArea.y,
+                attackArea.width,
+                attackArea.height);
+
+        Rectangle playerArea = new Rectangle(
+                gp.getPlayer().getWorldX() + gp.getPlayer().getCollisionArea().x,
+                gp.getPlayer().getWorldY() + gp.getPlayer().getCollisionArea().y,
+                gp.getPlayer().getCollisionArea().width,
+                gp.getPlayer().getCollisionArea().height);
+
+        if (attackZone.intersects(playerArea)) {
+            gp.getPlayer().takeDamage(1);
+            attackCooldown = ATTACK_INTERVAL;
+        }
     }
 }
