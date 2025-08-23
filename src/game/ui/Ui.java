@@ -12,6 +12,7 @@ import java.util.List;
 import game.entity.Entity;
 import game.entity.item.Item;
 import game.entity.item.ItemAction;
+import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.UtilityTool;
 
@@ -44,21 +45,41 @@ public class Ui {
     }
 	
     public void draw(Graphics2D g2) {
-    	this.g2 = g2;
-		g2.setColor(Color.white);
-		if (gp.getGameState() == gp.getPlayState()) {
-			drawInteractionHint(g2);
-		}
-		if(gp.getGameState() == gp.getPauseState()) {
-			drawPauseScreen();
-		}
-		if(gp.getGameState() == gp.getDialogueState()) {
-			drawDialogueScreen();
-		}
-		if(gp.keyH.isiPressed() == true) {
-			drawInventory(g2);
-		}
-	}
+        this.g2 = g2;
+        g2.setColor(Color.white);
+        drawPlayerStatus(g2);
+        if (gp.getGameState() == gp.getPlayState()) {
+            drawInteractionHint(g2);
+        }
+        if(gp.getGameState() == gp.getPauseState()) {
+            drawPauseScreen();
+        }
+        if(gp.getGameState() == gp.getDialogueState()) {
+            drawDialogueScreen();
+        }
+        if(gp.keyH.isiPressed() == true) {
+            drawInventory(g2);
+        }
+    }
+
+    private void drawPlayerStatus(Graphics2D g2) {
+        int boxSize = gp.getTileSize() * 3;
+        int x = 10;
+        int y = 10;
+        HUDUtils.drawSubWindow(g2, x, y, boxSize, boxSize,
+                new Color(0, 0, 0, 150), Color.white);
+        g2.setColor(Color.WHITE);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
+        int textX = x + 10;
+        int textY = y + 30;
+        int lineH = 25;
+        int hp = gp.getPlayer().atts().get(Attr.HEALTH);
+        g2.drawString("HP: " + hp, textX, textY);
+        textY += lineH;
+        g2.drawString("EXP: " + gp.getPlayer().getExp(), textX, textY);
+        textY += lineH;
+        g2.drawString("LVL: " + gp.getPlayer().getLevel(), textX, textY);
+    }
     
     private void drawInventory(Graphics2D g2) {
         int x = gp.getTileSize();
