@@ -227,16 +227,24 @@ public class Player extends GameActor implements DrawableEntity {
 	@Override
 	public void draw(Graphics2D g2) { }
 	
-	@Override
-	public void draw(Graphics2D g2, GamePanel gp) {
-		Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-		g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
-		if(gp.keyH.isDrawRect() == true) {
-	        g2.setColor(Color.BLUE);
-	        g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y, 
-	        		getCollisionArea().width, getCollisionArea().height);
-		}
-	}
+    @Override
+    public void draw(Graphics2D g2, GamePanel gp) {
+            Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
+            g2.drawImage(getDirectionImage(), screenPos.x, screenPos.y, null);
+
+            if (attacking) {
+                Rectangle attackRect = getAttackRectangle();
+                Point attackScreen = CameraHelper.worldToScreen(attackRect.x, attackRect.y, gp);
+                g2.setColor(Color.RED);
+                g2.drawRect(attackScreen.x, attackScreen.y, attackRect.width, attackRect.height);
+            }
+
+            if(gp.keyH.isDrawRect() == true) {
+            g2.setColor(Color.BLUE);
+            g2.drawRect(screenPos.x+getCollisionArea().x, screenPos.y + getCollisionArea().y,
+                            getCollisionArea().width, getCollisionArea().height);
+            }
+    }
 
 	private BufferedImage getDirectionImage() {
 		BufferedImage image = null;
