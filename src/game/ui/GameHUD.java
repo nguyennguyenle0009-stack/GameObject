@@ -21,9 +21,6 @@ public class GameHUD {
     private static final Color EXP_FILL = new Color(250, 150, 40);
     private static final Color BAR_BACK = new Color(30, 30, 30, 180);
     private static final Color BAR_BORDER = new Color(0, 0, 0, 180);
-    private static final int MAX_HEALTH = 100;
-    private static final int MAX_PEP = 100;
-    private static final int MAX_SPIRIT = 100;
 
     public GameHUD(GamePanel gp) {
         this.gp = gp;
@@ -36,7 +33,7 @@ public class GameHUD {
         int margin = 5;
 
         // draw realm box
-        String realmText = p.getRealm().getDisplayName();
+        String realmText = p.getRealmName();
         int boxWidth = g2.getFontMetrics().stringWidth(realmText) + 20;
         int boxHeight = barHeight;
         HUDUtils.drawSubWindow(g2, margin, margin, boxWidth, boxHeight, BAR_BACK, BAR_BORDER);
@@ -47,13 +44,13 @@ public class GameHUD {
         int y = margin;
 
         drawBar(g2, x, y, barWidth, barHeight,
-                p.atts().get(Attr.HEALTH), MAX_HEALTH, HP_FILL);
+                p.atts().get(Attr.HEALTH), p.atts().getMax(Attr.HEALTH), HP_FILL);
         y += barHeight + 6;
         drawBar(g2, x, y, barWidth, barHeight,
-                p.atts().get(Attr.PEP), MAX_PEP, MP_FILL);
+                p.atts().get(Attr.PEP), p.atts().getMax(Attr.PEP), MP_FILL);
         y += barHeight + 6;
         drawBar(g2, x, y, barWidth, barHeight,
-                p.atts().get(Attr.SPIRIT), MAX_SPIRIT, EXP_FILL);
+                p.atts().get(Attr.SPIRIT), p.atts().getMax(Attr.SPIRIT), EXP_FILL);
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int w, int h,
