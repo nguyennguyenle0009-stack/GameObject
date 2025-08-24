@@ -22,6 +22,18 @@
 
 ### Bug phát hiện
 - Tooltip của item tiếp tục hiển thị khi rời ô (đã sửa).
+
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Hệ thống **tu luyện** gồm các cảnh giới Phàm nhân, Luyện thể, Luyện khí với cơ chế tăng tầng.
+- Thể chất (**Physique**) và linh căn (**Affinity**) được sinh ngẫu nhiên khi tạo nhân vật.
+- Item thử nghiệm **Đan dược tinh thần** để tăng SPIRIT và lên cấp.
+- Hiển thị chỉ số dạng *hiện tại/tối đa* cùng tên cảnh giới, thể chất, linh căn.
+
+### Sửa lỗi
+- Bình máu không còn giới hạn cứng ở 100.
+- Chỉ số sau khi lên cấp được lưu lại bằng file `player_stats.properties`.
 	
 ## Cách chạy
 
