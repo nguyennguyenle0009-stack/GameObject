@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import game.entity.GameActor;
+import game.entity.Entity;
 import game.enums.Attr;
 import game.main.GamePanel;
 
@@ -43,6 +44,10 @@ public abstract class Monster extends GameActor {
     protected final Random random = new Random();
     /** Khu vực mà quái vật được phép di chuyển */
     protected Rectangle movementArea;
+    /** Tự động phát hiện người chơi khi vào khu vực sinh */
+    protected boolean autoDetectPlayerInZone = false;
+    /** Có thể tấn công các quái vật khác */
+    protected boolean canAttackMonsters = false;
 
     /**
      * Tạo quái vật mới.
@@ -80,9 +85,9 @@ public abstract class Monster extends GameActor {
      * @return true nếu trong phạm vi
      */
     protected boolean isPlayerInRange() {
-        if (movementArea != null &&
-            !movementArea.contains(gp.getPlayer().getWorldX(), gp.getPlayer().getWorldY())) {
-            return false;
+        if (autoDetectPlayerInZone && movementArea != null &&
+            movementArea.contains(gp.getPlayer().getWorldX(), gp.getPlayer().getWorldY())) {
+            return true;
         }
         int dx = gp.getPlayer().getWorldX() - getWorldX();
         int dy = gp.getPlayer().getWorldY() - getWorldY();
@@ -193,7 +198,25 @@ public abstract class Monster extends GameActor {
                 gp.getPlayer().getCollisionArea().width,
                 gp.getPlayer().getCollisionArea().height
             );
-            if (attackCooldown == 0 && attackRect.intersects(playerRect)) {
+            boolean hitPlayer = attackRect.intersects(playerRect);
+            boolean hitMonster = false;
+            if (!hitPlayer && canAttackMonsters) {
+                for (Entity e : gp.getMonsters()) {
+                    if (e == this || !(e instanceof Monster)) continue;
+                    Monster m = (Monster) e;
+                    Rectangle mRect = new Rectangle(
+                        m.getWorldX() + m.getCollisionArea().x,
+                        m.getWorldY() + m.getCollisionArea().y,
+                        m.getCollisionArea().width,
+                        m.getCollisionArea().height
+                    );
+                    if (attackRect.intersects(mRect)) {
+                        hitMonster = true;
+                        break;
+                    }
+                }
+            }
+            if (attackCooldown == 0 && (hitPlayer || hitMonster)) {
                 attacking = true;
             }
         }
@@ -228,6 +251,24 @@ public abstract class Monster extends GameActor {
         if (attackRect.intersects(playerRect)) {
             gp.getPlayer().atts().add(Attr.HEALTH, -attackDamage);
             gp.getUi().triggerDamageEffect();
+        }
+        if (canAttackMonsters) {
+            for (Entity e : new ArrayList<>(gp.getMonsters())) {
+                if (e == this || !(e instanceof Monster)) continue;
+                Monster m = (Monster) e;
+                Rectangle mRect = new Rectangle(
+                    m.getWorldX() + m.getCollisionArea().x,
+                    m.getWorldY() + m.getCollisionArea().y,
+                    m.getCollisionArea().width,
+                    m.getCollisionArea().height
+                );
+                if (attackRect.intersects(mRect)) {
+                    if (m.takeDamage(attackDamage)) {
+                        gp.getMonsters().remove(e);
+                        m.dropItem();
+                    }
+                }
+            }
         }
     }
 
@@ -293,6 +334,28 @@ public abstract class Monster extends GameActor {
     public void setMovementArea(Rectangle area) { this.movementArea = area; }
 
     /**
+     * Bật/tắt phát hiện người chơi khi vào khu vực sinh.
+     */
+    public void setAutoDetectPlayerInZone(boolean enabled) {
+        this.autoDetectPlayerInZone = enabled;
+    }
+
+    public boolean isAutoDetectPlayerInZone() {
+        return autoDetectPlayerInZone;
+    }
+
+    /**
+     * Bật/tắt khả năng tấn công quái vật khác.
+     */
+    public void setCanAttackMonsters(boolean enabled) {
+        this.canAttackMonsters = enabled;
+    }
+
+    public boolean isCanAttackMonsters() {
+        return canAttackMonsters;
+    }
+
+    /**
      * Di chuyển nhưng không vượt ra ngoài khu vực cho phép.
      */
     @Override
@@ -306,12 +369,20 @@ public abstract class Monster extends GameActor {
                 case "left" -> nextX -= getSpeed();
                 case "right" -> nextX += getSpeed();
             }
-            if (movementArea == null ||
+            boolean within = movementArea == null ||
                 (movementArea.contains(nextX, nextY) &&
                  movementArea.contains(nextX + getScaleEntityX() - 1,
-                                       nextY + getScaleEntityY() - 1))) {
+                                       nextY + getScaleEntityY() - 1));
+            if (within) {
                 setWorldX(nextX);
                 setWorldY(nextY);
+            } else {
+                switch (getDirection()) {
+                    case "up" -> setDirection("down");
+                    case "down" -> setDirection("up");
+                    case "left" -> setDirection("right");
+                    case "right" -> setDirection("left");
+                }
             }
         }
     }
