@@ -6,6 +6,15 @@
 
 ## Cập nhật
 
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Hệ thống **Thể chất** và **Linh căn** khi khởi tạo nhân vật.
+- Item **Đan dược tăng SPIRIT** giúp kiểm tra việc lên cấp.
+
+### Thay đổi
+- Mở rộng hệ thống cảnh giới với các tầng và quy tắc tăng chỉ số.
+
 ## [1.0.3] - 2025-08-08
 
 ### Thêm
