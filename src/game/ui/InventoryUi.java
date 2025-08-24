@@ -11,6 +11,7 @@ import java.util.List;
 
 import game.entity.item.Item;
 import game.main.GamePanel;
+import game.enums.Affinity;
 
 /**
  * Handles rendering and interaction for the player's inventory.
@@ -190,18 +191,34 @@ public class InventoryUi {
     private void characterScreen(Graphics2D g2, int topY) {
         int x = gp.getTileSize();
         int y = topY;
-        int width = x * 6;
-        int height = gp.getTileSize() * 8; // keep character box size constant
+        int width = x * 7; // rộng hơn để hiển thị chỉ số lớn
+        int height = gp.getTileSize() * 9;
         drawSubWindow(x, y, width, height, g2);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
         int textX = x + gp.getTileSize();
         int textY = y + gp.getTileSize();
 
         var attrs = gp.getPlayer().atts();
+        // hiển thị các thuộc tính chiến đấu
         for(game.enums.Attr a : game.enums.Attr.values()) {
-            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
-            textY += 30;
+            if (a == game.enums.Attr.PHYSIQUE || a == game.enums.Attr.AFFINITY) continue;
+            String line = a.displayerName() + ": ";
+            if (a == game.enums.Attr.HEALTH || a == game.enums.Attr.PEP || a == game.enums.Attr.SPIRIT) {
+                line += attrs.get(a) + "/" + attrs.getMax(a);
+            } else {
+                line += attrs.get(a);
+            }
+            g2.drawString(line, textX, textY);
+            textY += 24;
         }
+
+        // thông tin cảnh giới, thể chất và linh căn
+        var p = gp.getPlayer();
+        g2.drawString("Realm: " + p.getRealm().getDisplayName() + " " + p.getRealmLevel(), textX, textY); textY += 24;
+        g2.drawString("Physique: " + p.getPhysique().getDisplayName(), textX, textY); textY += 24;
+        String aff = p.getAffinities().isEmpty() ? "None" : p.getAffinities().stream()
+                .map(Affinity::getDisplayName).reduce((a,b) -> a+","+b).orElse("");
+        g2.drawString("Affinity: " + aff, textX, textY);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {

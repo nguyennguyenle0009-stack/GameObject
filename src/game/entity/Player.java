@@ -16,6 +16,9 @@ import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Realm;
+import game.enums.Physique;
+import game.enums.Affinity;
+import java.util.EnumSet;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -38,8 +41,13 @@ public class Player extends GameActor implements DrawableEntity {
     private static final int ATTACK_COOLDOWN = 20;
     private static final int ATTACK_DURATION = 10;
 
-    // Cảnh giới hiện tại của người chơi
+    // Cảnh giới và cấp độ hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
+    private int realmLevel = 0; // cấp độ nhỏ trong cảnh giới hiện tại
+
+    // Thể chất và linh căn của nhân vật
+    private Physique physique = Physique.NORMAL;
+    private EnumSet<Affinity> affinities = EnumSet.noneOf(Affinity.class);
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -51,21 +59,31 @@ public class Player extends GameActor implements DrawableEntity {
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
 
         }
-	public void setDefaultValue() {
-		setWorldX(100); 
-		setWorldY(100);
-		setSpeed(4);
-		setDirection("down");
-		setSpriteCouter(0);
+        public void setDefaultValue() {
+                setWorldX(100);
+                setWorldY(100);
+                setSpeed(4);
+                setDirection("down");
+                setSpriteCouter(0);
                 setSpriteNum(1);
                 setName("Nguyeen pro");
-                atts().set(game.enums.Attr.HEALTH, 100);
-                atts().set(game.enums.Attr.PEP, 100);
+
+                // thiết lập chỉ số cơ bản và giá trị tối đa ban đầu
+                atts().setBoth(game.enums.Attr.HEALTH, 100);
+                atts().setBoth(game.enums.Attr.PEP, 100);
                 atts().set(game.enums.Attr.SPIRIT, 0);
-                atts().set(game.enums.Attr.ATTACK, 5);
-                atts().set(game.enums.Attr.DEF, 4);
-        setScaleEntityX(gp.getTileSize());
-        setScaleEntityY(gp.getTileSize());
+                atts().setMax(game.enums.Attr.SPIRIT, 100); // yêu cầu để lên Luyện thể tầng 1
+                atts().setBoth(game.enums.Attr.ATTACK, 10);
+                atts().setBoth(game.enums.Attr.DEF, 5);
+                atts().setBoth(game.enums.Attr.STRENGTH, 1);
+                atts().setBoth(game.enums.Attr.SOULD, 5);
+
+                // Thể chất mặc định và một linh căn để hiển thị
+                physique = Physique.NORMAL;
+                affinities.add(Affinity.FIRE);
+
+                setScaleEntityX(gp.getTileSize());
+                setScaleEntityY(gp.getTileSize());
         }
 	
     private void setCollision() {
@@ -192,6 +210,10 @@ public class Player extends GameActor implements DrawableEntity {
                 // Nếu đòn đánh trúng quái
                 if (attackRect.intersects(monsterRect)) {
                     int damage = atts().get(game.enums.Attr.ATTACK);
+                    // Thần Thể: sát thương cộng thêm 10 lần chỉ số tấn công
+                    if (physique == Physique.THAN_THE) {
+                        damage += atts().get(game.enums.Attr.ATTACK) * 10;
+                    }
                     if (monster instanceof Monster m) {
                         // Quái vật có quản lý máu riêng
                         if (m.takeDamage(damage)) {
@@ -318,5 +340,107 @@ public class Player extends GameActor implements DrawableEntity {
 	public int getScreenY() { return screenY; }
 
 	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	public Inventory getBag() { return bag; } 
+        public Inventory getBag() { return bag; }
+
+    /** Returns current small level within the realm. */
+    public int getRealmLevel() { return realmLevel; }
+
+    public Physique getPhysique() { return physique; }
+
+    public EnumSet<Affinity> getAffinities() { return affinities; }
+
+    /**
+     * Increase SPIRIT (experience) and handle level ups automatically.
+     */
+    public void gainSpirit(int amount) {
+        if (physique == Physique.TIEN_LINH_THE) {
+            amount *= 3; // Tiên Linh Thể: tốc độ tu luyện x3
+        }
+        atts().add(game.enums.Attr.SPIRIT, amount);
+        while (atts().get(game.enums.Attr.SPIRIT) >= atts().getMax(game.enums.Attr.SPIRIT)) {
+            levelUp();
+        }
+    }
+
+    /**
+     * Apply stat changes when leveling up according to current realm.
+     */
+    private void levelUp() {
+        atts().add(game.enums.Attr.SPIRIT, -atts().getMax(game.enums.Attr.SPIRIT));
+
+        switch (realm) {
+            case PHAM_NHAN -> {
+                realm = Realm.LUYEN_THE;
+                realmLevel = 1;
+                applyLuyenTheIncrease();
+                atts().setMax(game.enums.Attr.SPIRIT, 1000);
+            }
+            case LUYEN_THE -> {
+                realmLevel++;
+                applyLuyenTheIncrease();
+                if (realmLevel >= getMaxSubLevel()) {
+                    // Đột phá lên Luyện khí kỳ
+                    realm = Realm.LUYEN_KHI;
+                    realmLevel = 1;
+                    applyBreakThrough();
+                    atts().setMax(game.enums.Attr.SPIRIT, 1000);
+                } else {
+                    atts().setMax(game.enums.Attr.SPIRIT, atts().getMax(game.enums.Attr.SPIRIT) * 2);
+                }
+            }
+            case LUYEN_KHI -> {
+                realmLevel++;
+                applyLuyenKhiIncrease();
+                atts().setMax(game.enums.Attr.SPIRIT, atts().getMax(game.enums.Attr.SPIRIT) * 2);
+            }
+        }
+        atts().set(game.enums.Attr.SPIRIT, 0);
+    }
+
+    // --------- realm stat helpers ----------
+
+    /**
+     * Stat increase for each level in Luyện thể kỳ.
+     */
+    private void applyLuyenTheIncrease() {
+        atts().setBoth(game.enums.Attr.HEALTH, (int) (atts().getMax(game.enums.Attr.HEALTH) * 1.5));
+        atts().setBoth(game.enums.Attr.PEP, (int) (atts().getMax(game.enums.Attr.PEP) * 1.5));
+        atts().setBoth(game.enums.Attr.ATTACK, (int) (atts().getMax(game.enums.Attr.ATTACK) * 1.5));
+        atts().setBoth(game.enums.Attr.DEF, atts().getMax(game.enums.Attr.DEF) * 3);
+        if (physique == Physique.THANH_THE) {
+            // DEF x2 khi có Thánh Thể
+            atts().setBoth(game.enums.Attr.DEF, atts().getMax(game.enums.Attr.DEF) * 2);
+        }
+    }
+
+    /**
+     * Stat increase for each level in Luyện khí kỳ.
+     */
+    private void applyLuyenKhiIncrease() {
+        atts().setBoth(game.enums.Attr.HEALTH, atts().getMax(game.enums.Attr.HEALTH) * 2);
+        atts().setBoth(game.enums.Attr.ATTACK, atts().getMax(game.enums.Attr.ATTACK) * 2);
+        int newPep = atts().get(game.enums.Attr.PEP) + atts().getMax(game.enums.Attr.SPIRIT) / 5;
+        atts().setBoth(game.enums.Attr.PEP, newPep);
+        atts().setBoth(game.enums.Attr.DEF, (int) (atts().getMax(game.enums.Attr.DEF) * 1.5));
+        if (physique == Physique.THANH_THE) {
+            atts().setBoth(game.enums.Attr.DEF, atts().getMax(game.enums.Attr.DEF) * 2);
+        }
+    }
+
+    /** Multiply all stats by 2 when breaking through to a new major realm. */
+    private void applyBreakThrough() {
+        for (game.enums.Attr a : new game.enums.Attr[]{game.enums.Attr.HEALTH, game.enums.Attr.PEP,
+                game.enums.Attr.SPIRIT, game.enums.Attr.ATTACK, game.enums.Attr.DEF}) {
+            atts().setBoth(a, atts().getMax(a) * 2);
+        }
+    }
+
+    /** Determine maximum sublevel based on physique. */
+    private int getMaxSubLevel() {
+        return switch (physique) {
+            case HU_KHONG -> 15;
+            case HU_KHONG_DAI_DE -> 20;
+            default -> 10;
+        };
+    }
 }
