@@ -60,14 +60,14 @@ public class SkeletonLord extends Monster {
         setLeft2(setup("/data/monster/skeleton/skeletonlord_left_2"));
         setRight1(setup("/data/monster/skeleton/skeletonlord_right_1"));
         setRight2(setup("/data/monster/skeleton/skeletonlord_right_2"));
-        attackUp1 = setup("/data/monster/skeleton/skeletonlord_attack_up_1");
-        attackUp2 = setup("/data/monster/skeleton/skeletonlord_attack_up_2");
-        attackDown1 = setup("/data/monster/skeleton/skeletonlord_attack_down_1");
-        attackDown2 = setup("/data/monster/skeleton/skeletonlord_attack_down_2");
-        attackLeft1 = setup("/data/monster/skeleton/skeletonlord_attack_left_1");
-        attackLeft2 = setup("/data/monster/skeleton/skeletonlord_attack_left_2");
-        attackRight1 = setup("/data/monster/skeleton/skeletonlord_attack_right_1");
-        attackRight2 = setup("/data/monster/skeleton/skeletonlord_attack_right_2");
+        attackUp1 = setup("/data/monster/skeleton/skeletonlord_attack_up_1", gp.getTileSize(), gp.getTileSize() * 2);
+        attackUp2 = setup("/data/monster/skeleton/skeletonlord_attack_up_2", gp.getTileSize(), gp.getTileSize() * 2);
+        attackDown1 = setup("/data/monster/skeleton/skeletonlord_attack_down_1", gp.getTileSize(), gp.getTileSize() * 2);
+        attackDown2 = setup("/data/monster/skeleton/skeletonlord_attack_down_2", gp.getTileSize(), gp.getTileSize() * 2);
+        attackLeft1 = setup("/data/monster/skeleton/skeletonlord_attack_left_1", gp.getTileSize() * 2, gp.getTileSize());
+        attackLeft2 = setup("/data/monster/skeleton/skeletonlord_attack_left_2", gp.getTileSize() * 2, gp.getTileSize());
+        attackRight1 = setup("/data/monster/skeleton/skeletonlord_attack_right_1", gp.getTileSize() * 2, gp.getTileSize());
+        attackRight2 = setup("/data/monster/skeleton/skeletonlord_attack_right_2", gp.getTileSize() * 2, gp.getTileSize());
     }
 
     /**
@@ -76,8 +76,16 @@ public class SkeletonLord extends Monster {
     @Override
     public void draw(Graphics2D g2, GamePanel gp) {
         Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-        g2.drawImage(getCurrentImage(), screenPos.x, screenPos.y, null);
-        drawHealthBar(g2, screenPos);
+        int screenX = screenPos.x;
+        int screenY = screenPos.y;
+        if (attacking) {
+            switch (getDirection()) {
+                case "up" -> screenY -= gp.getTileSize();
+                case "left" -> screenX -= gp.getTileSize();
+            }
+        }
+        g2.drawImage(getCurrentImage(), screenX, screenY, null);
+        drawHealthBar(g2, new Point(screenX, screenY));
     }
 
     /** Lấy ảnh hiện tại theo trạng thái */

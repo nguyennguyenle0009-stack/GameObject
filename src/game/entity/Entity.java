@@ -94,15 +94,25 @@ public abstract class Entity implements DrawableEntity {
 		if(resestTime == 20) { setSpriteNum(1); resestTime = 0; }
 	}
 	
-	public BufferedImage setup(String imagePath) {
-	    BufferedImage image = null;
-	    try {
-	        image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	    return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
-	}
+        public BufferedImage setup(String imagePath) {
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
+        }
+
+        public BufferedImage setup(String imagePath, int width, int height) {
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return UtilityTool.scaleImage(image, width, height);
+        }
 
 	
 	@Override
