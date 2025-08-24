@@ -5,6 +5,17 @@
 ## Tính năng
 
 ## Cập nhật
+
+## [1.0.2] - 2025-08-07
+
+
+
+### Sửa lỗi
+- Ẩn mô tả item khi chuột rời ô.
+
+
+### Bug phát hiện
+- Tooltip của item tiếp tục hiển thị khi rời ô (đã sửa).
 	
 ## Cách chạy
 
