@@ -10,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import game.entity.item.Item;
+import game.entity.Player;
+import game.enums.Attr;
 import game.main.GamePanel;
 
 /**
@@ -182,26 +184,28 @@ public class InventoryUi {
         g2.drawString(line2, x + padding, y + padding + 35);
     }
 
-    /**
-     * Draws the character attribute box at a given vertical offset.
-     *
-     * @param topY starting Y position of the box
-     */
     private void characterScreen(Graphics2D g2, int topY) {
         int x = gp.getTileSize();
         int y = topY;
         int width = x * 6;
-        int height = gp.getTileSize() * 8; // keep character box size constant
+        int height = gp.getTileSize() * 8;
         drawSubWindow(x, y, width, height, g2);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
         int textX = x + gp.getTileSize();
         int textY = y + gp.getTileSize();
 
-        var attrs = gp.getPlayer().atts();
-        for(game.enums.Attr a : game.enums.Attr.values()) {
-            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
-            textY += 30;
-        }
+        Player p = gp.getPlayer();
+        var attrs = p.atts();
+        g2.drawString("Realm: " + p.getRealmDisplay(), textX, textY); textY += 24;
+        g2.drawString("Physique: " + p.getPhysique().getDisplayName(), textX, textY); textY += 24;
+        g2.drawString("Affinity: " + p.getAffinityDisplay(), textX, textY); textY += 24;
+        g2.drawString("Health: " + attrs.get(Attr.HEALTH) + "/" + p.getMaxHealth(), textX, textY); textY += 24;
+        g2.drawString("Pep: " + attrs.get(Attr.PEP) + "/" + p.getMaxPep(), textX, textY); textY += 24;
+        g2.drawString("Spirit: " + attrs.get(Attr.SPIRIT) + "/" + p.getMaxSpirit(), textX, textY); textY += 24;
+        g2.drawString("Attack: " + attrs.get(Attr.ATTACK), textX, textY); textY += 24;
+        g2.drawString("Def: " + attrs.get(Attr.DEF), textX, textY); textY += 24;
+        g2.drawString("Strength: " + attrs.get(Attr.STRENGTH), textX, textY); textY += 24;
+        g2.drawString("Sould: " + attrs.get(Attr.SOULD), textX, textY);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
