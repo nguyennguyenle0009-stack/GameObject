@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import game.entity.GameActor;
+import game.entity.Entity;
 import game.enums.Attr;
 import game.main.GamePanel;
 
@@ -43,6 +44,10 @@ public abstract class Monster extends GameActor {
     protected final Random random = new Random();
     /** Khu vực mà quái vật được phép di chuyển */
     protected Rectangle movementArea;
+    /** Cờ phát hiện người chơi khi vào khu vực spawn */
+    private boolean detectInSpawnArea = false;
+    /** Cờ cho phép tấn công các quái vật khác */
+    private boolean canAttackMonsters = false;
 
     /**
      * Tạo quái vật mới.
@@ -80,12 +85,13 @@ public abstract class Monster extends GameActor {
      * @return true nếu trong phạm vi
      */
     protected boolean isPlayerInRange() {
-        if (movementArea != null &&
-            !movementArea.contains(gp.getPlayer().getWorldX(), gp.getPlayer().getWorldY())) {
-            return false;
+        int playerX = gp.getPlayer().getWorldX();
+        int playerY = gp.getPlayer().getWorldY();
+        if (detectInSpawnArea && movementArea != null && movementArea.contains(playerX, playerY)) {
+            return true;
         }
-        int dx = gp.getPlayer().getWorldX() - getWorldX();
-        int dy = gp.getPlayer().getWorldY() - getWorldY();
+        int dx = playerX - getWorldX();
+        int dy = playerY - getWorldY();
         double distance = Math.sqrt(dx * dx + dy * dy);
         return distance < detectionRange;
     }
@@ -193,7 +199,24 @@ public abstract class Monster extends GameActor {
                 gp.getPlayer().getCollisionArea().width,
                 gp.getPlayer().getCollisionArea().height
             );
-            if (attackCooldown == 0 && attackRect.intersects(playerRect)) {
+            boolean target = attackRect.intersects(playerRect);
+            if (!target && canAttackMonsters) {
+                for (int i = 0; i < gp.getMonsters().size(); i++) {
+                    Entity other = gp.getMonsters().get(i);
+                    if (other == this) continue;
+                    Rectangle otherRect = new Rectangle(
+                        other.getWorldX() + other.getCollisionArea().x,
+                        other.getWorldY() + other.getCollisionArea().y,
+                        other.getCollisionArea().width,
+                        other.getCollisionArea().height
+                    );
+                    if (attackRect.intersects(otherRect)) {
+                        target = true;
+                        break;
+                    }
+                }
+            }
+            if (attackCooldown == 0 && target) {
                 attacking = true;
             }
         }
@@ -228,6 +251,33 @@ public abstract class Monster extends GameActor {
         if (attackRect.intersects(playerRect)) {
             gp.getPlayer().atts().add(Attr.HEALTH, -attackDamage);
             gp.getUi().triggerDamageEffect();
+        }
+        if (canAttackMonsters) {
+            for (int i = 0; i < gp.getMonsters().size(); i++) {
+                Entity other = gp.getMonsters().get(i);
+                if (other == this) continue;
+                Rectangle otherRect = new Rectangle(
+                    other.getWorldX() + other.getCollisionArea().x,
+                    other.getWorldY() + other.getCollisionArea().y,
+                    other.getCollisionArea().width,
+                    other.getCollisionArea().height
+                );
+                if (attackRect.intersects(otherRect)) {
+                    if (other instanceof Monster m) {
+                        if (m.takeDamage(attackDamage)) {
+                            m.dropItem();
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
+                    } else if (other instanceof GameActor m) {
+                        m.atts().add(Attr.HEALTH, -attackDamage);
+                        if (m.atts().get(Attr.HEALTH) <= 0) {
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -292,6 +342,20 @@ public abstract class Monster extends GameActor {
      */
     public void setMovementArea(Rectangle area) { this.movementArea = area; }
 
+    /** Bật/tắt phát hiện người chơi trong khu vực spawn */
+    public void setDetectInSpawnArea(boolean detect) { this.detectInSpawnArea = detect; }
+    /**
+     * @return true nếu phát hiện người chơi trong khu vực spawn
+     */
+    public boolean isDetectInSpawnArea() { return detectInSpawnArea; }
+
+    /** Bật/tắt tấn công các quái vật khác */
+    public void setCanAttackMonsters(boolean attackMonsters) { this.canAttackMonsters = attackMonsters; }
+    /**
+     * @return true nếu được phép tấn công quái vật khác
+     */
+    public boolean isCanAttackMonsters() { return canAttackMonsters; }
+
     /**
      * Di chuyển nhưng không vượt ra ngoài khu vực cho phép.
      */
@@ -312,6 +376,28 @@ public abstract class Monster extends GameActor {
                                        nextY + getScaleEntityY() - 1))) {
                 setWorldX(nextX);
                 setWorldY(nextY);
+            } else {
+                switch (getDirection()) {
+                    case "up" -> setDirection("down");
+                    case "down" -> setDirection("up");
+                    case "left" -> setDirection("right");
+                    case "right" -> setDirection("left");
+                }
+                nextX = getWorldX();
+                nextY = getWorldY();
+                switch (getDirection()) {
+                    case "up" -> nextY -= getSpeed();
+                    case "down" -> nextY += getSpeed();
+                    case "left" -> nextX -= getSpeed();
+                    case "right" -> nextX += getSpeed();
+                }
+                if (movementArea == null ||
+                    (movementArea.contains(nextX, nextY) &&
+                     movementArea.contains(nextX + getScaleEntityX() - 1,
+                                           nextY + getScaleEntityY() - 1))) {
+                    setWorldX(nextX);
+                    setWorldY(nextY);
+                }
             }
         }
     }

@@ -124,12 +124,15 @@ public class GamePanel extends JPanel implements Runnable {
                     for (Entity npc : npcs) {
                         npc.update();
                     }
-                    for (Entity m : monsters) {
-                        m.update();
+                    List<Entity> monsterSnapshot = new ArrayList<>(monsters);
+                    for (Entity m : monsterSnapshot) {
+                        if (monsters.contains(m)) {
+                            m.update();
+                        }
                     }
-		}
-		if(gameState == pauseState) {}
-	}
+                }
+                if(gameState == pauseState) {}
+        }
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -189,7 +192,6 @@ public class GamePanel extends JPanel implements Runnable {
 	public Ui getUi() { return ui; }
 	
 }
-
 
 
 

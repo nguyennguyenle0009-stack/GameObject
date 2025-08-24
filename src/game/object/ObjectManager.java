@@ -79,12 +79,16 @@ public class ObjectManager {
                 10, 2, 20, 10,
                 () -> new Orc(gp),
                 2,
-                1);
+                1,
+                true, // bật cờ quái vật xuất hiện trong khu vực spawn
+                false); // bật cờ quái vật tấn công lẫn nhau
         MonsterZone zone2 = new MonsterZone(gp,
                 2, 20, 10, 30,
                 () -> new Orc(gp),
                 3,
-                2);
+                2,
+                false,
+                true);
         gp.getMonsterZones().add(zone1);
         gp.getMonsterZones().add(zone2);
     }
