@@ -3,6 +3,8 @@ package game.object;
 import game.entity.Entity;
 import game.entity.animal.cat.Cat_yellow;
 import game.entity.monster.GreenSlime;
+import game.entity.monster.Orc;
+import game.entity.monster.SkeletonLord;
 import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
@@ -51,11 +53,26 @@ public class ObjectManager {
         gp.getNpcs().add(cat2);
     }
     
+    /**
+     * Khởi tạo các quái vật trong bản đồ.
+     */
     public void setMonsters(){
+        // Slime cơ bản
         Entity slime = new GreenSlime(gp);
         slime.setWorldX(10 * gp.getTileSize());
         slime.setWorldY(10 * gp.getTileSize());
         gp.getMonsters().add(slime);
+
+        // Orc sử dụng sprite mới
+        Entity orc = new Orc(gp);
+        orc.setWorldX(12 * gp.getTileSize());
+        orc.setWorldY(12 * gp.getTileSize());
+        gp.getMonsters().add(orc);
+
+        // Skeleton Lord sử dụng sprite mới
+        Entity skeleton = new SkeletonLord(gp);
+        skeleton.setWorldX(14 * gp.getTileSize());
+        skeleton.setWorldY(12 * gp.getTileSize());
+        gp.getMonsters().add(skeleton);
     }
 }
-
