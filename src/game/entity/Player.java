@@ -38,6 +38,7 @@ public class Player extends GameActor implements DrawableEntity {
     private static final int ATTACK_COOLDOWN = 20;
     private static final int ATTACK_DURATION = 10;
 
+    // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
 
 	public Player(GamePanel gp) {
