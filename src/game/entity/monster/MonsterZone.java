@@ -20,6 +20,8 @@ public class MonsterZone {
     private final List<Monster> monsters = new ArrayList<>();
     private final Random random = new Random();
     private int respawnCounter = 0;
+    private final boolean detectInSpawnArea;
+    private final boolean canAttackMonsters;
 
     /**
      * Tạo một khu vực sinh quái.
@@ -38,7 +40,9 @@ public class MonsterZone {
                        int endCol, int endRow,
                        Supplier<? extends Monster> factory,
                        int maxMonsters,
-                       int respawnMin) {
+                       int respawnMin,
+                       boolean detectInSpawnArea,
+                       boolean canAttackMonsters) {
         this.gp = gp;
         int tile = gp.getTileSize();
         int x = startCol * tile;
@@ -49,6 +53,8 @@ public class MonsterZone {
         this.factory = factory;
         this.maxMonsters = maxMonsters;
         this.respawnTime = respawnMin * 60 * 60; // 60 FPS * 60s
+        this.detectInSpawnArea = detectInSpawnArea;
+        this.canAttackMonsters = canAttackMonsters;
         for (int i = 0; i < maxMonsters; i++) {
             spawn();
         }
@@ -76,6 +82,8 @@ public class MonsterZone {
         m.setWorldX(x);
         m.setWorldY(y);
         m.setMovementArea(area);
+        m.setDetectInSpawnArea(detectInSpawnArea);
+        m.setCanAttackMonsters(canAttackMonsters);
         monsters.add(m);
         gp.getMonsters().add(m);
     }
