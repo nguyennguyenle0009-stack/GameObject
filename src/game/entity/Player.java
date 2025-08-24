@@ -7,15 +7,21 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.item.elixir.SpiritPotion;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Realm;
+import game.enums.Physique;
+import game.enums.Affinity;
+import game.enums.Attr;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -40,6 +46,12 @@ public class Player extends GameActor implements DrawableEntity {
 
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
+    private int realmLevel = 0;
+    private int maxHealth;
+    private int maxPep;
+    private int maxSpirit = 100;
+    private Physique physique = Physique.NORMAL;
+    private final List<Affinity> affinities = new ArrayList<>();
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -52,18 +64,47 @@ public class Player extends GameActor implements DrawableEntity {
 
         }
 	public void setDefaultValue() {
-		setWorldX(100); 
-		setWorldY(100);
-		setSpeed(4);
-		setDirection("down");
-		setSpriteCouter(0);
+                setWorldX(100);
+                setWorldY(100);
+                setSpeed(4);
+                setDirection("down");
+                setSpriteCouter(0);
                 setSpriteNum(1);
                 setName("Nguyeen pro");
-                atts().set(game.enums.Attr.HEALTH, 100);
-                atts().set(game.enums.Attr.PEP, 100);
-                atts().set(game.enums.Attr.SPIRIT, 0);
-                atts().set(game.enums.Attr.ATTACK, 5);
-                atts().set(game.enums.Attr.DEF, 4);
+                atts().set(Attr.HEALTH, 100);
+                atts().set(Attr.PEP, 100);
+                atts().set(Attr.SPIRIT, 0);
+                atts().set(Attr.ATTACK, 5);
+                atts().set(Attr.DEF, 4);
+                atts().set(Attr.STRENGTH, 1);
+                atts().set(Attr.SOULD, 5);
+                maxHealth = 100;
+                maxPep = 100;
+                Random rand = new Random();
+                int r = rand.nextInt(100);
+                if (r < 1) physique = Physique.HU_KHONG;
+                else if (r < 2) physique = Physique.HU_KHONG_DAI_DE;
+                else if (r < 3) physique = Physique.THANH_THE;
+                else if (r < 4) physique = Physique.TIEN_LINH_THE;
+                else if (r < 5) physique = Physique.THAN_THE;
+                else if (r < 6) physique = Physique.NGU_HANH_LINH_CAN;
+                else physique = Physique.NORMAL;
+                int countRoll = rand.nextInt(100);
+                int count = 1;
+                if (countRoll < 10) count = 3;
+                else if (countRoll < 25) count = 2;
+                while (affinities.size() < count) {
+                    int a = rand.nextInt(105);
+                    Affinity af;
+                    if (a < 20) af = Affinity.FIRE;
+                    else if (a < 40) af = Affinity.WOOD;
+                    else if (a < 60) af = Affinity.WATER;
+                    else if (a < 80) af = Affinity.METAL;
+                    else if (a < 100) af = Affinity.EARTH;
+                    else af = Affinity.LIGHTNING;
+                    if (!affinities.contains(af)) affinities.add(af);
+                }
+                bag.add(new SpiritPotion(200,1));
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
         }
@@ -80,6 +121,44 @@ public class Player extends GameActor implements DrawableEntity {
 
     public void setRealm(Realm realm) {
         this.realm = realm;
+    }
+
+    /**
+     * Tên cảnh giới hiển thị kèm tầng hiện tại.
+     */
+    public String getRealmDisplay() {
+        if (realm == Realm.PHAM_NHAN) return realm.getDisplayName();
+        return realm.getDisplayName() + " tầng " + realmLevel;
+    }
+
+    public int getRealmLevel() {
+        return realmLevel;
+    }
+
+    public Physique getPhysique() {
+        return physique;
+    }
+
+    public List<Affinity> getAffinities() {
+        return List.copyOf(affinities);
+    }
+
+    // Display all affinities as text
+    public String getAffinityDisplay() {
+        if (affinities.isEmpty()) return "Khong";
+        return affinities.stream().map(Affinity::getDisplayName).reduce((a,b) -> a + ", " + b).orElse("");
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getMaxPep() {
+        return maxPep;
+    }
+
+    public int getMaxSpirit() {
+        return maxSpirit;
     }
 	
 	public void getImagePlayer() {
@@ -191,7 +270,10 @@ public class Player extends GameActor implements DrawableEntity {
                 );
                 // Nếu đòn đánh trúng quái
                 if (attackRect.intersects(monsterRect)) {
-                    int damage = atts().get(game.enums.Attr.ATTACK);
+                    int damage = atts().get(Attr.ATTACK);
+                    if (physique == Physique.THAN_THE) {
+                        damage *= 10;
+                    }
                     if (monster instanceof Monster m) {
                         // Quái vật có quản lý máu riêng
                         if (m.takeDamage(damage)) {
@@ -201,8 +283,8 @@ public class Player extends GameActor implements DrawableEntity {
                         }
                     } else if (monster instanceof GameActor m) {
                         // Quái vật cũ chỉ trừ máu đơn giản
-                        m.atts().add(game.enums.Attr.HEALTH, -damage);
-                        if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                        m.atts().add(Attr.HEALTH, -damage);
+                        if (m.atts().get(Attr.HEALTH) <= 0) {
                             gp.getMonsters().remove(i);
                             i--;
                         }
@@ -222,7 +304,7 @@ public class Player extends GameActor implements DrawableEntity {
 
         int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
         if (monsterIndex != 999 && !invincible) {
-            atts().add(game.enums.Attr.HEALTH, -1);
+            atts().add(Attr.HEALTH, -1);
             gp.getUi().triggerDamageEffect();
             invincible = true;
         }
@@ -308,6 +390,104 @@ public class Player extends GameActor implements DrawableEntity {
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
     
+    // -- Hệ thống tu luyện --
+    /**
+     * Nhận thêm Spirit (kinh nghiệm) và tự động kiểm tra lên cấp.
+     */
+    public void gainSpirit(int amount) {
+        if (physique == Physique.TIEN_LINH_THE) amount *= 3;
+        atts().add(Attr.SPIRIT, amount);
+        while (atts().get(Attr.SPIRIT) >= maxSpirit) {
+            atts().add(Attr.SPIRIT, -maxSpirit);
+            levelUp();
+        }
+    }
+
+    /**
+     * Xử lý tăng cấp tu luyện theo quy tắc từng cảnh giới.
+     */
+    private void levelUp() {
+        switch (realm) {
+            case PHAM_NHAN -> {
+                realm = Realm.LUYEN_THE;
+                realmLevel = 1;
+                applyLuyenTheStats();
+            }
+            case LUYEN_THE -> {
+                realmLevel++;
+                if (realmLevel > physique.getMaxTier()) {
+                    realm = Realm.LUYEN_KHI;
+                    realmLevel = 1;
+                    applyBreakthrough();
+                    applyLuyenKhiStats();
+                } else {
+                    applyLuyenTheStats();
+                }
+            }
+            case LUYEN_KHI -> {
+                realmLevel++;
+                if (realmLevel > physique.getMaxTier()) {
+                    realmLevel = physique.getMaxTier();
+                } else {
+                    applyLuyenKhiStats();
+                }
+            }
+        }
+    }
+
+    private void applyLuyenTheStats() {
+        maxHealth = (int)(maxHealth * 1.5);
+        maxPep = (int)(maxPep * 1.5);
+        atts().set(Attr.HEALTH, maxHealth);
+        atts().set(Attr.PEP, maxPep);
+        atts().set(Attr.ATTACK, (int)(atts().get(Attr.ATTACK) * 1.5));
+        atts().set(Attr.DEF, atts().get(Attr.DEF) * 3);
+        atts().add(Attr.STRENGTH, 1);
+        maxSpirit *= 2;
+        if (physique == Physique.NGU_HANH_LINH_CAN) {
+            multiplyAllStats(5);
+        }
+        if (physique == Physique.THANH_THE) {
+            atts().set(Attr.DEF, atts().get(Attr.DEF) * 2);
+        }
+    }
+
+    private void applyBreakthrough() {
+        maxHealth *= 2;
+        maxPep *= 2;
+        atts().set(Attr.HEALTH, maxHealth);
+        atts().set(Attr.PEP, maxPep);
+        atts().set(Attr.ATTACK, atts().get(Attr.ATTACK) * 2);
+        atts().set(Attr.DEF, atts().get(Attr.DEF) * 2);
+        maxSpirit *= 3;
+    }
+
+    private void applyLuyenKhiStats() {
+        int prevReq = maxSpirit;
+        maxHealth *= 2;
+        atts().set(Attr.HEALTH, maxHealth);
+        atts().set(Attr.ATTACK, atts().get(Attr.ATTACK) * 2);
+        maxPep += prevReq / 5;
+        atts().set(Attr.PEP, maxPep);
+        atts().set(Attr.DEF, (int)(atts().get(Attr.DEF) * 1.5));
+        maxSpirit = prevReq * 3;
+        if (physique == Physique.NGU_HANH_LINH_CAN) {
+            multiplyAllStats(5);
+        }
+        if (physique == Physique.THANH_THE) {
+            atts().set(Attr.DEF, atts().get(Attr.DEF) * 2);
+        }
+    }
+
+    private void multiplyAllStats(int m) {
+        maxHealth *= m;
+        maxPep *= m;
+        atts().set(Attr.HEALTH, maxHealth);
+        atts().set(Attr.PEP, maxPep);
+        atts().set(Attr.ATTACK, atts().get(Attr.ATTACK) * m);
+        atts().set(Attr.DEF, atts().get(Attr.DEF) * m);
+    }
+
     // Sử dụng item
     public void useItem(Item i) {
     	i.use(this);

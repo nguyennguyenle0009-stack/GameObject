@@ -1,11 +1,12 @@
 package game.enums;
 
 /**
- * Cảnh giới tu luyện của nhân vật.
- * Hiện tại mới chỉ có cấp "Phàm nhân" mặc định.
+ * Các đại cảnh giới tu luyện của nhân vật.
  */
 public enum Realm {
-    PHAM_NHAN("Phàm nhân");
+    PHAM_NHAN("Phàm nhân"),
+    LUYEN_THE("Luyện thể"),
+    LUYEN_KHI("Luyện khí");
 
     private final String displayName;
 

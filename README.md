@@ -6,6 +6,16 @@
 
 ## Cập nhật
 
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Bổ sung hệ thống cảnh giới, thể chất và linh căn cho nhân vật.
+- Thêm item "Đan dược tinh thần" để tăng SPIRIT thử nghiệm lên cấp.
+- HUD và bảng thuộc tính hiển thị tên cảnh giới, thể chất, linh căn.
+
+### Sửa lỗi
+- Thuốc hồi máu giới hạn theo chỉ số tối đa của người chơi.
+
 ## [1.0.3] - 2025-08-08
 
 ### Thêm
