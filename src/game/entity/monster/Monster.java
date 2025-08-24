@@ -41,6 +41,8 @@ public abstract class Monster extends GameActor {
     protected int maxHealth = 1;
     /** Random dùng cho di chuyển và rơi vật phẩm */
     protected final Random random = new Random();
+    /** Khu vực mà quái vật được phép di chuyển */
+    protected Rectangle movementArea;
 
     /**
      * Tạo quái vật mới.
@@ -78,6 +80,10 @@ public abstract class Monster extends GameActor {
      * @return true nếu trong phạm vi
      */
     protected boolean isPlayerInRange() {
+        if (movementArea != null &&
+            !movementArea.contains(gp.getPlayer().getWorldX(), gp.getPlayer().getWorldY())) {
+            return false;
+        }
         int dx = gp.getPlayer().getWorldX() - getWorldX();
         int dy = gp.getPlayer().getWorldY() - getWorldY();
         double distance = Math.sqrt(dx * dx + dy * dy);
@@ -278,4 +284,35 @@ public abstract class Monster extends GameActor {
      * @return thời gian thực hiện 1 đòn tấn công
      */
     protected int getAttackDuration() { return 20; }
+
+    /**
+     * Thiết lập khu vực di chuyển giới hạn.
+     *
+     * @param area hình chữ nhật đại diện khu vực
+     */
+    public void setMovementArea(Rectangle area) { this.movementArea = area; }
+
+    /**
+     * Di chuyển nhưng không vượt ra ngoài khu vực cho phép.
+     */
+    @Override
+    public void moveIfCollisionNotDetected() {
+        if (!isCollisionOn()) {
+            int nextX = getWorldX();
+            int nextY = getWorldY();
+            switch (getDirection()) {
+                case "up" -> nextY -= getSpeed();
+                case "down" -> nextY += getSpeed();
+                case "left" -> nextX -= getSpeed();
+                case "right" -> nextX += getSpeed();
+            }
+            if (movementArea == null ||
+                (movementArea.contains(nextX, nextY) &&
+                 movementArea.contains(nextX + getScaleEntityX() - 1,
+                                       nextY + getScaleEntityY() - 1))) {
+                setWorldX(nextX);
+                setWorldY(nextY);
+            }
+        }
+    }
 }
