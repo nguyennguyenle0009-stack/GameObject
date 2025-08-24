@@ -6,6 +6,17 @@
 
 ## Cập nhật
 
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Hệ thống **Thể chất** và **Linh căn** với xác suất khởi tạo ngẫu nhiên.
+- Cơ chế tu luyện đầy đủ cho các cảnh giới Luyện thể và Luyện khí.
+- Màn hình thuộc tính hiển thị tên cảnh giới, thể chất, linh căn và các chỉ số hiện tại/tối đa.
+- Thêm item **Đan dược tinh thần** để tăng Spirit dùng thử nghiệm lên cấp.
+
+### Sửa lỗi
+- Thuốc hồi máu không còn giới hạn ở 100 HP.
+
 ## [1.0.3] - 2025-08-08
 
 ### Thêm
