@@ -21,7 +21,7 @@ public class MonsterZone {
     private final Random random = new Random();
     private int respawnCounter = 0;
     private final boolean detectInSpawnArea;
-    private final boolean canAttackMonsters;
+    private boolean canAttackMonsters;
 
     /**
      * Tạo một khu vực sinh quái.
@@ -86,5 +86,13 @@ public class MonsterZone {
         m.setCanAttackMonsters(canAttackMonsters);
         monsters.add(m);
         gp.getMonsters().add(m);
+    }
+
+    /** Update whether monsters in this zone can attack each other. */
+    public void setCanAttackMonsters(boolean value) {
+        this.canAttackMonsters = value;
+        for (Monster m : monsters) {
+            m.setCanAttackMonsters(value);
+        }
     }
 }

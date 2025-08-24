@@ -36,21 +36,21 @@ public class InventoryUi {
         int charH = gp.getTileSize() * 8;
         Dimension d = itemGrid.getPreferredSize();
         int gridX = gp.getTileSize() * 8; // default position with one tile gap after character panel
-        int gridY = gp.getTileSize();
+        int gridY = gp.getTileSize() * 2; // move below HUD bars
         // ensure grid within screen
         if (gridX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
             gridX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
         }
 
         int outerX = gp.getTileSize() / 2;
-        int outerY = gp.getTileSize() / 2;
+        int outerY = gridY - gp.getTileSize() / 2; // keep margin similar to original
         int outerW = gridX + d.width + gp.getTileSize() / 2 - outerX;
         int outerH = Math.max(charH, d.height) + gp.getTileSize();
         HUDUtils.drawSubWindow(g2, outerX, outerY, outerW, outerH,
                 new Color(40,40,40,180), Color.YELLOW);
 
         // Draw character panel on the left
-        characterScreen(g2);
+        characterScreen(g2, gridY);
 
         var items = gp.getPlayer().getBag().all();
         handleInventoryInput(items, gridX, gridY);
@@ -58,7 +58,7 @@ public class InventoryUi {
 
         itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot);
 
-        int infoIdx = hoverSlot >= 0 ? hoverSlot : selectedSlot;
+        int infoIdx = hoverSlot; // hide tooltip when mouse leaves the slot
         if (infoIdx >= 0 && infoIdx < items.size()) {
             Point m = gp.getMousePosition();
             int tipX = (m != null ? m.x + 15 : gridX + d.width + 10);
@@ -182,11 +182,16 @@ public class InventoryUi {
         g2.drawString(line2, x + padding, y + padding + 35);
     }
 
-    private void characterScreen(Graphics2D g2) {
+    /**
+     * Draws the character attribute box at a given vertical offset.
+     *
+     * @param topY starting Y position of the box
+     */
+    private void characterScreen(Graphics2D g2, int topY) {
         int x = gp.getTileSize();
-        int y = gp.getTileSize();
+        int y = topY;
         int width = x * 6;
-        int height = y * 8;
+        int height = gp.getTileSize() * 8; // keep character box size constant
         drawSubWindow(x, y, width, height, g2);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
         int textX = x + gp.getTileSize();
@@ -216,7 +221,7 @@ public class InventoryUi {
         if (baseX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
             baseX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
         }
-        int baseY = gp.getTileSize();
+        int baseY = gp.getTileSize() * 2; // match grid position in draw()
         int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
         if (idx >= 0 && idx < itemGrid.getCols() * itemGrid.getRows()) {

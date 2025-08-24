@@ -36,6 +36,17 @@ public class GreenSlime extends GameActor {
         setCollisionArea(new Rectangle(8, 16, 32, 32));
         atts().set(Attr.HEALTH, 10);
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
+
+        // Load green slime sprites
+        setDown1(setup("/data/monster/slim/greenslime_down_1"));
+        setDown2(setup("/data/monster/slim/greenslime_down_2"));
+        // Use the same image for all directions for now
+        setUp1(getDown1());
+        setUp2(getDown2());
+        setLeft1(getDown1());
+        setLeft2(getDown2());
+        setRight1(getDown1());
+        setRight2(getDown2());
     }
 
     @Override
@@ -122,8 +133,9 @@ public class GreenSlime extends GameActor {
     @Override
     public void draw(Graphics2D g2, GamePanel gp) {
         Point screenPos = CameraHelper.worldToScreen(getWorldX(), getWorldY(), gp);
-        g2.setColor(Color.GREEN);
-        g2.fillOval(screenPos.x, screenPos.y, getScaleEntityX(), getScaleEntityY());
+        // Animate between the two slime sprites
+        var image = (getSpriteNum() == 1) ? getDown1() : getDown2();
+        g2.drawImage(image, screenPos.x, screenPos.y, null);
         if (attacking) {
             Rectangle attackRect = getAttackRectangle();
             Point attackScreen = CameraHelper.worldToScreen(attackRect.x, attackRect.y, gp);
