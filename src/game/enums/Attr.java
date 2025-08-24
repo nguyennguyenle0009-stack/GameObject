@@ -9,7 +9,8 @@ public enum Attr {
 	SPIRIT("Spirit"),// tinh thần
 	STRENGTH("Strength"),// sức mạnh
 	SOULD("Sould"),// linh hồn
-	PHYSIQUE("Physique");// thể chất
+	PHYSIQUE("Physique"),// thể chất
+	AFFINITY("Affinity");// Hệ
 	
 	private final String display;
 	Attr(String d) { this.display = d; }
