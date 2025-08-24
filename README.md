@@ -22,6 +22,17 @@
 
 ### Bug phát hiện
 - Tooltip của item tiếp tục hiển thị khi rời ô (đã sửa).
+
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Hệ thống **Thể chất** và **Linh căn** cho nhân vật, hiển thị tại bảng thuộc tính.
+- Thuộc tính now lưu cả giá trị hiện tại và tối đa; HUD hiển thị dạng `current/max`.
+- Item "Đan dược tinh thần" giúp tăng SPIRIT để thử nghiệm lên cấp.
+
+### Sửa lỗi
+- Máu và các chỉ số không bị reset về 100 sau khi sử dụng item.
+- Tấn công không bị giảm về 0 khi lên cấp.
 	
 ## Cách chạy
 
