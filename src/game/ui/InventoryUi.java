@@ -197,9 +197,24 @@ public class InventoryUi {
         int textX = x + gp.getTileSize();
         int textY = y + gp.getTileSize();
 
-        var attrs = gp.getPlayer().atts();
-        for(game.enums.Attr a : game.enums.Attr.values()) {
-            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
+        var player = gp.getPlayer();
+        var attrs = player.atts();
+        g2.drawString("Realm: " + player.getRealmDisplay(), textX, textY); textY += 30;
+        g2.drawString("Physique: " + player.getPhysique().getDisplayName(), textX, textY); textY += 30;
+        g2.drawString("Affinity: " + player.getAffinityNames(), textX, textY); textY += 30;
+
+        // Hiển thị các thuộc tính chiến đấu
+        game.enums.Attr[] toShow = {
+            game.enums.Attr.HEALTH,
+            game.enums.Attr.ATTACK,
+            game.enums.Attr.DEF,
+            game.enums.Attr.PEP,
+            game.enums.Attr.SPIRIT,
+            game.enums.Attr.STRENGTH,
+            game.enums.Attr.SOULD
+        };
+        for (game.enums.Attr a : toShow) {
+            g2.drawString(a.displayerName() + ": " + attrs.getBase(a), textX, textY);
             textY += 30;
         }
     }

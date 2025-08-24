@@ -14,6 +14,7 @@ import game.check.CollisionChecker;
 import game.entity.Entity;
 import game.entity.Player;
 import game.entity.item.elixir.HealthPotion;
+import game.entity.item.elixir.SpiritPotion;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -71,13 +72,15 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setUpGame() { 
-		player.getBag().add(new HealthPotion(30, 50));
-		player.getBag().add(new HealthPotion(30, 60));  // 50+60 => 100 trong ô đầu + 10 sang ô mới
-		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(50, 1));
-		player.getBag().add(new HealthPotion(30, 60));
-		player.getBag().add(new HealthPotion(390, 60));
+                player.getBag().add(new HealthPotion(30, 50));
+                player.getBag().add(new HealthPotion(30, 60));  // 50+60 => 100 trong ô đầu + 10 sang ô mới
+                player.getBag().add(new HealthPotion(50, 1));
+                player.getBag().add(new HealthPotion(50, 1));
+                player.getBag().add(new HealthPotion(50, 1));
+                player.getBag().add(new HealthPotion(30, 60));
+                player.getBag().add(new HealthPotion(390, 60));
+                // Item tăng Spirit để kiểm tra lên cấp
+                player.getBag().add(new SpiritPotion(200, 5));
 		
                 objectManager.setObject();
                 objectManager.setEntity();

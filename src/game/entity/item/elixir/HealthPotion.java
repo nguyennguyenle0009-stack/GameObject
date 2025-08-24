@@ -31,9 +31,13 @@ public class HealthPotion extends Item {
 	}
 
 	@Override
+    /**
+     * Hồi máu cho người chơi nhưng không vượt quá giới hạn gốc.
+     */
     public void use(Player p) {
         int current = p.atts().get(Attr.HEALTH);
-        int newHealth = Math.min(current + healthAmount, 100);
+        int max = p.atts().getBase(Attr.HEALTH);
+        int newHealth = Math.min(current + healthAmount, max);
         p.atts().set(Attr.HEALTH, newHealth);
         decreaseQuantity(1);
 }
