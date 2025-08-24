@@ -1,11 +1,16 @@
 package game.enums;
 
 /**
- * Cảnh giới tu luyện của nhân vật.
- * Hiện tại mới chỉ có cấp "Phàm nhân" mặc định.
+ * Các đại cảnh giới tu luyện chính của nhân vật.
+ * Mỗi cảnh giới có nhiều tầng (tiểu cảnh giới).
  */
 public enum Realm {
-    PHAM_NHAN("Phàm nhân");
+    /** Trạng thái phàm nhân khởi đầu */
+    PHAM_NHAN("Phàm nhân"),
+    /** Luyện thể kỳ */
+    LUYEN_THE("Luyện thể"),
+    /** Luyện khí kỳ */
+    LUYEN_KHI("Luyện khí");
 
     private final String displayName;
 
@@ -13,6 +18,9 @@ public enum Realm {
         this.displayName = displayName;
     }
 
+    /**
+     * @return tên hiển thị của cảnh giới
+     */
     public String getDisplayName() {
         return displayName;
     }

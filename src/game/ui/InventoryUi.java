@@ -197,11 +197,19 @@ public class InventoryUi {
         int textX = x + gp.getTileSize();
         int textY = y + gp.getTileSize();
 
-        var attrs = gp.getPlayer().atts();
-        for(game.enums.Attr a : game.enums.Attr.values()) {
-            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
-            textY += 30;
-        }
+        var p = gp.getPlayer();
+        var attrs = p.atts();
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 18F));
+        g2.drawString("Realm: " + p.getRealmName(), textX, textY); textY += 20;
+        g2.drawString("Physique: " + p.getPhysique().getDisplayName(), textX, textY); textY += 20;
+        g2.drawString("Affinity: " + p.getAffinityDisplay(), textX, textY); textY += 20;
+        g2.drawString("Health: " + attrs.get(game.enums.Attr.HEALTH) + "/" + p.getMaxHealth(), textX, textY); textY += 20;
+        g2.drawString("Pep: " + attrs.get(game.enums.Attr.PEP) + "/" + p.getMaxPep(), textX, textY); textY += 20;
+        g2.drawString("Spirit: " + attrs.get(game.enums.Attr.SPIRIT) + "/" + p.getRequiredSpirit(), textX, textY); textY += 20;
+        g2.drawString("Attack: " + attrs.get(game.enums.Attr.ATTACK), textX, textY); textY += 20;
+        g2.drawString("Def: " + attrs.get(game.enums.Attr.DEF), textX, textY); textY += 20;
+        g2.drawString("Sould: " + attrs.get(game.enums.Attr.SOULD), textX, textY); textY += 20;
+        g2.drawString("Strength: " + attrs.get(game.enums.Attr.STRENGTH), textX, textY);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
