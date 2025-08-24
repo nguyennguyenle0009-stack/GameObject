@@ -5,7 +5,20 @@
 ## Tính năng
 
 ## Cập nhật
-	
+
+## [1.0.2] - 2025-08-07
+
+### Trạng thái
+- Đã chỉnh lại giao diện kho đồ, thêm cờ bật/tắt quái vật tấn công cùng loại (phím **G**).
+
+### Sửa lỗi
+- Ẩn mô tả item khi chuột rời ô.
+- Kéo khung thông tin và kho đồ xuống dưới để không chồng lên thanh máu/mana/kinh nghiệm.
+- Sử dụng sprite **green-slim** cho quái slime.
+
+### Bug phát hiện
+- Tooltip của item tiếp tục hiển thị khi rời ô (đã sửa).
+
 ## Cách chạy
 
 1. Mở project trong Eclipse.

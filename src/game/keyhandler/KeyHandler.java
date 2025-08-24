@@ -81,6 +81,10 @@ public class KeyHandler implements KeyListener {
                     if(drawRect == false) { drawRect = true; }
                     else { drawRect = false; }
             }
+            if(code == KeyEvent.VK_G) {
+                    // Toggle whether monsters can attack others of the same type
+                    gp.toggleMonsterFriendlyFire();
+            }
     }
 
     public GamePanel getGp() { return gp; }

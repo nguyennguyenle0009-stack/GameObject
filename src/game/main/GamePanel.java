@@ -21,6 +21,7 @@ import game.object.ObjectManager;
 import game.object.SuperObject;
 import game.tile.TileManager;
 import game.ui.Ui;
+import game.entity.monster.Monster;
 import game.entity.monster.MonsterZone;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -54,6 +55,8 @@ public class GamePanel extends JPanel implements Runnable {
     private final ObjectManager objectManager = new ObjectManager(this);
     private final Ui ui = new Ui(this);
     private final List<MonsterZone> monsterZones = new ArrayList<>();
+    // Toggle allowing monsters to attack each other
+    private boolean monsterFriendlyFire = false;
     
     // GAME STATE
     private int gameState;
@@ -115,12 +118,12 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 	
-	public void update() {
-		if(gameState == playState) {
-                    player.update();
-                    for (MonsterZone zone : monsterZones) {
-                        zone.update();
-                    }
+    public void update() {
+        if(gameState == playState) {
+            player.update();
+            for (MonsterZone zone : monsterZones) {
+                zone.update();
+            }
                     for (Entity npc : npcs) {
                         npc.update();
                     }
@@ -183,6 +186,22 @@ public class GamePanel extends JPanel implements Runnable {
     public List<Entity> getNpcs() { return npcs; }
     public List<Entity> getMonsters() { return monsters; }
     public List<MonsterZone> getMonsterZones() { return monsterZones; }
+
+    /**
+     * Toggle whether monsters can attack others of the same type.
+     * Updates existing monsters and zones.
+     */
+    public void toggleMonsterFriendlyFire() {
+        monsterFriendlyFire = !monsterFriendlyFire;
+        for (Entity e : monsters) {
+            if (e instanceof Monster m) {
+                m.setCanAttackMonsters(monsterFriendlyFire);
+            }
+        }
+        for (MonsterZone zone : monsterZones) {
+            zone.setCanAttackMonsters(monsterFriendlyFire);
+        }
+    }
 
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
