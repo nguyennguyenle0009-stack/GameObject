@@ -6,7 +6,13 @@
 
 ## Cập nhật
 
-## [1.0.2] - 2025-08-07
+## [1.0.3] - 2025-08-08
+
+### Thêm
+- Hệ thống **Cảnh giới** cho nhân vật, hiển thị tại HUD.
+
+### Sửa lỗi
+- HUD bị phóng to khi hiển thị tên NPC.
 
 
 

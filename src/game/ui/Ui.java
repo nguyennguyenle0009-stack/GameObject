@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.util.List;
 
 import game.entity.Entity;
@@ -71,7 +72,11 @@ public class Ui {
     private void drawInteractionHint(Graphics2D g2) {
         List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
         if (!nearbyNpcs.isEmpty()) {
-            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
+            // Lưu lại font và stroke gốc để tránh ảnh hưởng tới HUD
+            Font oldFont = g2.getFont();
+            Stroke oldStroke = g2.getStroke();
+
+            g2.setFont(oldFont.deriveFont(Font.PLAIN, 20F));
 
             int padding = 10;
             int lineHeight = 25;
@@ -94,6 +99,10 @@ public class Ui {
                 g2.drawString(npc.getName(), boxX + padding, startY);
                 startY += lineHeight;
             }
+
+            // Khôi phục lại font và stroke ban đầu
+            g2.setFont(oldFont);
+            g2.setStroke(oldStroke);
         }
     }
 
