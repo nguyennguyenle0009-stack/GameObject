@@ -15,6 +15,7 @@ import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
+import game.enums.Realm;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -36,6 +37,8 @@ public class Player extends GameActor implements DrawableEntity {
     private int attackCooldown = 0;
     private static final int ATTACK_COOLDOWN = 20;
     private static final int ATTACK_DURATION = 10;
+
+    private Realm realm = Realm.PHAM_NHAN;
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -68,6 +71,14 @@ public class Player extends GameActor implements DrawableEntity {
         setCollisionArea(new Rectangle( 16, 32, 16, 16));
         setCollisionDefaultX(getCollisionArea().x);
         setCollisionDefaultY(getCollisionArea().y);
+    }
+
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 	
 	public void getImagePlayer() {

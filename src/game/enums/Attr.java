@@ -6,7 +6,7 @@ public enum Attr {
 	ATTACK("Attack"),// tấn công
 	DEF("Def"),// phòng thủ
 	PEP("Pep"),// năng lượng
-	SPIRIT("Spirit"),// tinh thần
+	SPIRIT("Spirit"),// tinh thần // Kinh nghiệm
 	STRENGTH("Strength"),// sức mạnh
 	SOULD("Sould"),// linh hồn
 	PHYSIQUE("Physique"),// thể chất

@@ -33,8 +33,18 @@ public class GameHUD {
         Player p = gp.getPlayer();
         int barWidth = gp.getTileSize() * 4;
         int barHeight = gp.getTileSize() / 3;
-        int x = gp.getTileSize();
-        int y = gp.getTileSize() / 2;
+        int margin = 5;
+
+        // draw realm box
+        String realmText = p.getRealm().getDisplayName();
+        int boxWidth = g2.getFontMetrics().stringWidth(realmText) + 20;
+        int boxHeight = barHeight;
+        HUDUtils.drawSubWindow(g2, margin, margin, boxWidth, boxHeight, BAR_BACK, BAR_BORDER);
+        g2.setColor(REALM_COLOR);
+        g2.drawString(realmText, margin + 10, margin + boxHeight - 6);
+
+        int x = margin + boxWidth + 10;
+        int y = margin;
 
         drawBar(g2, x, y, barWidth, barHeight,
                 p.atts().get(Attr.HEALTH), MAX_HEALTH, HP_FILL);
