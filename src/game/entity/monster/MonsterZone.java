@@ -21,14 +21,34 @@ public class MonsterZone {
     private final Random random = new Random();
     private int respawnCounter = 0;
 
-    public MonsterZone(GamePanel gp, Rectangle area,
+    /**
+     * Tạo một khu vực sinh quái.
+     *
+     * @param gp          tham chiếu game panel
+     * @param startCol    cột bắt đầu (tile)
+     * @param startRow    hàng bắt đầu (tile)
+     * @param endCol      cột kết thúc (tile)
+     * @param endRow      hàng kết thúc (tile)
+     * @param factory     hàm tạo quái vật
+     * @param maxMonsters số lượng quái tối đa
+     * @param respawnMin  thời gian hồi sinh (phút)
+     */
+    public MonsterZone(GamePanel gp,
+                       int startCol, int startRow,
+                       int endCol, int endRow,
                        Supplier<? extends Monster> factory,
-                       int maxMonsters, int respawnTime) {
+                       int maxMonsters,
+                       int respawnMin) {
         this.gp = gp;
-        this.area = area;
+        int tile = gp.getTileSize();
+        int x = startCol * tile;
+        int y = startRow * tile;
+        int width = Math.max(1, (endCol - startCol + 1) * tile);
+        int height = Math.max(1, (endRow - startRow + 1) * tile);
+        this.area = new Rectangle(x, y, width, height);
         this.factory = factory;
         this.maxMonsters = maxMonsters;
-        this.respawnTime = respawnTime;
+        this.respawnTime = respawnMin * 60 * 60; // 60 FPS * 60s
         for (int i = 0; i < maxMonsters; i++) {
             spawn();
         }
@@ -51,8 +71,8 @@ public class MonsterZone {
     /** Sinh một quái vật trong khu vực. */
     private void spawn() {
         Monster m = factory.get();
-        int x = area.x + random.nextInt(Math.max(1, area.width - gp.getTileSize()));
-        int y = area.y + random.nextInt(Math.max(1, area.height - gp.getTileSize()));
+        int x = area.x + random.nextInt(Math.max(1, area.width - gp.getTileSize() + 1));
+        int y = area.y + random.nextInt(Math.max(1, area.height - gp.getTileSize() + 1));
         m.setWorldX(x);
         m.setWorldY(y);
         m.setMovementArea(area);

@@ -7,7 +7,6 @@ import game.entity.monster.Orc;
 import game.entity.monster.SkeletonLord;
 import game.entity.monster.MonsterZone;
 
-import java.awt.Rectangle;
 import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
@@ -66,12 +65,6 @@ public class ObjectManager {
         slime.setWorldY(10 * gp.getTileSize());
         gp.getMonsters().add(slime);
 
-        // Orc sử dụng sprite mới
-        Entity orc = new Orc(gp);
-        orc.setWorldX(12 * gp.getTileSize());
-        orc.setWorldY(12 * gp.getTileSize());
-        gp.getMonsters().add(orc);
-
         // Skeleton Lord sử dụng sprite mới
         Entity skeleton = new SkeletonLord(gp);
         skeleton.setWorldX(14 * gp.getTileSize());
@@ -83,10 +76,17 @@ public class ObjectManager {
      * Khởi tạo các khu vực sinh quái.
      */
     public void setMonsterZones() {
-        Rectangle area = new Rectangle(20 * gp.getTileSize(),
-                20 * gp.getTileSize(), 5 * gp.getTileSize(), 5 * gp.getTileSize());
-        MonsterZone zone = new MonsterZone(gp, area,
-                () -> new Orc(gp), 5, 60 * 60 * 5);
-        gp.getMonsterZones().add(zone);
+        MonsterZone zone1 = new MonsterZone(gp,
+                10, 2, 20, 10,
+                () -> new Orc(gp),
+                2,
+                1);
+        MonsterZone zone2 = new MonsterZone(gp,
+                2, 20, 10, 30,
+                () -> new Orc(gp),
+                3,
+                2);
+        gp.getMonsterZones().add(zone1);
+        gp.getMonsterZones().add(zone2);
     }
 }
