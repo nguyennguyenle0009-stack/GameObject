@@ -6,9 +6,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -41,6 +46,9 @@ public class Player extends GameActor implements DrawableEntity {
     private int attackCooldown = 0;
     private static final int ATTACK_COOLDOWN = 20;
     private static final int ATTACK_DURATION = 10;
+
+    // File lưu trữ chỉ số nhân vật
+    private static final Path SAVE_FILE = Paths.get("player_stats.properties");
 
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
@@ -85,6 +93,8 @@ public class Player extends GameActor implements DrawableEntity {
                 bag.add(new SpiritPotion(200, 3));
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
+        // Tải chỉ số đã lưu nếu tồn tại
+        loadStats();
         }
 	
     private void setCollision() {
@@ -107,6 +117,8 @@ public class Player extends GameActor implements DrawableEntity {
     public void gainSpirit(int amount) {
         atts().add(game.enums.Attr.SPIRIT, amount);
         checkLevelUp();
+        // Lưu lại chỉ số sau khi thay đổi
+        saveStats();
     }
 
     private void checkLevelUp() {
@@ -153,27 +165,35 @@ public class Player extends GameActor implements DrawableEntity {
         };
     }
 
+    /**
+     * Nhân chỉ số với hệ số, giới hạn ở {@link Integer#MAX_VALUE} để tránh tràn số.
+     */
+    private int safeMul(int value, double factor) {
+        long result = Math.round(value * factor);
+        return (int) Math.min(Integer.MAX_VALUE, result);
+    }
+
     private void applyLuyenTheIncrease() {
-        atts().set(game.enums.Attr.HEALTH, (int)(atts().get(game.enums.Attr.HEALTH) * 1.5));
-        atts().set(game.enums.Attr.PEP, (int)(atts().get(game.enums.Attr.PEP) * 1.5));
-        atts().set(game.enums.Attr.ATTACK, (int)(atts().get(game.enums.Attr.ATTACK) * 1.5));
-        atts().set(game.enums.Attr.SPIRIT, atts().get(game.enums.Attr.SPIRIT) * 2);
-        atts().set(game.enums.Attr.DEF, atts().get(game.enums.Attr.DEF) * 3);
+        atts().set(game.enums.Attr.HEALTH, safeMul(atts().get(game.enums.Attr.HEALTH), 1.5));
+        atts().set(game.enums.Attr.PEP, safeMul(atts().get(game.enums.Attr.PEP), 1.5));
+        atts().set(game.enums.Attr.ATTACK, safeMul(atts().get(game.enums.Attr.ATTACK), 1.5));
+        atts().set(game.enums.Attr.SPIRIT, safeMul(atts().get(game.enums.Attr.SPIRIT), 2));
+        atts().set(game.enums.Attr.DEF, safeMul(atts().get(game.enums.Attr.DEF), 3));
     }
 
     private void applyBreakThrough() {
         for (game.enums.Attr a : game.enums.Attr.values()) {
             if (a == game.enums.Attr.PHYSIQUE || a == game.enums.Attr.AFFINITY) continue;
-            atts().set(a, atts().get(a) * 2);
+            atts().set(a, safeMul(atts().get(a), 2));
         }
     }
 
     private void applyLuyenKhiIncrease() {
-        atts().set(game.enums.Attr.HEALTH, atts().get(game.enums.Attr.HEALTH) * 2);
-        atts().set(game.enums.Attr.ATTACK, atts().get(game.enums.Attr.ATTACK) * 2);
+        atts().set(game.enums.Attr.HEALTH, safeMul(atts().get(game.enums.Attr.HEALTH), 2));
+        atts().set(game.enums.Attr.ATTACK, safeMul(atts().get(game.enums.Attr.ATTACK), 2));
         atts().add(game.enums.Attr.PEP, atts().get(game.enums.Attr.SPIRIT) / 5);
-        atts().set(game.enums.Attr.SPIRIT, atts().get(game.enums.Attr.SPIRIT) * 3);
-        atts().set(game.enums.Attr.DEF, (int)(atts().get(game.enums.Attr.DEF) * 1.5));
+        atts().set(game.enums.Attr.SPIRIT, safeMul(atts().get(game.enums.Attr.SPIRIT), 3));
+        atts().set(game.enums.Attr.DEF, safeMul(atts().get(game.enums.Attr.DEF), 1.5));
     }
 
     public Physique getPhysique() {
@@ -416,8 +436,65 @@ public class Player extends GameActor implements DrawableEntity {
     
     // Sử dụng item
     public void useItem(Item i) {
-    	i.use(this);
-    	if(i.getQuantity() == 0) bag.remove(i);
+        i.use(this);
+        if(i.getQuantity() == 0) bag.remove(i);
+        // Lưu lại chỉ số sau khi dùng item
+        saveStats();
+    }
+
+    /**
+     * Ghi lại các thuộc tính quan trọng của nhân vật ra file.
+     */
+    private void saveStats() {
+        try {
+            Properties props = new Properties();
+            for (game.enums.Attr a : game.enums.Attr.values()) {
+                props.setProperty(a.name(), String.valueOf(atts().get(a)));
+            }
+            props.setProperty("realm", realm.name());
+            props.setProperty("realmStage", String.valueOf(realmStage));
+            props.setProperty("physique", physique.name());
+            String aff = affinities.stream().map(Affinity::name).collect(Collectors.joining(","));
+            props.setProperty("affinities", aff);
+            try (var out = Files.newOutputStream(SAVE_FILE)) {
+                props.store(out, "player stats");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Tải lại các thuộc tính đã lưu nếu file tồn tại.
+     */
+    private void loadStats() {
+        if (!Files.exists(SAVE_FILE)) return;
+        try {
+            Properties props = new Properties();
+            try (var in = Files.newInputStream(SAVE_FILE)) {
+                props.load(in);
+            }
+            for (game.enums.Attr a : game.enums.Attr.values()) {
+                String val = props.getProperty(a.name());
+                if (val != null) {
+                    atts().set(a, Integer.parseInt(val));
+                }
+            }
+            realm = Realm.valueOf(props.getProperty("realm", realm.name()));
+            realmStage = Integer.parseInt(props.getProperty("realmStage", String.valueOf(realmStage)));
+            physique = Physique.valueOf(props.getProperty("physique", physique.name()));
+            affinities.clear();
+            String aff = props.getProperty("affinities");
+            if (aff != null && !aff.isBlank()) {
+                for (String s : aff.split(",")) {
+                    try {
+                        affinities.add(Affinity.valueOf(s));
+                    } catch (IllegalArgumentException ignored) {}
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 	public int getScreenX() { return screenX; }

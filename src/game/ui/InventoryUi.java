@@ -197,11 +197,25 @@ public class InventoryUi {
         int textX = x + gp.getTileSize();
         int textY = y + gp.getTileSize();
 
-        var attrs = gp.getPlayer().atts();
-        for(game.enums.Attr a : game.enums.Attr.values()) {
+        var player = gp.getPlayer();
+        var attrs = player.atts();
+        // Hiển thị các thuộc tính chiến đấu
+        for (game.enums.Attr a : game.enums.Attr.values()) {
+            if (a == game.enums.Attr.PHYSIQUE || a == game.enums.Attr.AFFINITY) continue;
             g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
             textY += 30;
         }
+        // Cảnh giới hiện tại và tầng
+        g2.drawString("Cảnh giới: " + player.getRealm().getDisplayName() + " tầng " + player.getRealmStage(), textX, textY);
+        textY += 30;
+        // Thể chất
+        g2.drawString("Thể chất: " + player.getPhysique().getDisplayName(), textX, textY);
+        textY += 30;
+        // Linh căn
+        String aff = player.getAffinities().stream()
+                .map(game.enums.Affinity::getDisplayName)
+                .collect(java.util.stream.Collectors.joining(", "));
+        g2.drawString("Linh căn: " + aff, textX, textY);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
