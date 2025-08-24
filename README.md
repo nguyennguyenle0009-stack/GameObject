@@ -11,9 +11,12 @@
 ### Thêm
 - Hệ thống **Thể chất** và **Linh căn** khi khởi tạo nhân vật.
 - Item **Đan dược tăng SPIRIT** giúp kiểm tra việc lên cấp.
+- Lưu lại chỉ số nhân vật vào file `player_stats.properties` để chúng vĩnh viễn giữa các lần chơi.
+- Hiển thị tên **Cảnh giới**, **Thể chất** và **Linh căn** trong bảng thuộc tính.
 
 ### Thay đổi
 - Mở rộng hệ thống cảnh giới với các tầng và quy tắc tăng chỉ số.
+- Sửa lỗi dùng thuốc hồi máu làm máu quay về 100 và lỗi tràn số khiến `ATTACK` về 0.
 
 ## [1.0.3] - 2025-08-08
 

@@ -32,9 +32,9 @@ public class HealthPotion extends Item {
 
 	@Override
     public void use(Player p) {
-        int current = p.atts().get(Attr.HEALTH);
-        int newHealth = Math.min(current + healthAmount, 100);
-        p.atts().set(Attr.HEALTH, newHealth);
+        // Không giới hạn máu ở 100, chỉ cộng thêm để tránh việc reset về 100
+        // Khi lên cấp tối đa máu sẽ được lưu lại trong thuộc tính
+        p.atts().add(Attr.HEALTH, healthAmount);
         decreaseQuantity(1);
 }
 	
