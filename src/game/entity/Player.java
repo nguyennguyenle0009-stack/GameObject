@@ -6,8 +6,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -15,6 +17,9 @@ import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
+import game.enums.Affinity;
+import game.enums.Attr;
+import game.enums.Physique;
 import game.enums.Realm;
 
 import game.main.GamePanel;
@@ -40,6 +45,14 @@ public class Player extends GameActor implements DrawableEntity {
 
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
+    private int realmStage = 0;
+    private int spiritToNextLevel = 100;
+
+    // Thể chất và linh căn
+    private Physique physique;
+    private EnumSet<Affinity> affinities = EnumSet.noneOf(Affinity.class);
+
+    private final Random random = new Random();
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -51,21 +64,39 @@ public class Player extends GameActor implements DrawableEntity {
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
 
         }
-	public void setDefaultValue() {
-		setWorldX(100); 
-		setWorldY(100);
-		setSpeed(4);
-		setDirection("down");
-		setSpriteCouter(0);
+        public void setDefaultValue() {
+                setWorldX(100);
+                setWorldY(100);
+                setSpeed(4);
+                setDirection("down");
+                setSpriteCouter(0);
                 setSpriteNum(1);
                 setName("Nguyeen pro");
-                atts().set(game.enums.Attr.HEALTH, 100);
-                atts().set(game.enums.Attr.PEP, 100);
-                atts().set(game.enums.Attr.SPIRIT, 0);
-                atts().set(game.enums.Attr.ATTACK, 5);
-                atts().set(game.enums.Attr.DEF, 4);
-        setScaleEntityX(gp.getTileSize());
-        setScaleEntityY(gp.getTileSize());
+
+                // Thuộc tính cơ bản
+                atts().setMax(Attr.HEALTH, 100);
+                atts().set(Attr.HEALTH, 100);
+                atts().setMax(Attr.PEP, 100);
+                atts().set(Attr.PEP, 100);
+                atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+                atts().set(Attr.SPIRIT, 0);
+                atts().setMax(Attr.ATTACK, 5);
+                atts().set(Attr.ATTACK, 5);
+                atts().setMax(Attr.DEF, 4);
+                atts().set(Attr.DEF, 4);
+                atts().set(Attr.STRENGTH, 1);
+                atts().set(Attr.SOULD, 5);
+
+                // Thiết lập thể chất và linh căn ngẫu nhiên
+                physique = randomPhysique();
+                affinities = randomAffinities();
+
+                // Thêm vài item test: bình hồi máu & tinh thần
+                bag.add(new game.entity.item.elixir.HealthPotion(50, 3));
+                bag.add(new game.entity.item.elixir.SpiritPotion(200, 3));
+
+                setScaleEntityX(gp.getTileSize());
+                setScaleEntityY(gp.getTileSize());
         }
 	
     private void setCollision() {
@@ -191,7 +222,7 @@ public class Player extends GameActor implements DrawableEntity {
                 );
                 // Nếu đòn đánh trúng quái
                 if (attackRect.intersects(monsterRect)) {
-                    int damage = atts().get(game.enums.Attr.ATTACK);
+                    int damage = atts().get(Attr.ATTACK);
                     if (monster instanceof Monster m) {
                         // Quái vật có quản lý máu riêng
                         if (m.takeDamage(damage)) {
@@ -201,8 +232,8 @@ public class Player extends GameActor implements DrawableEntity {
                         }
                     } else if (monster instanceof GameActor m) {
                         // Quái vật cũ chỉ trừ máu đơn giản
-                        m.atts().add(game.enums.Attr.HEALTH, -damage);
-                        if (m.atts().get(game.enums.Attr.HEALTH) <= 0) {
+                        m.atts().add(Attr.HEALTH, -damage);
+                        if (m.atts().get(Attr.HEALTH) <= 0) {
                             gp.getMonsters().remove(i);
                             i--;
                         }
@@ -222,7 +253,7 @@ public class Player extends GameActor implements DrawableEntity {
 
         int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
         if (monsterIndex != 999 && !invincible) {
-            atts().add(game.enums.Attr.HEALTH, -1);
+            atts().add(Attr.HEALTH, -1);
             gp.getUi().triggerDamageEffect();
             invincible = true;
         }
@@ -310,13 +341,189 @@ public class Player extends GameActor implements DrawableEntity {
     
     // Sử dụng item
     public void useItem(Item i) {
-    	i.use(this);
-    	if(i.getQuantity() == 0) bag.remove(i);
+        i.use(this);
+        if(i.getQuantity() == 0) bag.remove(i);
     }
 
-	public int getScreenX() { return screenX; }
-	public int getScreenY() { return screenY; }
+    /**
+     * Tăng Spirit và tự động kiểm tra lên cấp.
+     */
+    public void gainSpirit(int amount) {
+        atts().add(Attr.SPIRIT, amount);
+        while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
+            atts().add(Attr.SPIRIT, -spiritToNextLevel);
+            levelUp();
+        }
+    }
 
-	public static int getInteractionRange() { return INTERACTION_RANGE; }
-	public Inventory getBag() { return bag; } 
+    /**
+     * Thực hiện lên cấp theo cảnh giới hiện tại.
+     */
+    private void levelUp() {
+        int oldReq = spiritToNextLevel;
+        switch (realm) {
+            case PHAM_NHAN -> {
+                realm = Realm.LUYEN_THE;
+                realmStage = 1;
+                applyLuyenTheGrowth();
+                spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+            }
+            case LUYEN_THE -> {
+                realmStage++;
+                if (realmStage > physique.getMaxStage()) {
+                    realm = Realm.LUYEN_KHI;
+                    realmStage = 1;
+                    multiplyAllStats(2);
+                    spiritToNextLevel = (int) (oldReq * 3 * physique.getSpiritReqFactor());
+                } else {
+                    applyLuyenTheGrowth();
+                    spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+                }
+            }
+            case LUYEN_KHI -> {
+                realmStage++;
+                if (realmStage > physique.getMaxStage()) {
+                    realmStage = physique.getMaxStage();
+                } else {
+                    applyLuyenKhiGrowth(oldReq);
+                    spiritToNextLevel = (int) (oldReq * 3 * physique.getSpiritReqFactor());
+                }
+            }
+        }
+        // Cập nhật max Spirit cho HUD
+        atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+    }
+
+    /**
+     * Tăng chỉ số khi ở Luyện thể kỳ.
+     */
+    private void applyLuyenTheGrowth() {
+        int hp = (int) (atts().getMax(Attr.HEALTH) * 1.5 * physique.getStatFactor());
+        atts().setMax(Attr.HEALTH, hp);
+        atts().set(Attr.HEALTH, hp);
+
+        int pep = (int) (atts().getMax(Attr.PEP) * 1.5 * physique.getStatFactor());
+        atts().setMax(Attr.PEP, pep);
+        atts().set(Attr.PEP, pep);
+
+        int atk = (int) (atts().get(Attr.ATTACK) * 1.5 * physique.getStatFactor());
+        atts().set(Attr.ATTACK, atk);
+
+        int def = (int) (atts().get(Attr.DEF) * 3 * physique.getDefFactor());
+        atts().set(Attr.DEF, def);
+    }
+
+    /**
+     * Tăng chỉ số khi ở Luyện khí kỳ.
+     */
+    private void applyLuyenKhiGrowth(int oldReq) {
+        int hp = (int) (atts().getMax(Attr.HEALTH) * 2 * physique.getStatFactor());
+        atts().setMax(Attr.HEALTH, hp);
+        atts().set(Attr.HEALTH, hp);
+
+        int atk = (int) (atts().get(Attr.ATTACK) * 2 * physique.getStatFactor());
+        atts().set(Attr.ATTACK, atk);
+
+        int pep = (int) (atts().getMax(Attr.PEP) + oldReq / 5.0);
+        pep = (int) (pep * physique.getStatFactor());
+        atts().setMax(Attr.PEP, pep);
+        atts().set(Attr.PEP, pep);
+
+        int def = (int) (atts().get(Attr.DEF) * 1.5 * physique.getDefFactor());
+        atts().set(Attr.DEF, def);
+    }
+
+    /**
+     * Nhân toàn bộ chỉ số khi đột phá đại cảnh giới.
+     */
+    private void multiplyAllStats(double factor) {
+        int hp = (int) (atts().getMax(Attr.HEALTH) * factor * physique.getStatFactor());
+        atts().setMax(Attr.HEALTH, hp);
+        atts().set(Attr.HEALTH, hp);
+
+        int pep = (int) (atts().getMax(Attr.PEP) * factor * physique.getStatFactor());
+        atts().setMax(Attr.PEP, pep);
+        atts().set(Attr.PEP, pep);
+
+        int atk = (int) (atts().get(Attr.ATTACK) * factor * physique.getStatFactor());
+        atts().set(Attr.ATTACK, atk);
+
+        int def = (int) (atts().get(Attr.DEF) * factor * physique.getDefFactor());
+        atts().set(Attr.DEF, def);
+
+        int str = (int) (atts().get(Attr.STRENGTH) * factor * physique.getStatFactor());
+        atts().set(Attr.STRENGTH, str);
+
+        int soul = (int) (atts().get(Attr.SOULD) * factor * physique.getStatFactor());
+        atts().set(Attr.SOULD, soul);
+    }
+
+    // -------- Random Physique/Affinity ---------
+
+    private Physique randomPhysique() {
+        double roll = random.nextDouble() * 100;
+        if ((roll -= 1) < 0) return Physique.HU_KHONG;
+        if ((roll -= 1) < 0) return Physique.HU_KHONG_DAI_DE;
+        if ((roll -= 1) < 0) return Physique.THANH_THE;
+        if ((roll -= 1) < 0) return Physique.TIEN_LINH_THE;
+        if ((roll -= 1) < 0) return Physique.THAN_THE;
+        if ((roll -= 1) < 0) return Physique.NGU_HANH;
+        return Physique.NORMAL;
+    }
+
+    private EnumSet<Affinity> randomAffinities() {
+        int count = 1;
+        double r = random.nextDouble() * 100;
+        if (r < 10) count = 3;
+        else if (r < 25) count = 2;
+
+        EnumSet<Affinity> set = EnumSet.noneOf(Affinity.class);
+        while (set.size() < count) {
+            set.add(randomAffinity());
+        }
+        return set;
+    }
+
+    private Affinity randomAffinity() {
+        double roll = random.nextDouble() * 100;
+        if ((roll -= 20) < 0) return Affinity.HOA;
+        if ((roll -= 20) < 0) return Affinity.MOC;
+        if ((roll -= 20) < 0) return Affinity.THUY;
+        if ((roll -= 20) < 0) return Affinity.KIM;
+        if ((roll -= 20) < 0) return Affinity.THO;
+        return Affinity.LOI;
+    }
+
+    // -------- Getter helpers ---------
+
+    public int getRealmStage() { return realmStage; }
+    public int getSpiritToNextLevel() { return spiritToNextLevel; }
+    public Physique getPhysique() { return physique; }
+    public EnumSet<Affinity> getAffinities() { return affinities; }
+
+    /**
+     * @return tên cảnh giới + tầng hiện tại để hiển thị.
+     */
+    public String getRealmName() {
+        return switch (realm) {
+            case PHAM_NHAN -> realm.getDisplayName();
+            case LUYEN_THE, LUYEN_KHI -> realm.getDisplayName() + " tầng " + realmStage;
+        };
+    }
+
+    /**
+     * @return danh sách tên linh căn, cách nhau bằng dấu phẩy.
+     */
+    public String getAffinityNames() {
+        return affinities.stream()
+                .map(Affinity::getDisplay)
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("None");
+    }
+
+    public int getScreenX() { return screenX; }
+    public int getScreenY() { return screenY; }
+
+    public static int getInteractionRange() { return INTERACTION_RANGE; }
+    public Inventory getBag() { return bag; }
 }
