@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import game.entity.GameActor;
+import game.entity.Entity;
 import game.enums.Attr;
 import game.main.GamePanel;
 
@@ -43,6 +44,10 @@ public abstract class Monster extends GameActor {
     protected final Random random = new Random();
     /** Khu vực mà quái vật được phép di chuyển */
     protected Rectangle movementArea;
+    /** Cờ phát hiện người chơi khi vào khu vực spawn */
+    protected boolean detectPlayerInSpawnArea = false;
+    /** Cờ cho phép tấn công quái vật khác */
+    protected boolean canAttackMonsters = false;
 
     /**
      * Tạo quái vật mới.
@@ -80,9 +85,11 @@ public abstract class Monster extends GameActor {
      * @return true nếu trong phạm vi
      */
     protected boolean isPlayerInRange() {
-        if (movementArea != null &&
-            !movementArea.contains(gp.getPlayer().getWorldX(), gp.getPlayer().getWorldY())) {
-            return false;
+        if (movementArea != null) {
+            boolean inArea = movementArea.contains(
+                gp.getPlayer().getWorldX(), gp.getPlayer().getWorldY());
+            if (!inArea) return false;
+            if (detectPlayerInSpawnArea) return true;
         }
         int dx = gp.getPlayer().getWorldX() - getWorldX();
         int dy = gp.getPlayer().getWorldY() - getWorldY();
@@ -193,7 +200,23 @@ public abstract class Monster extends GameActor {
                 gp.getPlayer().getCollisionArea().width,
                 gp.getPlayer().getCollisionArea().height
             );
-            if (attackCooldown == 0 && attackRect.intersects(playerRect)) {
+            boolean hit = attackRect.intersects(playerRect);
+            if (!hit && canAttackMonsters) {
+                for (Entity e : gp.getMonsters()) {
+                    if (e == this) continue;
+                    Rectangle mRect = new Rectangle(
+                        e.getWorldX() + e.getCollisionArea().x,
+                        e.getWorldY() + e.getCollisionArea().y,
+                        e.getCollisionArea().width,
+                        e.getCollisionArea().height
+                    );
+                    if (attackRect.intersects(mRect)) {
+                        hit = true;
+                        break;
+                    }
+                }
+            }
+            if (attackCooldown == 0 && hit) {
                 attacking = true;
             }
         }
@@ -228,6 +251,33 @@ public abstract class Monster extends GameActor {
         if (attackRect.intersects(playerRect)) {
             gp.getPlayer().atts().add(Attr.HEALTH, -attackDamage);
             gp.getUi().triggerDamageEffect();
+        }
+        if (canAttackMonsters) {
+            for (int i = 0; i < gp.getMonsters().size(); i++) {
+                Entity e = gp.getMonsters().get(i);
+                if (e == this) continue;
+                Rectangle mRect = new Rectangle(
+                    e.getWorldX() + e.getCollisionArea().x,
+                    e.getWorldY() + e.getCollisionArea().y,
+                    e.getCollisionArea().width,
+                    e.getCollisionArea().height
+                );
+                if (attackRect.intersects(mRect)) {
+                    if (e instanceof Monster m) {
+                        if (m.takeDamage(attackDamage)) {
+                            m.dropItem();
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
+                    } else if (e instanceof GameActor m) {
+                        m.atts().add(Attr.HEALTH, -attackDamage);
+                        if (m.atts().get(Attr.HEALTH) <= 0) {
+                            gp.getMonsters().remove(i);
+                            i--;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -293,6 +343,24 @@ public abstract class Monster extends GameActor {
     public void setMovementArea(Rectangle area) { this.movementArea = area; }
 
     /**
+     * Bật/tắt phát hiện người chơi khi vào khu vực spawn.
+     *
+     * @param detect true để phát hiện ngay khi người chơi vào khu vực
+     */
+    public void setDetectPlayerInSpawnArea(boolean detect) {
+        this.detectPlayerInSpawnArea = detect;
+    }
+
+    /**
+     * Bật/tắt khả năng tấn công quái vật khác.
+     *
+     * @param can true nếu quái vật có thể tấn công quái khác
+     */
+    public void setCanAttackMonsters(boolean can) {
+        this.canAttackMonsters = can;
+    }
+
+    /**
      * Di chuyển nhưng không vượt ra ngoài khu vực cho phép.
      */
     @Override
@@ -312,6 +380,13 @@ public abstract class Monster extends GameActor {
                                        nextY + getScaleEntityY() - 1))) {
                 setWorldX(nextX);
                 setWorldY(nextY);
+            } else {
+                switch (getDirection()) {
+                    case "up" -> setDirection("down");
+                    case "down" -> setDirection("up");
+                    case "left" -> setDirection("right");
+                    case "right" -> setDirection("left");
+                }
             }
         }
     }
