@@ -1,11 +1,12 @@
 package game.enums;
 
 /**
- * Cảnh giới tu luyện của nhân vật.
- * Hiện tại mới chỉ có cấp "Phàm nhân" mặc định.
+ * Cultivation realms. Each realm contains several minor stages.
  */
 public enum Realm {
-    PHAM_NHAN("Phàm nhân");
+    PHAM_NHAN("Phàm nhân"),
+    LUYEN_THE("Luyện thể"),
+    LUYEN_KHI("Luyện khí");
 
     private final String displayName;
 

@@ -32,8 +32,9 @@ public class HealthPotion extends Item {
 
 	@Override
     public void use(Player p) {
+        // Restore health but never exceed player's maximum health.
         int current = p.atts().get(Attr.HEALTH);
-        int newHealth = Math.min(current + healthAmount, 100);
+        int newHealth = Math.min(current + healthAmount, p.getMaxHealth());
         p.atts().set(Attr.HEALTH, newHealth);
         decreaseQuantity(1);
 }
