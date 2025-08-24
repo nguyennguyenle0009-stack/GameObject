@@ -6,6 +6,16 @@
 
 ## Cập nhật
 
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Thêm hệ thống **Thể chất** và **Linh căn** cho nhân vật.
+- Cảnh giới có nhiều tầng, thống kê thay đổi theo mỗi lần đột phá.
+- Item "Tinh linh đan" dùng để tăng Spirit, giúp kiểm tra việc lên cấp.
+
+### Sửa lỗi
+- Thuộc tính tối đa không còn bị reset về 100 khi dùng item.
+
 ## [1.0.3] - 2025-08-08
 
 ### Thêm
