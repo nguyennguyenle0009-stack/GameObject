@@ -5,6 +5,9 @@ import game.entity.animal.cat.Cat_yellow;
 import game.entity.monster.GreenSlime;
 import game.entity.monster.Orc;
 import game.entity.monster.SkeletonLord;
+import game.entity.monster.MonsterZone;
+
+import java.awt.Rectangle;
 import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
@@ -74,5 +77,16 @@ public class ObjectManager {
         skeleton.setWorldX(14 * gp.getTileSize());
         skeleton.setWorldY(12 * gp.getTileSize());
         gp.getMonsters().add(skeleton);
+    }
+
+    /**
+     * Khởi tạo các khu vực sinh quái.
+     */
+    public void setMonsterZones() {
+        Rectangle area = new Rectangle(20 * gp.getTileSize(),
+                20 * gp.getTileSize(), 5 * gp.getTileSize(), 5 * gp.getTileSize());
+        MonsterZone zone = new MonsterZone(gp, area,
+                () -> new Orc(gp), 5, 60 * 60 * 5);
+        gp.getMonsterZones().add(zone);
     }
 }

@@ -21,6 +21,7 @@ import game.object.ObjectManager;
 import game.object.SuperObject;
 import game.tile.TileManager;
 import game.ui.Ui;
+import game.entity.monster.MonsterZone;
 
 public class GamePanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -52,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final List<Entity> monsters = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
     private final Ui ui = new Ui(this);
+    private final List<MonsterZone> monsterZones = new ArrayList<>();
     
     // GAME STATE
     private int gameState;
@@ -80,8 +82,9 @@ public class GamePanel extends JPanel implements Runnable {
                 objectManager.setObject();
                 objectManager.setEntity();
                 objectManager.setMonsters();
-		gameState = playState;
-	}
+                objectManager.setMonsterZones();
+                gameState = playState;
+        }
 	
 	public void startGame() { this.thread = new Thread(this); thread.start(); }
 	
@@ -115,6 +118,9 @@ public class GamePanel extends JPanel implements Runnable {
 	public void update() {
 		if(gameState == playState) {
                     player.update();
+                    for (MonsterZone zone : monsterZones) {
+                        zone.update();
+                    }
                     for (Entity npc : npcs) {
                         npc.update();
                     }
@@ -171,8 +177,9 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker getCheckCollision() { return checkCollision; }
 	public ObjectManager getObjectManager() { return objectManager; } 
 	public List<SuperObject> getObjects() { return objects; }
-        public List<Entity> getNpcs() { return npcs; }
+    public List<Entity> getNpcs() { return npcs; }
     public List<Entity> getMonsters() { return monsters; }
+    public List<MonsterZone> getMonsterZones() { return monsterZones; }
 
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
