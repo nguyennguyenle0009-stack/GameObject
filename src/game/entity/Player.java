@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,9 +14,12 @@ import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.item.elixir.SpiritPotion;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Realm;
+import game.enums.Physique;
+import game.enums.Affinity;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -40,6 +44,12 @@ public class Player extends GameActor implements DrawableEntity {
 
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
+    // Tầng (tiểu cảnh giới) hiện tại trong đại cảnh giới
+    private int realmStage = 0;
+    // Thể chất của nhân vật
+    private Physique physique = Physique.BINH_THUONG;
+    // Danh sách linh căn (có thể nhiều hơn 1)
+    private final List<Affinity> affinities = new ArrayList<>();
 
 	public Player(GamePanel gp) {
 		super(gp);
@@ -51,19 +61,28 @@ public class Player extends GameActor implements DrawableEntity {
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
 
         }
-	public void setDefaultValue() {
-		setWorldX(100); 
-		setWorldY(100);
-		setSpeed(4);
-		setDirection("down");
-		setSpriteCouter(0);
+        public void setDefaultValue() {
+                setWorldX(100);
+                setWorldY(100);
+                setSpeed(4);
+                setDirection("down");
+                setSpriteCouter(0);
                 setSpriteNum(1);
                 setName("Nguyeen pro");
+                // Thuộc tính cơ bản của cảnh giới phàm nhân
                 atts().set(game.enums.Attr.HEALTH, 100);
                 atts().set(game.enums.Attr.PEP, 100);
                 atts().set(game.enums.Attr.SPIRIT, 0);
                 atts().set(game.enums.Attr.ATTACK, 5);
                 atts().set(game.enums.Attr.DEF, 4);
+                atts().set(game.enums.Attr.SOULD, 5);
+                atts().set(game.enums.Attr.STRENGTH, 1);
+                // Thể chất và linh căn mặc định
+                physique = Physique.BINH_THUONG;
+                affinities.clear();
+                affinities.add(Affinity.HOA);
+                // Thêm item thử nghiệm tăng SPIRIT
+                bag.add(new SpiritPotion(200, 3));
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
         }
@@ -80,6 +99,93 @@ public class Player extends GameActor implements DrawableEntity {
 
     public void setRealm(Realm realm) {
         this.realm = realm;
+    }
+
+    /**
+     * Nhận thêm SPIRIT và kiểm tra lên cấp.
+     */
+    public void gainSpirit(int amount) {
+        atts().add(game.enums.Attr.SPIRIT, amount);
+        checkLevelUp();
+    }
+
+    private void checkLevelUp() {
+        boolean leveled;
+        do {
+            leveled = false;
+            int required = getRequiredSpirit();
+            int current = atts().get(game.enums.Attr.SPIRIT);
+            if (current >= required) {
+                atts().add(game.enums.Attr.SPIRIT, -required);
+                if (realm == Realm.PHAM_NHAN) {
+                    realm = Realm.LUYEN_THE;
+                    realmStage = 1;
+                    // Thiết lập thuộc tính ban đầu của Luyện thể tầng 1
+                    atts().set(game.enums.Attr.HEALTH, 150);
+                    atts().set(game.enums.Attr.PEP, 150);
+                    atts().set(game.enums.Attr.ATTACK, 10);
+                    atts().set(game.enums.Attr.DEF, 5);
+                    atts().set(game.enums.Attr.SOULD, 5);
+                    atts().set(game.enums.Attr.STRENGTH, 2);
+                } else if (realm == Realm.LUYEN_THE) {
+                    realmStage++;
+                    applyLuyenTheIncrease();
+                    if (realmStage > physique.getMaxTier()) {
+                        // Đột phá lên Luyện khí
+                        realm = Realm.LUYEN_KHI;
+                        realmStage = 1;
+                        applyBreakThrough();
+                    }
+                } else if (realm == Realm.LUYEN_KHI) {
+                    realmStage++;
+                    applyLuyenKhiIncrease();
+                }
+                leveled = true;
+            }
+        } while (leveled);
+    }
+
+    private int getRequiredSpirit() {
+        return switch (realm) {
+            case PHAM_NHAN -> 100;
+            case LUYEN_THE -> 1000;
+            case LUYEN_KHI -> 10000;
+        };
+    }
+
+    private void applyLuyenTheIncrease() {
+        atts().set(game.enums.Attr.HEALTH, (int)(atts().get(game.enums.Attr.HEALTH) * 1.5));
+        atts().set(game.enums.Attr.PEP, (int)(atts().get(game.enums.Attr.PEP) * 1.5));
+        atts().set(game.enums.Attr.ATTACK, (int)(atts().get(game.enums.Attr.ATTACK) * 1.5));
+        atts().set(game.enums.Attr.SPIRIT, atts().get(game.enums.Attr.SPIRIT) * 2);
+        atts().set(game.enums.Attr.DEF, atts().get(game.enums.Attr.DEF) * 3);
+    }
+
+    private void applyBreakThrough() {
+        for (game.enums.Attr a : game.enums.Attr.values()) {
+            if (a == game.enums.Attr.PHYSIQUE || a == game.enums.Attr.AFFINITY) continue;
+            atts().set(a, atts().get(a) * 2);
+        }
+    }
+
+    private void applyLuyenKhiIncrease() {
+        atts().set(game.enums.Attr.HEALTH, atts().get(game.enums.Attr.HEALTH) * 2);
+        atts().set(game.enums.Attr.ATTACK, atts().get(game.enums.Attr.ATTACK) * 2);
+        atts().add(game.enums.Attr.PEP, atts().get(game.enums.Attr.SPIRIT) / 5);
+        atts().set(game.enums.Attr.SPIRIT, atts().get(game.enums.Attr.SPIRIT) * 3);
+        atts().set(game.enums.Attr.DEF, (int)(atts().get(game.enums.Attr.DEF) * 1.5));
+    }
+
+    public Physique getPhysique() {
+        return physique;
+    }
+
+    public List<Affinity> getAffinities() {
+        return List.copyOf(affinities);
+    }
+
+    public int getRealmStage() {
+        return realmStage;
     }
 	
 	public void getImagePlayer() {
