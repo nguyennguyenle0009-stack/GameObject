@@ -76,6 +76,15 @@ public class Ui {
         return hud.handleMousePress(mx, my, button);
     }
 
+    /**
+     * Xử lý sự kiện cuộn chuột cho các bảng UI đang mở.
+     */
+    public void handleMouseWheel(int rotation, int mx, int my) {
+        if (!gp.keyH.isiPressed()) return;
+        inventory.handleMouseWheel(rotation, mx, my);
+        skillUi.handleMouseWheel(rotation, mx, my);
+    }
+
     private void drawInteractionHint(Graphics2D g2) {
         List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(gp.getPlayer(), gp.getNpcs(), 48);
         if (!nearbyNpcs.isEmpty()) {

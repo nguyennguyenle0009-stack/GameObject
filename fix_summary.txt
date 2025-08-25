@@ -1,0 +1,6 @@
+- Sửa lỗi không hiển thị thời gian hồi chiêu công pháp.
+- Bảng công pháp chuyển sang bên phải, thêm nút Dùng/Gán, tooltip, và hỗ trợ cuộn bằng con lăn.
+- Kho đồ hỗ trợ cuộn bằng chuột, lưu lại vị trí để cuộn chính xác.
+- Khi học công pháp mới sẽ lưu ngay vào tệp .txt.
+- HUD hiển thị thời gian hồi chiêu khi không tu luyện.
+- Cập nhật README và Change.txt.
