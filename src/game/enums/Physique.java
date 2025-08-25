@@ -5,28 +5,32 @@ package game.enums;
  * Một số thể chất ảnh hưởng đến số tầng tối đa hoặc chỉ số khi lên cấp.
  */
 public enum Physique {
-    NORMAL("Bình thường", 10, 1.0, 1.0, 1.0),
-    HU_KHONG("Hư không", 15, 1.0, 1.0, 1.0),
-    HU_KHONG_DAI_DE("Hư không đại đế", 20, 1.0, 1.0, 1.0),
-    THANH_THE("Thánh Thể", 10, 1.0, 2.0, 1.0),
-    TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0/3.0, 1.0, 1.0),
-    THAN_THE("Thần Thể", 10, 1.0, 1.0, 1.0),
+    NORMAL("Bình thường", 10, 1.0, 1.0, 1.0, 1.0),
+    HU_KHONG("Hư không", 15, 1.0, 1.0, 1.0, 1.0),
+    HU_KHONG_DAI_DE("Hư không đại đế", 20, 1.0, 1.0, 1.0, 1.0),
+    THANH_THE("Thánh Thể", 10, 1.0, 2.0, 1.0, 1.0),
+    // Tiên Linh Thể giảm yêu cầu SPIRIT và tăng tốc tu luyện gấp 3
+    TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0/3.0, 1.0, 1.0, 3.0),
+    THAN_THE("Thần Thể", 10, 1.0, 1.0, 1.0, 1.0),
     // Ngũ Hành: chỉ số gấp 2 lần nên yêu cầu SPIRIT gấp 3
-    NGU_HANH("Ngũ Hành Linh Căn", 10, 2.0, 1.0, 3.0);
+    NGU_HANH("Ngũ Hành Linh Căn", 10, 2.0, 1.0, 3.0, 1.0);
 
     private final String display;
     private final int maxStage;
     private final double spiritReqFactor;
     private final double defFactor;
     private final double statFactor;
+    /** Hệ số tốc độ tu luyện (1 = bình thường) */
+    private final double cultivationSpeed;
 
     Physique(String display, int maxStage, double spiritReqFactor,
-             double defFactor, double statFactor) {
+             double defFactor, double statFactor, double cultivationSpeed) {
         this.display = display;
         this.maxStage = maxStage;
         this.spiritReqFactor = spiritReqFactor;
         this.defFactor = defFactor;
         this.statFactor = statFactor;
+        this.cultivationSpeed = cultivationSpeed;
     }
 
     /** @return tên hiển thị của thể chất */
@@ -39,4 +43,6 @@ public enum Physique {
     public double getDefFactor() { return defFactor; }
     /** @return hệ số cộng dồn cho toàn bộ chỉ số */
     public double getStatFactor() { return statFactor; }
+    /** @return hệ số tăng tốc tu luyện */
+    public double getCultivationSpeed() { return cultivationSpeed; }
 }

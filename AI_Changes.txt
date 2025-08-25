@@ -1,0 +1,3 @@
+- Sửa lỗi thể chất Tiên Linh Thể không tăng tốc tu luyện gấp 3 lần.
+- Định dạng lại tệp lưu thuộc tính HEALTH/PEP/SPIRIT theo dạng hiện tại/tổng.
+- Cập nhật README.md và Change.txt.
