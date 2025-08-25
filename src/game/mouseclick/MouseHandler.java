@@ -14,13 +14,14 @@ public class MouseHandler implements MouseListener {
     public void mouseClicked(MouseEvent e) { }
     @Override
     public void mousePressed(MouseEvent e) {
-            if (gp.keyH.isiPressed()) {
-                if (gp.getUi().handleInventoryMousePress(e.getX(), e.getY(), e.getButton())) {
-                    return;
-                }
-                return;
-            }
-            // Right mouse pressed
+        // Ưu tiên xử lý click cho UI (kho đồ, nút hủy, bảng công pháp...)
+        if (gp.getUi().handleInventoryMousePress(e.getX(), e.getY(), e.getButton())) {
+            return;
+        }
+        if (gp.keyH.isiPressed()) {
+            return;
+        }
+        // Right mouse pressed
         if (e.getButton() == MouseEvent.BUTTON3) {
             //Tọa độ x,y trên màn hình
             int mouseX = e.getX();

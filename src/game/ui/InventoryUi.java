@@ -27,6 +27,7 @@ public class InventoryUi {
     private String[] contextOptions = new String[0];
     private int contextSelection = 0;
     private int contextX, contextY;
+    private java.awt.Rectangle skillBtn = new java.awt.Rectangle();
 
     public InventoryUi(GamePanel gp) {
         this.gp = gp;
@@ -210,7 +211,17 @@ public class InventoryUi {
         g2.drawString("Strength: " + attrs.get(Attr.STRENGTH), textX, textY); textY += 30;
         g2.drawString("Sould: " + attrs.get(Attr.SOULD), textX, textY); textY += 30;
         g2.drawString("Physique: " + p.getPhysique().getDisplay(), textX, textY); textY += 30;
-        g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY);
+        g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY); textY += 40;
+
+        // Vẽ nút mở bảng công pháp
+        int btnW = gp.getTileSize() * 4;
+        int btnH = gp.getTileSize();
+        int btnX = x + (width - btnW) / 2;
+        int btnY = y + height - btnH - gp.getTileSize() / 2;
+        HUDUtils.drawSubWindow(g2, btnX, btnY, btnW, btnH, new Color(40,40,40,200), Color.WHITE);
+        g2.setColor(Color.WHITE);
+        g2.drawString("Công pháp", btnX + 20, btnY + btnH - 10);
+        skillBtn.setBounds(btnX, btnY, btnW, btnH);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
@@ -231,6 +242,11 @@ public class InventoryUi {
             baseX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
         }
         int baseY = gp.getTileSize() * 2; // match grid position in draw()
+        if (skillBtn.contains(mx, my)) {
+            gp.getUi().getSkillUi().toggle();
+            return true;
+        }
+
         int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
         if (idx >= 0 && idx < itemGrid.getCols() * itemGrid.getRows()) {
