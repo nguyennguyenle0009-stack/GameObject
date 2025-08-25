@@ -35,4 +35,12 @@ Sửa lỗi và cải tiến:
 	   - Cập nhật cả phần ghi (`logRealmState`) và đọc (`loadProfile`).
 	   - Cập nhật ví dụ tệp `player.Nguyeen_pro.20250825.txt`.
 	
-	3. Cập nhật README với mô tả thay đổi.
+        3. Cập nhật README với mô tả thay đổi.
+
+## 1.0.11
+        1. Sửa lỗi Tiên Linh Thể:
+           - `spiritReqFactor` đặt về 1.0 để tránh giảm tổng SPIRIT khi thăng cấp.
+           - Thêm kiểm tra yêu cầu SPIRIT tối thiểu và vòng lặp `gainSpirit` tránh lặp vô hạn.
+        2. Hồ sơ người chơi thiếu dòng `PHYSIQUE` mặc định về "Bình thường".
+        3. Điều chỉnh Ngũ Hành Linh Căn: chỉ số x2, yêu cầu SPIRIT x3.
+        4. Cập nhật README.md mô tả thay đổi.

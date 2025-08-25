@@ -10,10 +10,10 @@ public enum Physique {
     HU_KHONG_DAI_DE("Hư không đại đế", 20, 1.0, 1.0, 1.0, 1.0),
     THANH_THE("Thánh Thể", 10, 1.0, 2.0, 1.0, 1.0),
     // Tiên Linh Thể: tu luyện nhanh gấp 3 lần
-    TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0/3.0, 1.0, 1.0, 3.0),
+    TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0, 1.0, 1.0, 3.0),
     THAN_THE("Thần Thể", 10, 1.0, 1.0, 1.0, 1.0),
     // Ngũ Hành: chỉ số gấp 2 lần nên yêu cầu SPIRIT gấp 3
-    NGU_HANH("Ngũ Hành Linh Căn", 10, 2.0, 1.0, 3.0, 1.0);
+    NGU_HANH("Ngũ Hành Linh Căn", 10, 3.0, 1.0, 2.0, 1.0);
 
     private final String display;
     private final int maxStage;

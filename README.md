@@ -47,6 +47,16 @@
 - Khi rê chuột vào item, HUD và khung công pháp không còn bị phóng to chữ.
 - HUD chỉ hiển thị tên và thời gian hiệu lực của đan dược hoặc tu luyện, bỏ dòng hồi chiêu.
 
+## [1.0.11]
+
+### Sửa lỗi
+- Thể chất **Tiên Linh Thể** không còn làm giảm yêu cầu SPIRIT và gây dừng tu luyện sau Luyện khí tầng 10.
+- Tệp lưu thiếu dòng `PHYSIQUE` mặc định về "Bình thường" để tránh lỗi khi mở bảng item.
+
+### Thay đổi
+- Điều chỉnh **Ngũ Hành Linh Căn**: chỉ số x2, yêu cầu SPIRIT x3.
+- `gainSpirit` và `levelUp` kiểm tra yêu cầu SPIRIT tối thiểu để tránh vòng lặp vô hạn.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi
