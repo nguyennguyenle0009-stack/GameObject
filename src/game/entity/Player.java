@@ -71,6 +71,8 @@ public class Player extends GameActor implements DrawableEntity {
 
     // Danh sách công pháp đã học
     private final List<CultivationTechnique> techniques = new ArrayList<>();
+    /** Công pháp được gán phím nóng (dùng sau này). */
+    private CultivationTechnique assignedTechnique;
     // Trạng thái tu luyện
     private boolean cultivating = false;
     private CultivationTechnique activeTechnique;
@@ -425,9 +427,14 @@ public class Player extends GameActor implements DrawableEntity {
     /** Người chơi học một công pháp mới. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
+        saveProfile();
     }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
+
+    /** Gán công pháp vào phím nóng để sử dụng sau này. */
+    public void assignTechnique(CultivationTechnique tech) { assignedTechnique = tech; saveProfile(); }
+    public CultivationTechnique getAssignedTechnique() { return assignedTechnique; }
 
     public String getSkillSummary() {
         if (techniques.isEmpty()) return "None";
@@ -610,7 +617,7 @@ public class Player extends GameActor implements DrawableEntity {
         spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
     }
 
-    private void logRealmState() {
+    private String buildRealmState() {
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         StringBuilder sb = new StringBuilder();
         sb.append("=============================\n");
@@ -625,12 +632,24 @@ public class Player extends GameActor implements DrawableEntity {
         sb.append("PHYSIQUE: " + physique.getDisplay() + "\n");
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
         sb.append("SKILL: " + getSkillSummary() + "\n");
-        realmLog.add(sb.toString());
+        return sb.toString();
+    }
+
+    private void logRealmState() {
+        realmLog.add(buildRealmState());
+    }
+
+    /** Cập nhật nhật ký cảnh giới với thông tin hiện tại. */
+    private void updateCurrentRealmLog() {
+        String current = buildRealmState();
+        if (realmLog.isEmpty()) realmLog.add(current);
+        else realmLog.set(realmLog.size() - 1, current);
     }
 
     private void saveProfile() {
         try {
             Path file = getProfilePath();
+            updateCurrentRealmLog();
             List<String> lines = new ArrayList<>();
             String fileName = file.getFileName().toString();
             lines.add("============" + fileName + "==============");
