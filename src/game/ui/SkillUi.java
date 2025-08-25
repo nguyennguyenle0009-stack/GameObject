@@ -30,10 +30,16 @@ public class SkillUi {
         HUDUtils.drawSubWindow(g2, x, y, w, h, new Color(0,0,0,200), Color.WHITE);
         List<CultivationTechnique> skills = gp.getPlayer().getTechniques();
         entries = new Rectangle[skills.size()];
+        long cd = gp.getPlayer().getCultivationCooldownRemaining();
         for (int i = 0; i < skills.size(); i++) {
             int yy = y + 40 + i * 40;
             g2.setColor(Color.WHITE);
             g2.drawString(skills.get(i).getName(), x + 30, yy);
+            if (cd > 0) {
+                String cdStr = formatTime(cd);
+                int strW = g2.getFontMetrics().stringWidth(cdStr);
+                g2.drawString(cdStr, x + w - 30 - strW, yy);
+            }
             entries[i] = new Rectangle(x + 20, yy - 25, w - 40, 30);
         }
     }
@@ -57,4 +63,11 @@ public class SkillUi {
 
     public void toggle() { visible = !visible; }
     public boolean isVisible() { return visible; }
+
+    private String formatTime(long ms) {
+        long sec = ms / 1000;
+        long min = sec / 60;
+        long s = sec % 60;
+        return String.format("%02d:%02d", min, s);
+    }
 }
