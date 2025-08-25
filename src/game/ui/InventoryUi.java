@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import game.entity.item.Item;
+import game.enums.Attr;
 import game.main.GamePanel;
 
 /**
@@ -197,11 +198,19 @@ public class InventoryUi {
         int textX = x + gp.getTileSize();
         int textY = y + gp.getTileSize();
 
-        var attrs = gp.getPlayer().atts();
-        for(game.enums.Attr a : game.enums.Attr.values()) {
-            g2.drawString(a.displayerName() + ": " + attrs.get(a), textX, textY);
-            textY += 30;
-        }
+        var p = gp.getPlayer();
+        var attrs = p.atts();
+
+        g2.drawString("Realm: " + p.getRealmName(), textX, textY); textY += 30;
+        g2.drawString("Health: " + attrs.get(Attr.HEALTH) + "/" + attrs.getMax(Attr.HEALTH), textX, textY); textY += 30;
+        g2.drawString("Pep: " + attrs.get(Attr.PEP) + "/" + attrs.getMax(Attr.PEP), textX, textY); textY += 30;
+        g2.drawString("Spirit: " + attrs.get(Attr.SPIRIT) + "/" + p.getSpiritToNextLevel(), textX, textY); textY += 30;
+        g2.drawString("Attack: " + attrs.get(Attr.ATTACK), textX, textY); textY += 30;
+        g2.drawString("Def: " + attrs.get(Attr.DEF), textX, textY); textY += 30;
+        g2.drawString("Strength: " + attrs.get(Attr.STRENGTH), textX, textY); textY += 30;
+        g2.drawString("Sould: " + attrs.get(Attr.SOULD), textX, textY); textY += 30;
+        g2.drawString("Physique: " + p.getPhysique().getDisplay(), textX, textY); textY += 30;
+        g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {

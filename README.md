@@ -6,6 +6,17 @@
 
 ## Cập nhật
 
+## [1.0.4] - 2025-08-09
+
+### Thêm
+- Hệ thống **Thể chất** và **Linh căn** khi khởi tạo nhân vật.
+- Mở rộng hệ thống **Cảnh giới** với Luyện thể/Luyện khí và tăng chỉ số khi lên cấp.
+- Item mới **Đan dược tinh thần** giúp cộng Spirit để kiểm tra lên cấp.
+- HUD và bảng thuộc tính hiển thị tên cảnh giới, thể chất và linh căn hiện tại.
+
+### Sửa lỗi
+- Sử dụng item không còn đặt lại máu về 100 mà giới hạn theo chỉ số tối đa.
+
 ## [1.0.3] - 2025-08-08
 
 ### Thêm
@@ -94,6 +105,5 @@
 - va chạm player với npc (đã làm)
 
 - 
-
 
 
