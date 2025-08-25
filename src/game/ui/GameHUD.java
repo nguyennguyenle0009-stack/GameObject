@@ -70,6 +70,14 @@ public class GameHUD {
             String text = "Tu luyện: " + (sec / 60) + ":" + String.format("%02d", sec % 60);
             g2.setColor(Color.WHITE);
             g2.drawString(text, x, infoY);
+        } else {
+            long cd = p.getCultivationCooldownRemaining();
+            if (cd > 0) {
+                long sec = cd / 1000;
+                String text = "Hồi chiêu: " + (sec / 60) + ":" + String.format("%02d", sec % 60);
+                g2.setColor(Color.WHITE);
+                g2.drawString(text, x, infoY);
+            }
         }
 
         // Nếu đang tu luyện, vẽ nút hủy

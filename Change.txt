@@ -12,3 +12,9 @@ Sửa lỗi và cải tiến:
 - HUD hiển thị thời gian hồi chiêu tu luyện.
 - Kho đồ thu nhỏ ô 32px và có thanh cuộn để chứa nhiều item.
 - Khung thuộc tính dùng font nhỏ, lề sát hơn để tránh đè giao diện.
+
+## [1.0.8] 2025-08-27
+- Bảng công pháp chuyển sang bên phải, thêm nút **Use**/**Gán** và tooltip chi tiết.
+- Hiển thị thời gian hồi chiêu cả trong HUD lẫn danh sách công pháp.
+- Danh sách công pháp và kho đồ hỗ trợ cuộn bằng con lăn chuột.
+- Tệp lưu bổ sung cấp độ/phẩm cấp công pháp và được cập nhật ngay khi học.

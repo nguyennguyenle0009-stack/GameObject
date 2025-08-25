@@ -74,6 +74,8 @@ public class Player extends GameActor implements DrawableEntity {
     // Trạng thái tu luyện
     private boolean cultivating = false;
     private CultivationTechnique activeTechnique;
+    // Công pháp được gán phím nhanh (chưa dùng)
+    private CultivationTechnique assignedTechnique;
     private long cultivationEndTime = 0;
     private long cultivationCooldownEnd = 0;
     private long lastSpiritTick = 0;
@@ -422,9 +424,22 @@ public class Player extends GameActor implements DrawableEntity {
 
     // ------------ Hệ thống kỹ năng & tu luyện ------------
 
-    /** Người chơi học một công pháp mới. */
+    /** Người chơi học một công pháp mới và lưu lại hồ sơ. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
+        // Cập nhật log để tệp lưu có danh sách công pháp mới
+        logRealmState();
+        saveProfile();
+    }
+
+    /** Gán công pháp vào phím tắt (hiện chưa sử dụng). */
+    public void assignTechnique(CultivationTechnique tech) {
+        assignedTechnique = tech;
+    }
+
+    /** Lấy công pháp đã gán phím tắt. */
+    public CultivationTechnique getAssignedTechnique() {
+        return assignedTechnique;
     }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
@@ -628,7 +643,8 @@ public class Player extends GameActor implements DrawableEntity {
         realmLog.add(sb.toString());
     }
 
-    private void saveProfile() {
+    /** Lưu trạng thái hiện tại của nhân vật vào tệp. */
+    public void saveProfile() {
         try {
             Path file = getProfilePath();
             List<String> lines = new ArrayList<>();

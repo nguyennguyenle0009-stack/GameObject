@@ -6,6 +6,20 @@
 
 ## Cập nhật
 
+## [1.0.8] - 2025-08-27
+
+### Thêm
+- Bảng **Công pháp** di chuyển sang bên phải, có nút *Use* và *Gán* cho từng kỹ năng.
+- Hiển thị thời gian hồi chiêu bên cạnh tên công pháp và trong HUD.
+- Tooltip và con lăn chuột hỗ trợ cuộn trong danh sách công pháp.
+- Kho đồ và bảng công pháp đều hỗ trợ cuộn bằng chuột.
+
+### Sửa lỗi
+- Sử dụng sách công pháp giờ được lưu vào tệp, nhân vật giữ nguyên công pháp sau khi thoát.
+
+### Cải thiện
+- Tệp lưu bổ sung thông tin công pháp với cấp độ và phẩm cấp.
+
 ## [1.0.7] - 2025-08-26
 
 ### Thêm
