@@ -1,0 +1,6 @@
+Các thay đổi chính:
+- Sửa lỗi không lưu công pháp đã học vào tệp và không hiển thị hồi chiêu.
+- HUD hiển thị thời gian hồi chiêu của tu luyện khi đang chờ.
+- Bảng công pháp di chuyển sang bên phải, có nút "Dùng" và "Gán", tooltip và thanh cuộn dùng con lăn chuột.
+- Kho đồ hỗ trợ cuộn bằng con lăn.
+- Định dạng file lưu giữ mục SKILL với cấp và phẩm của công pháp.

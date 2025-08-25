@@ -6,6 +6,16 @@
 
 ## Cập nhật
 
+## [1.0.8] - 2025-08-27
+
+### Thêm
+- Bảng công pháp di chuyển sang bên phải, có nút **Dùng** và **Gán** cùng tooltip khi rê chuột.
+- Hiển thị thời gian hồi chiêu cạnh tên công pháp và trong HUD.
+- Danh sách công pháp và kho đồ hỗ trợ cuộn bằng con lăn chuột.
+
+### Sửa lỗi
+- Tệp lưu ghi lại công pháp đã học và thời gian hồi chiêu sau khi thoát game.
+
 ## [1.0.7] - 2025-08-26
 
 ### Thêm

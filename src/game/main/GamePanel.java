@@ -65,11 +65,12 @@ public class GamePanel extends JPanel implements Runnable {
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setBackground(Color.white);
-		this.setDoubleBuffered(true);
-		this.addKeyListener(keyH);
-		this.addMouseListener(mounseH);
-		this.setFocusable(true);
-	}
+                this.setDoubleBuffered(true);
+                this.addKeyListener(keyH);
+                this.addMouseListener(mounseH);
+                this.addMouseWheelListener(mounseH);
+                this.setFocusable(true);
+        }
 	
 	public void setUpGame() { 
         player.addItem(new HealthPotion(30, 50));

@@ -193,6 +193,24 @@ public class InventoryUi {
     }
 
     /**
+     * Cuộn kho đồ bằng con lăn chuột.
+     */
+    public boolean handleMouseWheel(int rotation) {
+        int cols = itemGrid.getCols();
+        int rows = itemGrid.getRows();
+        var items = gp.getPlayer().getBag().all();
+        int visible = cols * rows;
+        int maxOffset = Math.max(0, items.size() - visible);
+        scrollOffset += rotation * cols; // cuộn mỗi lần một hàng
+        if (scrollOffset < 0) scrollOffset = 0;
+        if (scrollOffset > maxOffset) scrollOffset = maxOffset;
+        // đảm bảo ô chọn nằm trong trang hiện tại
+        if (selectedSlot < scrollOffset) selectedSlot = scrollOffset;
+        if (selectedSlot >= scrollOffset + visible) selectedSlot = scrollOffset + visible - 1;
+        return true;
+    }
+
+    /**
      * Draws the character attribute box at a given vertical offset.
      *
      * @param topY starting Y position of the box
