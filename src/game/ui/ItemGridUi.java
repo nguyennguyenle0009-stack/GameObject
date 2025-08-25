@@ -13,15 +13,17 @@ import game.entity.item.Item;
 
 public class ItemGridUi {
         private final int cols = 6;
-	private final int rows = 3;
-	private final int slotSize;
-	private final int gap = 6;
-	private final int padding; // Viền trong của khung lớn
-	
-	public ItemGridUi(int tileSize) {
-		this.slotSize = tileSize;
-		this.padding = tileSize / 4;
-	}
+        private final int rows = 3;
+        private final int slotSize;
+        private final int gap = 4;
+        private final int padding; // Viền trong của khung lớn
+        private int scrollOffset = 0; // hàng đầu tiên đang hiển thị
+
+        public ItemGridUi(int tileSize) {
+                // giới hạn ô khoảng 32px để tăng số lượng hiển thị
+                this.slotSize = Math.min(32, tileSize);
+                this.padding = 10;
+        }
 	
 	// Trả về kích thước khung (bug)
 	
@@ -48,6 +50,7 @@ public class ItemGridUi {
             int startX = x + padding;
             int startY = y + padding;
 
+            int capacity = cols * rows;
             for (int r = 0; r < rows; r++) {
                 int yy = startY + r * (slotSize + gap);
                 for (int c = 0; c < cols; c++) {
@@ -61,7 +64,7 @@ public class ItemGridUi {
                     g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
 
                     // lấy item
-                    int idx = r * cols + c;            // <— tính chỉ số tại chỗ
+                    int idx = scrollOffset + r * cols + c;
                     Item it = (idx < size) ? items.get(idx) : null;
 
                     // icon
@@ -101,13 +104,40 @@ public class ItemGridUi {
                     }
                 }
             }
+            // Vẽ scrollbar nếu cần
+            int totalRows = (int)Math.ceil(size / (double)cols);
+            if (totalRows > rows) {
+                int trackX = x + d.width - 6;
+                int trackY = y + padding;
+                int trackH = d.height - padding * 2;
+                g2.setColor(new Color(0,0,0,100));
+                g2.fillRect(trackX, trackY, 4, trackH);
+                int thumbH = Math.max(20, trackH * rows / totalRows);
+                int maxOffsetRow = totalRows - rows;
+                int thumbY = trackY + (trackH - thumbH) * (scrollOffset / cols) / Math.max(1, maxOffsetRow);
+                g2.setColor(Color.WHITE);
+                g2.fillRect(trackX, thumbY, 4, thumbH);
+            }
         }
 
-	public int getCols() { return cols; }
-	public int getRows() { return rows; }
-	public int getSlotSize() { return slotSize; }
-	public int getGap() { return gap; }
-	public int getPadding() { return padding; } 
-	
+        public void ensureVisible(int index, int totalItems) {
+            if (index < 0) return;
+            int capacity = cols * rows;
+            int maxOffset = Math.max(0, ((totalItems - 1) / cols) * cols);
+            if (index < scrollOffset) {
+                scrollOffset = index - index % cols;
+            } else if (index >= scrollOffset + capacity) {
+                scrollOffset = index - capacity + cols;
+            }
+            scrollOffset = Math.max(0, Math.min(scrollOffset, maxOffset));
+        }
+
+        public int getScrollOffset() { return scrollOffset; }
+        public int getCols() { return cols; }
+        public int getRows() { return rows; }
+        public int getSlotSize() { return slotSize; }
+        public int getGap() { return gap; }
+        public int getPadding() { return padding; }
+
 }
 

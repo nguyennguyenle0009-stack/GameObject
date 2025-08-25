@@ -6,6 +6,17 @@
 
 ## Cập nhật
 
+## [1.0.8] - 2025-08-27
+
+### Sửa lỗi
+- Dùng sách công pháp và đan dược nay sẽ tự giảm số lượng và lưu vào hồ sơ.
+- Hiển thị thời gian tu luyện còn lại và hồi chiêu trên HUD.
+- Lưu danh sách công pháp vào tệp người chơi để không bị mất khi khởi động lại.
+
+### Thay đổi
+- Thu nhỏ ô vật phẩm trong kho, thêm cuộn để tránh giao diện bị đè lên nhau.
+- Khung thuộc tính sử dụng phông chữ nhỏ hơn và căn lề gọn gàng hơn.
+
 ## [1.0.7] - 2025-08-26
 
 ### Thêm
