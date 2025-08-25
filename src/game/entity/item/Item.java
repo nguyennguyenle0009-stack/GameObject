@@ -47,12 +47,11 @@ public abstract class Item {
     // Thực hiện hành động tương ứng
     public void performAction(Player p, String action) {
         if ("Use".equalsIgnoreCase(action)) {
-            use(p);
-            if (getQuantity() == 0) {
-                p.getBag().remove(this);
-            }
+            // Ủy quyền cho Player xử lý để tự động lưu tệp
+            p.useItem(this);
         } else if ("Drop".equalsIgnoreCase(action)) {
             p.getBag().remove(this);
+            p.saveProfile();
         }
     }
 

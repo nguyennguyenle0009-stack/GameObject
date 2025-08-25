@@ -192,6 +192,18 @@ public class InventoryUi {
         g2.drawString(line2, x + padding, y + padding + 35);
     }
 
+    /** Cuộn kho đồ bằng con lăn chuột. */
+    public void handleMouseWheel(int rotation) {
+        var items = gp.getPlayer().getBag().all();
+        int cols = itemGrid.getCols();
+        int rows = itemGrid.getRows();
+        int visible = cols * rows;
+        scrollOffset += rotation * cols;
+        int maxOffset = Math.max(0, items.size() - visible);
+        if (scrollOffset < 0) scrollOffset = 0;
+        if (scrollOffset > maxOffset) scrollOffset = maxOffset;
+    }
+
     /**
      * Draws the character attribute box at a given vertical offset.
      *
