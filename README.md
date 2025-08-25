@@ -41,6 +41,14 @@
 - Khi rê chuột vào item, HUD và khung công pháp không còn bị phóng to chữ.
 - HUD chỉ hiển thị tên và thời gian hiệu lực của đan dược hoặc tu luyện, bỏ dòng hồi chiêu.
 
+## [1.0.10]
+
+### Sửa lỗi
+- Thể chất **Tiên Linh Thể** không còn bỏ qua việc tăng tốc độ tu luyện gấp 3.
+
+### Thay đổi
+- Tệp lưu người chơi ghi HEALTH, PEP và SPIRIT theo định dạng `hiện tại/tối đa`.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi

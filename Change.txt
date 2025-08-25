@@ -23,3 +23,7 @@ Sửa lỗi và cải tiến:
 ## 1.0.9
 - Fix HUD và bảng công pháp phóng to chữ khi hover item.
 - HUD bỏ hiển thị dòng "Hồi chiêu", chỉ còn tên và thời gian hiệu lực của đan dược/tu luyện.
+
+## 1.0.10
+- Sửa lỗi Tiên Linh Thể không tăng tốc tu luyện gấp 3 lần.
+- Định dạng tệp lưu thuộc tính `HEALTH`, `PEP`, `SPIRIT` theo kiểu hiện tại/tổng.

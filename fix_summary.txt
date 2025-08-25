@@ -1,0 +1,3 @@
+Sửa lỗi và thay đổi:
+- Tiên Linh Thể nay tăng tốc tu luyện gấp 3 lần.
+- Tệp lưu thuộc tính người chơi ghi HEALTH, PEP và SPIRIT theo dạng hiện tại/tổng.
