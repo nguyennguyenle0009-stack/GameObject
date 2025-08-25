@@ -425,7 +425,21 @@ public class Player extends GameActor implements DrawableEntity {
     /** Người chơi học một công pháp mới. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
+        // Lưu lại tiến trình ngay sau khi học để đảm bảo
+        // công pháp tồn tại khi thoát game.
+        logRealmState();
+        saveProfile();
     }
+
+    // Công pháp được gán vào phím nhanh (tạm thời lưu 1 kỹ năng).
+    private CultivationTechnique assignedTechnique;
+
+    /** Gán một công pháp cho phím nhanh. */
+    public void assignTechnique(CultivationTechnique tech) {
+        assignedTechnique = tech;
+    }
+
+    public CultivationTechnique getAssignedTechnique() { return assignedTechnique; }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
 
