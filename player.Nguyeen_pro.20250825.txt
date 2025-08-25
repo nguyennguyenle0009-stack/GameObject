@@ -1,0 +1,38 @@
+============player.Nguyeen_pro.20250825.txt==============
+Itemcủa nhân vật: Đan dược hồi máu (6), Đan dược tinh thần (2), Đan dược hồi máu (100), Đan dược hồi máu (70), Đan dược hồi máu (60)
+=============================
+cảnh giới phàm nhân - 2025-08-25 11:01:05
+HEALTH: 100
+ATTACK: 5
+PEP: 100
+DEF: 4
+SOULD: 5
+SPIRIT 100
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 1 - 2025-08-25 11:01:22
+HEALTH: 150
+ATTACK: 5
+PEP: 150
+DEF: 4
+SOULD: 5
+SPIRIT 200
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 2 - 2025-08-25 11:01:23
+HEALTH: 225
+ATTACK: 5
+PEP: 225
+DEF: 4
+SOULD: 5
+SPIRIT 400
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
