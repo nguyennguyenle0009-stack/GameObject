@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.6] - 2025-08-25
+
+### Sửa lỗi
+- Gỡ giới hạn Attack/Def để chỉ số tăng đúng khi thăng cấp.
+- Thể chất **Ngũ Hành** yêu cầu SPIRIT gấp 3 lần so với thể chất khác.
+
 ## [1.0.5] - 2025-08-25
 
 ### Thay đổi

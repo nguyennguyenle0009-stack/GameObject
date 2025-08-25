@@ -56,7 +56,7 @@ public class Player extends GameActor implements DrawableEntity {
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
     private int realmStage = 0;
-    private int spiritToNextLevel = 100;
+    private int spiritToNextLevel = 1000;
 
     // Thể chất và linh căn
     private Physique physique;
@@ -94,9 +94,8 @@ public class Player extends GameActor implements DrawableEntity {
             atts().set(Attr.PEP, 100);
             atts().setMax(Attr.SPIRIT, spiritToNextLevel);
             atts().set(Attr.SPIRIT, 0);
-            atts().setMax(Attr.ATTACK, 5);
+            // Attack/Def không còn giới hạn max mặc định để có thể tăng khi lên cấp
             atts().set(Attr.ATTACK, 5);
-            atts().setMax(Attr.DEF, 4);
             atts().set(Attr.DEF, 4);
             atts().set(Attr.STRENGTH, 1);
             atts().set(Attr.SOULD, 5);
@@ -104,6 +103,10 @@ public class Player extends GameActor implements DrawableEntity {
             // Thiết lập thể chất và linh căn ngẫu nhiên
             physique = randomPhysique();
             affinities = randomAffinities();
+
+            // Ngũ Hành Linh Căn có chỉ số gấp 5 lần nên yêu cầu SPIRIT cũng gấp 5
+            spiritToNextLevel = (int) (spiritToNextLevel * physique.getSpiritReqFactor());
+            atts().setMax(Attr.SPIRIT, spiritToNextLevel);
 
             // Thêm vài item test: bình hồi máu & tinh thần
             addItem(new game.entity.item.elixir.HealthPotion(50, 3));
