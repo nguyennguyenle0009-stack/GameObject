@@ -2,6 +2,8 @@ package game.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 import game.entity.Player;
 import game.enums.Attr;
@@ -22,8 +24,14 @@ public class GameHUD {
     private static final Color BAR_BACK = new Color(30, 30, 30, 180);
     private static final Color BAR_BORDER = new Color(0, 0, 0, 180);
 
+    private final Rectangle cancelRect;
+
     public GameHUD(GamePanel gp) {
         this.gp = gp;
+        // Nút hủy tu luyện nằm góc trái dưới màn hình
+        int w = 80;
+        int h = 30;
+        this.cancelRect = new Rectangle(5, gp.getScreenHeight() - h - 5, w, h);
     }
 
     public void draw(Graphics2D g2) {
@@ -52,26 +60,21 @@ public class GameHUD {
         drawBar(g2, x, y, barWidth, barHeight,
                 p.atts().get(Attr.SPIRIT), p.atts().getMax(Attr.SPIRIT), EXP_FILL);
 
-        // Hiển thị thông tin đan dược đang dùng (nếu có)
-        if (p.getActivePillName() != null && p.getPillRemainingMs() > 0) {
-            String text = p.getActivePillName() + " " + formatTime(p.getPillRemainingMs());
-            int tw = g2.getFontMetrics().stringWidth(text) + 10;
-            HUDUtils.drawSubWindow(g2, x, y + barHeight + 6, tw, barHeight, BAR_BACK, BAR_BORDER);
+        // Hiển thị thông tin buff đan dược dưới thanh SPIRIT
+        if (p.getPillSpiritBonus() > 0) {
+            long sec = p.getPillTimeLeft() / 1000;
+            String text = p.getActivePillName() + " " + (sec / 60) + ":" + String.format("%02d", sec % 60);
             g2.setColor(Color.WHITE);
-            g2.drawString(text, x + 5, y + barHeight + barHeight); // text dưới thanh SPIRIT
+            g2.drawString(text, x, y + barHeight + 20);
         }
 
-        // Khi đang tu luyện, vẽ nút hủy ở góc trái
+        // Nếu đang tu luyện, vẽ nút hủy
         if (p.isCultivating()) {
-            HUDUtils.drawSubWindow(g2, margin, gp.getTileSize()*2, 80, barHeight, PURPLE_BG, PURPLE_BORDER);
+            HUDUtils.drawSubWindow(g2, cancelRect.x, cancelRect.y, cancelRect.width, cancelRect.height,
+                    BAR_BACK, BAR_BORDER);
             g2.setColor(Color.WHITE);
-            g2.drawString("Huỷ", margin + 25, gp.getTileSize()*2 + barHeight - 6);
+            g2.drawString("Huỷ", cancelRect.x + 20, cancelRect.y + cancelRect.height - 10);
         }
-
-        // Nút mở bảng công pháp (chưa xử lý click)
-        HUDUtils.drawSubWindow(g2, margin, gp.getTileSize()*3, 100, barHeight, PURPLE_BG, PURPLE_BORDER);
-        g2.setColor(Color.WHITE);
-        g2.drawString("Công pháp", margin + 10, gp.getTileSize()*3 + barHeight - 6);
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int w, int h,
@@ -84,11 +87,13 @@ public class GameHUD {
         g2.setColor(BAR_BORDER);
         g2.drawRect(x, y, w, h);
     }
-    
-    private String formatTime(long ms) {
-        long totalSeconds = ms / 1000;
-        long m = totalSeconds / 60;
-        long s = totalSeconds % 60;
-        return String.format("%02d:%02d", m, s);
+
+    /** Xử lý click chuột trên HUD. */
+    public boolean handleMousePress(int mx, int my, int button) {
+        if (button == MouseEvent.BUTTON1 && gp.getPlayer().isCultivating() && cancelRect.contains(mx, my)) {
+            gp.getPlayer().cancelCultivation();
+            return true;
+        }
+        return false;
     }
 }

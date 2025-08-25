@@ -26,6 +26,7 @@ public class Ui {
 
     private final InventoryUi inventory;
     private final GameHUD hud;
+    private final SkillUi skillUi;
     
     private int damageCounter = 0;
 
@@ -35,6 +36,7 @@ public class Ui {
         this.arial_80B = new Font("Arial", Font.BOLD, 80);
         this.inventory = new InventoryUi(gp);
         this.hud = new GameHUD(gp);
+        this.skillUi = new SkillUi(gp);
     }
 
     public void showMessage(String text) {
@@ -56,6 +58,9 @@ public class Ui {
         }
         if (gp.keyH.isiPressed()) {
             inventory.draw(g2);
+            if (skillUi.isVisible()) {
+                skillUi.draw(g2);
+            }
         }
         hud.draw(g2);
         if (damageCounter > 0) {
@@ -66,7 +71,9 @@ public class Ui {
     }
 
     public boolean handleInventoryMousePress(int mx, int my, int button) {
-        return inventory.handleMousePress(mx, my, button);
+        if (inventory.handleMousePress(mx, my, button)) return true;
+        if (skillUi.handleMousePress(mx, my, button)) return true;
+        return hud.handleMousePress(mx, my, button);
     }
 
     private void drawInteractionHint(Graphics2D g2) {
@@ -155,6 +162,7 @@ public class Ui {
     public Ui setCurrentDialogue(String currentDialogue) { this.currentDialogue = currentDialogue; return this; }
 
     public InventoryUi getInventory() { return inventory; }
+    public SkillUi getSkillUi() { return skillUi; }
     
     public void triggerDamageEffect() { damageCounter = 10; }
 }

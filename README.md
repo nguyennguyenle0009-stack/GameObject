@@ -6,6 +6,17 @@
 
 ## Cập nhật
 
+## [1.0.7] - 2025-08-26
+
+### Thêm
+- Hệ thống **Kỹ năng** cơ bản với class `Skill` dễ mở rộng.
+- 4 công pháp tu luyện (hạ, trung, thượng, cực phẩm) học qua sách.
+- 4 loại đan dược tăng tốc tu luyện, cộng thêm SPIRIT mỗi giây trong 10 phút.
+- Tu luyện đứng im, có nút **Huỷ** ở HUD và hồi chiêu 1 giờ.
+- HUD hiển thị tên đan dược đang dùng và thời gian đếm ngược.
+- Bảng thuộc tính có nút mở danh sách công pháp.
+- Tệp lưu người chơi thêm mục `SKILL` ghi lại công pháp đã học.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi
@@ -117,5 +128,4 @@
 - va chạm player với npc (đã làm)
 
 - 
-
 

@@ -1,5 +1,5 @@
 ============player.Nguyeen_pro.20250825.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược hồi máu (100), Đan dược tinh thần (23), Đan dược hồi máu (25), Đan dược hồi máu (100), Đan dược hồi máu (11), Đan dược tinh thần (60), Đan dược tinh thần (60), Đan dược tinh thần (60)
+Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược hồi máu (13), Đan dược tinh thần (5), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (60), Đan dược tinh thần (60), Đan dược tinh thần (60)
 =============================
 cảnh giới phàm nhân - 2025-08-25 13:23:08
 HEALTH: 100
@@ -11,6 +11,7 @@ SPIRIT 1000
 STRENGTH: 1
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 1 - 2025-08-25 13:23:19
@@ -23,6 +24,7 @@ SPIRIT 1500
 STRENGTH: 2
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 2 - 2025-08-25 13:23:21
@@ -35,6 +37,7 @@ SPIRIT 2250
 STRENGTH: 2
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 3 - 2025-08-25 13:23:25
@@ -47,6 +50,7 @@ SPIRIT 3375
 STRENGTH: 3
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 4 - 2025-08-25 13:23:26
@@ -59,6 +63,7 @@ SPIRIT 5062
 STRENGTH: 3
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 5 - 2025-08-25 13:23:28
@@ -71,6 +76,7 @@ SPIRIT 7593
 STRENGTH: 3
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 6 - 2025-08-25 13:23:30
@@ -83,6 +89,7 @@ SPIRIT 11389
 STRENGTH: 4
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 7 - 2025-08-25 13:23:32
@@ -95,6 +102,7 @@ SPIRIT 17083
 STRENGTH: 4
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 8 - 2025-08-25 13:23:36
@@ -107,6 +115,7 @@ SPIRIT 25624
 STRENGTH: 4
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 9 - 2025-08-25 13:23:38
@@ -119,6 +128,7 @@ SPIRIT 38436
 STRENGTH: 5
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện thể tầng 10 - 2025-08-25 13:23:41
@@ -131,6 +141,7 @@ SPIRIT 57654
 STRENGTH: 5
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện khí tầng 1 - 2025-08-25 13:23:42
@@ -143,6 +154,7 @@ SPIRIT 115308
 STRENGTH: 10
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện khí tầng 2 - 2025-08-25 13:23:45
@@ -155,6 +167,7 @@ SPIRIT 172962
 STRENGTH: 10
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
+SKILL: None
 
 =============================
 cảnh giới luyện khí tầng 3 - 2025-08-25 13:23:49
@@ -167,100 +180,4 @@ SPIRIT 259443
 STRENGTH: 11
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 4 - 2025-08-25 17:48:02
-HEALTH: 6150
-ATTACK: 73
-PEP: 6150
-DEF: 67
-SOULD: 40
-SPIRIT 389164
-STRENGTH: 11
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 5 - 2025-08-25 17:48:43
-HEALTH: 6400
-ATTACK: 74
-PEP: 6400
-DEF: 68
-SOULD: 40
-SPIRIT 583746
-STRENGTH: 11
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 6 - 2025-08-25 17:48:45
-HEALTH: 6700
-ATTACK: 80
-PEP: 6700
-DEF: 71
-SOULD: 40
-SPIRIT 875619
-STRENGTH: 12
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 7 - 2025-08-25 17:48:47
-HEALTH: 7050
-ATTACK: 81
-PEP: 7050
-DEF: 72
-SOULD: 40
-SPIRIT 1313428
-STRENGTH: 12
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 8 - 2025-08-25 17:48:50
-HEALTH: 7450
-ATTACK: 82
-PEP: 7450
-DEF: 73
-SOULD: 40
-SPIRIT 1970142
-STRENGTH: 12
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 9 - 2025-08-25 17:48:54
-HEALTH: 7900
-ATTACK: 91
-PEP: 7900
-DEF: 78
-SOULD: 40
-SPIRIT 2955213
-STRENGTH: 13
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 10 - 2025-08-25 17:49:00
-HEALTH: 8400
-ATTACK: 92
-PEP: 8400
-DEF: 79
-SOULD: 40
-SPIRIT 4432819
-STRENGTH: 13
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
-=============================
-cảnh giới luyện khí tầng 10 - 2025-08-25 17:49:25
-HEALTH: 8400
-ATTACK: 92
-PEP: 8400
-DEF: 79
-SOULD: 40
-SPIRIT 4432819
-STRENGTH: 13
-PHYSIQUE: Bình thường
-AFFINITY: Thủy
-
+SKILL: None
