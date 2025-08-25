@@ -1,8 +1,10 @@
 package game.ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 
 import game.entity.Player;
@@ -33,6 +35,10 @@ public class GameHUD {
 
     public void draw(Graphics2D g2) {
         Player p = gp.getPlayer();
+        Font oldFont = g2.getFont();
+        Stroke oldStroke = g2.getStroke();
+        Color oldColor = g2.getColor();
+        g2.setFont(oldFont.deriveFont(Font.PLAIN, 16f));
         int barWidth = gp.getTileSize() * 4;
         int barHeight = gp.getTileSize() / 3;
         int margin = 5;
@@ -71,12 +77,6 @@ public class GameHUD {
             g2.setColor(Color.WHITE);
             g2.drawString(text, x, infoY);
             infoY += 20;
-        } else if (p.getCultivationCooldownRemaining() > 0) {
-            long sec = p.getCultivationCooldownRemaining() / 1000;
-            String text = "Hồi chiêu: " + (sec / 60) + ":" + String.format("%02d", sec % 60);
-            g2.setColor(Color.WHITE);
-            g2.drawString(text, x, infoY);
-            infoY += 20;
         }
 
         // Nếu đang tu luyện, vẽ nút hủy
@@ -86,6 +86,9 @@ public class GameHUD {
             g2.setColor(Color.WHITE);
             g2.drawString("Huỷ", cancelRect.x + 20, cancelRect.y + cancelRect.height - 10);
         }
+        g2.setFont(oldFont);
+        g2.setStroke(oldStroke);
+        g2.setColor(oldColor);
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int w, int h,

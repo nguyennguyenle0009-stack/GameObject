@@ -39,6 +39,9 @@ public class InventoryUi {
     }
 
     public void draw(Graphics2D g2) {
+        var oldFont = g2.getFont();
+        var oldStroke = g2.getStroke();
+        var oldColor = g2.getColor();
         int charH = gp.getTileSize() * 8;
         Dimension d = itemGrid.getPreferredSize();
         int gridX = gp.getTileSize() * 8; // default position with one tile gap after character panel
@@ -77,6 +80,10 @@ public class InventoryUi {
         }
 
         drawContextMenu(g2);
+
+        g2.setFont(oldFont);
+        g2.setStroke(oldStroke);
+        g2.setColor(oldColor);
     }
 
     private int computeSlotIndex(int originX, int originY, Point mouse) {
@@ -168,22 +175,25 @@ public class InventoryUi {
 
     private void drawContextMenu(Graphics2D g2) {
         if (!contextVisible) return;
+        Font oldFont = g2.getFont();
         int w = 120;
         int h = contextOptions.length * 20 + 10;
         HUDUtils.drawSubWindow(g2, contextX, contextY, w, h, new Color(40,40,40,200), new Color(200, 200, 200));
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
+        g2.setFont(oldFont.deriveFont(Font.PLAIN, 16f));
         for (int i = 0; i < contextOptions.length; i++) {
             int yy = contextY + 20 + i * 20;
             g2.setColor(i == contextSelection ? Color.YELLOW : Color.WHITE);
             g2.drawString(contextOptions[i], contextX + 10, yy);
         }
+        g2.setFont(oldFont);
     }
 
     private void drawItemTooltip(Graphics2D g2, int x, int y, Item it) {
+        Font oldFont = g2.getFont();
         String line1 = it.getName() + " x" + it.getQuantity();
         String line2 = it.getDecription();
         int padding = 10;
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
+        g2.setFont(oldFont.deriveFont(Font.PLAIN, 16f));
         int width = Math.max(g2.getFontMetrics().stringWidth(line1), g2.getFontMetrics().stringWidth(line2)) + padding * 2;
         int height = 40 + padding * 2;
         if (x + width > gp.getScreenWidth()) {
@@ -196,6 +206,7 @@ public class InventoryUi {
         g2.setColor(Color.WHITE);
         g2.drawString(line1, x + padding, y + padding + 15);
         g2.drawString(line2, x + padding, y + padding + 35);
+        g2.setFont(oldFont);
     }
 
     /** Xử lý cuộn bằng con lăn chuột. */
@@ -220,12 +231,13 @@ public class InventoryUi {
      * @param topY starting Y position of the box
      */
     private void characterScreen(Graphics2D g2, int topY) {
+        Font oldFont = g2.getFont();
         int x = gp.getTileSize();
         int y = topY;
         int width = x * 5;
         int height = gp.getTileSize() * 6;
         drawSubWindow(x, y, width, height, g2);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 12f));
+        g2.setFont(oldFont.deriveFont(Font.PLAIN, 12f));
         int textX = x + 10;
         int textY = y + 20;
 
@@ -252,9 +264,12 @@ public class InventoryUi {
         g2.setColor(Color.WHITE);
         g2.drawString("Công pháp", btnX + 10, btnY + btnH - 5);
         skillBtn.setBounds(btnX, btnY, btnW, btnH);
+        g2.setFont(oldFont);
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
+        Color oldColor = g2.getColor();
+        var oldStroke = g2.getStroke();
         Color color = new Color(0, 0, 0, 210);
         g2.setColor(color);
         g2.fillRoundRect(x, y, width, height, 35, 35);
@@ -263,6 +278,9 @@ public class InventoryUi {
         g2.setColor(color);
         g2.setStroke(new BasicStroke(5));
         g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+
+        g2.setStroke(oldStroke);
+        g2.setColor(oldColor);
     }
 
     public boolean handleMousePress(int mx, int my, int button) {
