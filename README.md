@@ -47,6 +47,12 @@
 - Khi rê chuột vào item, HUD và khung công pháp không còn bị phóng to chữ.
 - HUD chỉ hiển thị tên và thời gian hiệu lực của đan dược hoặc tu luyện, bỏ dòng hồi chiêu.
 
+## [1.0.11] - 2025-08-27
+
+### Sửa lỗi
+- SPIRIT không còn trở về 0/0 khi đạt Luyện khí tầng 10.
+- Sửa lỗi mở bảng item/thuộc tính gây NullPointerException khi thiếu thông tin thể chất.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi

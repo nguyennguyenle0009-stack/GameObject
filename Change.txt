@@ -35,4 +35,9 @@ Sửa lỗi và cải tiến:
 	   - Cập nhật cả phần ghi (`logRealmState`) và đọc (`loadProfile`).
 	   - Cập nhật ví dụ tệp `player.Nguyeen_pro.20250825.txt`.
 	
-	3. Cập nhật README với mô tả thay đổi.
+        3. Cập nhật README với mô tả thay đổi.
+
+## 1.0.11
+- Khắc phục lỗi SPIRIT trở về 0/0 khi đạt Luyện khí tầng 10 khiến không thể tu luyện tiếp.
+- Đảm bảo `physique` và `affinity` luôn có giá trị hợp lệ khi đọc tệp lưu để tránh lỗi bảng thuộc tính.
+- Thêm kiểm tra trong `gainSpirit` để bỏ qua khi yêu cầu SPIRIT không hợp lệ.
