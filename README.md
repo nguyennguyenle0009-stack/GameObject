@@ -35,6 +35,14 @@
 - Hồi chiêu công pháp hiển thị đầy đủ trong HUD và bảng công pháp.
 - Công pháp học mới được lưu vào tệp `.txt` ngay lập tức.
 
+## [1.0.9] - 2025-08-28
+
+### Sửa lỗi
+- HUD và chữ không còn phóng to khi rê chuột vào item.
+
+### Thay đổi
+- HUD bỏ hiển thị dòng "Hồi chiêu", chỉ giữ thông tin hiệu ứng đang sử dụng.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi
