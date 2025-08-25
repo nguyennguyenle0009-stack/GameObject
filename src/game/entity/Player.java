@@ -58,10 +58,20 @@ public class Player extends GameActor implements DrawableEntity {
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
     private int realmStage = 0;
+    /**
+     * Yêu cầu SPIRIT thực tế để lên cấp tiếp theo sau khi áp dụng hệ số thể chất.
+     * Giá trị gốc trước khi áp dụng hệ số được lưu trong {@code baseSpiritRequirement}.
+     */
     private int spiritToNextLevel = 1000;
+    /**
+     * Yêu cầu SPIRIT cơ bản chưa áp dụng hệ số thể chất. Dùng để tính toán
+     * khi lên cấp nhằm tránh giảm dần yêu cầu SPIRIT ở các thể chất đặc biệt
+     * (ví dụ Tiên Linh Thể có hệ số < 1).
+     */
+    private int baseSpiritRequirement = 1000;
 
     // Thể chất và linh căn
-    private Physique physique;
+    private Physique physique = Physique.NORMAL;
     private EnumSet<Affinity> affinities = EnumSet.noneOf(Affinity.class);
 
     private final Random random = new Random();
@@ -107,8 +117,6 @@ public class Player extends GameActor implements DrawableEntity {
             atts().set(Attr.HEALTH, 100);
             atts().setMax(Attr.PEP, 100);
             atts().set(Attr.PEP, 100);
-            atts().setMax(Attr.SPIRIT, spiritToNextLevel);
-            atts().set(Attr.SPIRIT, 0);
             // Attack/Def không còn giới hạn max mặc định để có thể tăng khi lên cấp
             atts().set(Attr.ATTACK, 5);
             atts().set(Attr.DEF, 4);
@@ -119,9 +127,11 @@ public class Player extends GameActor implements DrawableEntity {
             physique = randomPhysique();
             affinities = randomAffinities();
 
-            // Ngũ Hành Linh Căn có chỉ số gấp 5 lần nên yêu cầu SPIRIT cũng gấp 5
-            spiritToNextLevel = (int) (spiritToNextLevel * physique.getSpiritReqFactor());
+            // Tính lại yêu cầu SPIRIT dựa trên hệ số thể chất
+            baseSpiritRequirement = 1000;
+            spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
             atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+            atts().set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
             addItem(new game.entity.item.elixir.HealthPotion(50, 3));
@@ -509,23 +519,24 @@ public class Player extends GameActor implements DrawableEntity {
      * Thực hiện lên cấp theo cảnh giới hiện tại.
      */
     private void levelUp() {
-        int oldReq = spiritToNextLevel;
         switch (realm) {
             case PHAM_NHAN -> {
                 realm = Realm.LUYEN_THE;
                 realmStage = 1;
                 initializeLuyenThe();
-                spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                baseSpiritRequirement += baseSpiritRequirement / 2;
+                spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
                 atts().add(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
-                    breakThroughToLuyenKhi(oldReq);
+                    breakThroughToLuyenKhi();
                     atts().add(Attr.SOULD, 10);
                 } else {
                     applyStageGrowth();
-                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                    baseSpiritRequirement += baseSpiritRequirement / 2;
+                    spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
                 }
             }
             case LUYEN_KHI -> {
@@ -534,7 +545,8 @@ public class Player extends GameActor implements DrawableEntity {
                     realmStage = physique.getMaxStage();
                 } else {
                     applyStageGrowth();
-                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                    baseSpiritRequirement += baseSpiritRequirement / 2;
+                    spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
                 }
             }
         }
@@ -599,7 +611,7 @@ public class Player extends GameActor implements DrawableEntity {
     /**
      * Đột phá từ Luyện thể sang Luyện khí.
      */
-    private void breakThroughToLuyenKhi(int oldReq) {
+    private void breakThroughToLuyenKhi() {
         realm = Realm.LUYEN_KHI;
         realmStage = 1;
 
@@ -623,7 +635,8 @@ public class Player extends GameActor implements DrawableEntity {
         int soul = (int) (atts().get(Attr.SOULD) * 2 * physique.getStatFactor());
         atts().set(Attr.SOULD, soul);
 
-        spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+        baseSpiritRequirement *= 2;
+        spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
     }
 
     private void logRealmState() {
@@ -827,6 +840,15 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
 
+            // Sau khi đọc xong, tính lại yêu cầu SPIRIT cơ bản.
+            if (spiritToNextLevel <= 0) {
+                baseSpiritRequirement = computeBaseSpiritRequirement(realm, realmStage);
+                spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
+                atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+            } else {
+                baseSpiritRequirement = (int) Math.round(spiritToNextLevel / physique.getSpiritReqFactor());
+            }
+
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -849,6 +871,27 @@ public class Player extends GameActor implements DrawableEntity {
             if (p.getDisplay().equals(display)) return p;
         }
         return Physique.NORMAL;
+    }
+
+    /**
+     * Tính toán yêu cầu SPIRIT cơ bản (chưa áp dụng hệ số thể chất) dựa trên
+     * cảnh giới và tầng hiện tại.
+     */
+    private int computeBaseSpiritRequirement(Realm realm, int stage) {
+        int base = 1000;
+        if (realm == Realm.PHAM_NHAN) return base;
+
+        int luyenTheStages = (realm == Realm.LUYEN_THE) ? stage : physique.getMaxStage();
+        for (int i = 1; i <= luyenTheStages; i++) {
+            base += base / 2;
+        }
+        if (realm == Realm.LUYEN_KHI) {
+            base *= 2; // đột phá đại cảnh giới
+            for (int i = 1; i <= stage; i++) {
+                base += base / 2;
+            }
+        }
+        return base;
     }
 
     private EnumSet<Affinity> parseAffinities(String list) {
