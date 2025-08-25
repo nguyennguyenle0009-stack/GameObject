@@ -6,3 +6,5 @@ Cập nhật:
 - HUD hiển thị buff đan dược và nút hủy khi đang tu luyện.
 - Bảng thuộc tính có nút mở danh sách công pháp.
 - Định dạng file lưu tiến trình bổ sung dòng SKILL.
+- Sửa lỗi dùng sách/đan không trừ số lượng, hiển thị thời gian tu luyện & hồi chiêu.
+- Thu nhỏ ô vật phẩm, thêm thanh cuộn và canh lề lại bảng thuộc tính.

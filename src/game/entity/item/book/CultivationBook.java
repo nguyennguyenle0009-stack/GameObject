@@ -31,7 +31,6 @@ public class CultivationBook extends Item {
     @Override
     public void use(Player p) {
         p.learnSkill(technique);
-        decreaseQuantity(1);
     }
 
     @Override
