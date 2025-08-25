@@ -1,0 +1,6 @@
+Fixes and changes:
+- Items now consume one unit by default when used.
+- Skills learned from books are stored in save file and loaded on start.
+- HUD shows remaining cultivation time or cooldown.
+- Inventory slots shrink to 32px with scrollbar for overflow and smaller fonts.
+- Attribute panel uses tighter padding and smaller text.

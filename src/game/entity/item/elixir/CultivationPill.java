@@ -31,7 +31,6 @@ public class CultivationPill extends Item {
     @Override
     public void use(Player p) {
         p.consumeCultivationPill(getName(), spiritBonus, 10 * 60 * 1000L);
-        decreaseQuantity(1);
     }
 
     @Override

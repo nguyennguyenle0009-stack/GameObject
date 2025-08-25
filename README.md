@@ -6,6 +6,13 @@
 
 ## Cập nhật
 
+## [1.0.8] - 2025-08-27
+
+### Sửa lỗi
+- Sách và đan mới dùng sẽ trừ số lượng và lưu công pháp vào tệp.
+- HUD hiển thị thời gian tu luyện và hồi chiêu.
+- Thu nhỏ ô vật phẩm, thêm thanh cuộn và giảm kích thước chữ của bảng thuộc tính.
+
 ## [1.0.7] - 2025-08-26
 
 ### Thêm

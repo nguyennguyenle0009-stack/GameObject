@@ -34,7 +34,6 @@ public class SpiritPotion extends Item {
     public void use(Player p) {
         // tăng Spirit và kiểm tra lên cấp
         p.gainSpirit(spiritAmount);
-        decreaseQuantity(1);
     }
 
     @Override

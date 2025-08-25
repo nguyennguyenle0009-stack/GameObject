@@ -36,8 +36,7 @@ public class HealthPotion extends Item {
         int max = p.atts().getMax(Attr.HEALTH);
         int newHealth = Math.min(current + healthAmount, max);
         p.atts().set(Attr.HEALTH, newHealth);
-        decreaseQuantity(1);
-}
+    }
 	
    @Override
     public Item copyWithQuantity(int qty) {

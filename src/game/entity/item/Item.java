@@ -47,7 +47,10 @@ public abstract class Item {
     // Thực hiện hành động tương ứng
     public void performAction(Player p, String action) {
         if ("Use".equalsIgnoreCase(action)) {
+            // cho item xử lý logic riêng
             use(p);
+            // mặc định mỗi lần dùng sẽ mất 1 đơn vị
+            decreaseQuantity(1);
             if (getQuantity() == 0) {
                 p.getBag().remove(this);
             }

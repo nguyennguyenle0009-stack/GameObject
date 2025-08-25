@@ -425,6 +425,8 @@ public class Player extends GameActor implements DrawableEntity {
     /** Người chơi học một công pháp mới. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
+        // lưu lại tiến trình sau khi học
+        saveProfile();
     }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
@@ -479,6 +481,8 @@ public class Player extends GameActor implements DrawableEntity {
     public int getPillSpiritBonus() { return pillSpiritBonus; }
     public String getActivePillName() { return activePillName; }
     public long getPillTimeLeft() { return Math.max(0, pillBuffEnd - System.currentTimeMillis()); }
+    public long getCultivationTimeLeft() { return cultivating ? Math.max(0, cultivationEndTime - System.currentTimeMillis()) : 0; }
+    public long getCultivationCooldownLeft() { return Math.max(0, cultivationCooldownEnd - System.currentTimeMillis()); }
 
     /**
      * Thực hiện lên cấp theo cảnh giới hiện tại.
@@ -629,6 +633,10 @@ public class Player extends GameActor implements DrawableEntity {
                     .map(it -> it.getName() + " (" + it.getQuantity() + ")")
                     .collect(Collectors.joining(", "));
             lines.add("Itemcủa nhân vật: " + items);
+            String skills = techniques.stream()
+                    .map(t -> t.getName() + ":" + t.getGrade().name() + ":" + t.getLevel())
+                    .collect(Collectors.joining(","));
+            lines.add("Skills: " + skills);
             lines.addAll(realmLog);
             Files.write(file, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
@@ -678,15 +686,36 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
 
+            // Skills
+            techniques.clear();
+            if (lines.size() > 2) {
+                String skillLine = lines.get(2);
+                String sp = "Skills: ";
+                if (skillLine.startsWith(sp)) {
+                    String skills = skillLine.substring(sp.length()).trim();
+                    if (!skills.isEmpty()) {
+                        String[] tokens = skills.split(",\\s*");
+                        for (String token : tokens) {
+                            String[] parts3 = token.split(":");
+                            if (parts3.length >= 3) {
+                                CultivationTechnique t = createTechniqueByName(parts3[0], parts3[1], Integer.parseInt(parts3[2]));
+                                if (t != null) techniques.add(t);
+                            }
+                        }
+                    }
+                }
+            }
+
+            int startIdx = 3;
             // Realm log
             realmLog.clear();
-            if (lines.size() > 2) {
-                realmLog.addAll(lines.subList(2, lines.size()));
+            if (lines.size() > startIdx) {
+                realmLog.addAll(lines.subList(startIdx, lines.size()));
             }
 
             // Parse last block for stats
             int last = -1;
-            for (int i = 2; i < lines.size(); i++) {
+            for (int i = startIdx; i < lines.size(); i++) {
                 if (lines.get(i).startsWith("=============================")) {
                     last = i;
                 }
@@ -811,6 +840,22 @@ public class Player extends GameActor implements DrawableEntity {
             case "Sách Công pháp trung phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 10, 2));
             case "Sách Công pháp thượng phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 15, 3));
             case "Sách Công pháp cực phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 25, 5));
+            default -> null;
+        };
+    }
+
+    private CultivationTechnique createTechniqueByName(String name, String gradeName, int level) {
+        SkillGrade g;
+        try {
+            g = SkillGrade.valueOf(gradeName);
+        } catch (Exception e) {
+            return null;
+        }
+        return switch (name) {
+            case "Công pháp hạ phẩm" -> new CultivationTechnique(name, g, level, 5, 1);
+            case "Công pháp trung phẩm" -> new CultivationTechnique(name, g, level, 10, 2);
+            case "Công pháp thượng phẩm" -> new CultivationTechnique(name, g, level, 15, 3);
+            case "Công pháp cực phẩm" -> new CultivationTechnique(name, g, level, 25, 5);
             default -> null;
         };
     }
