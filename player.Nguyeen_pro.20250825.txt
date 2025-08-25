@@ -1,5 +1,5 @@
 ============player.Nguyeen_pro.20250825.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (6), Đan dược tinh thần (2), Đan dược hồi máu (100), Đan dược hồi máu (70), Đan dược hồi máu (60)
+Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược hồi máu (100), Đan dược hồi máu (100), Đan dược hồi máu (43), Đan dược tinh thần (100), Đan dược tinh thần (38), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (52), Đan dược tinh thần (60), Đan dược tinh thần (60)
 =============================
 cảnh giới phàm nhân - 2025-08-25 11:01:05
 HEALTH: 100
@@ -32,6 +32,78 @@ PEP: 225
 DEF: 4
 SOULD: 5
 SPIRIT 400
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 3 - 2025-08-25 11:49:08
+HEALTH: 337
+ATTACK: 7
+PEP: 337
+DEF: 12
+SOULD: 5
+SPIRIT 800
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 4 - 2025-08-25 11:55:34
+HEALTH: 505
+ATTACK: 10
+PEP: 505
+DEF: 36
+SOULD: 5
+SPIRIT 1600
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 5 - 2025-08-25 11:55:38
+HEALTH: 757
+ATTACK: 15
+PEP: 757
+DEF: 108
+SOULD: 5
+SPIRIT 3200
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 6 - 2025-08-25 11:55:47
+HEALTH: 1135
+ATTACK: 22
+PEP: 1135
+DEF: 324
+SOULD: 5
+SPIRIT 6400
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 7 - 2025-08-25 11:56:07
+HEALTH: 1702
+ATTACK: 33
+PEP: 1702
+DEF: 972
+SOULD: 5
+SPIRIT 12800
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Thổ
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-25 11:56:12
+HEALTH: 2553
+ATTACK: 49
+PEP: 2553
+DEF: 2916
+SOULD: 5
+SPIRIT 25600
 STRENGTH: 1
 PHYSIQUE: Bình thường
 AFFINITY: Thổ

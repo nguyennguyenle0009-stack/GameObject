@@ -26,7 +26,7 @@ public class SpiritPotion extends Item {
     }
 
     public SpiritPotion(int spiritAmount, int quantity) {
-        super("Đan dược tinh thần", "Tăng Spirit", quantity, 100);
+        super("Đan dược tinh thần", "Tăng " + spiritAmount + " Spirit", quantity, 100);
         this.spiritAmount = spiritAmount;
     }
 

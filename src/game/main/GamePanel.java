@@ -14,6 +14,7 @@ import game.check.CollisionChecker;
 import game.entity.Entity;
 import game.entity.Player;
 import game.entity.item.elixir.HealthPotion;
+import game.entity.item.elixir.SpiritPotion;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -72,12 +73,11 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	public void setUpGame() { 
         player.addItem(new HealthPotion(30, 50));
-        player.addItem(new HealthPotion(30, 60));  // 50+60 => 100 trong ô đầu + 10 sang ô mới
-        player.addItem(new HealthPotion(50, 1));
-        player.addItem(new HealthPotion(50, 1));
-        player.addItem(new HealthPotion(50, 1));
-        player.addItem(new HealthPotion(30, 60));
-        player.addItem(new HealthPotion(390, 60));
+        player.addItem(new HealthPotion(30, 60)); 
+        player.addItem(new SpiritPotion(2000, 60));
+        player.addItem(new SpiritPotion(20000, 60));
+        player.addItem(new SpiritPotion(200000, 60));
+
 		
                 objectManager.setObject();
                 objectManager.setEntity();
