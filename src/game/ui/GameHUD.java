@@ -2,6 +2,8 @@ package game.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 import game.entity.Player;
 import game.enums.Attr;
@@ -22,8 +24,14 @@ public class GameHUD {
     private static final Color BAR_BACK = new Color(30, 30, 30, 180);
     private static final Color BAR_BORDER = new Color(0, 0, 0, 180);
 
+    private final Rectangle cancelRect;
+
     public GameHUD(GamePanel gp) {
         this.gp = gp;
+        // Nút hủy tu luyện nằm góc trái dưới màn hình
+        int w = 80;
+        int h = 30;
+        this.cancelRect = new Rectangle(5, gp.getScreenHeight() - h - 5, w, h);
     }
 
     public void draw(Graphics2D g2) {
@@ -51,6 +59,22 @@ public class GameHUD {
         y += barHeight + 6;
         drawBar(g2, x, y, barWidth, barHeight,
                 p.atts().get(Attr.SPIRIT), p.atts().getMax(Attr.SPIRIT), EXP_FILL);
+
+        // Hiển thị thông tin buff đan dược dưới thanh SPIRIT
+        if (p.getPillSpiritBonus() > 0) {
+            long sec = p.getPillTimeLeft() / 1000;
+            String text = p.getActivePillName() + " " + (sec / 60) + ":" + String.format("%02d", sec % 60);
+            g2.setColor(Color.WHITE);
+            g2.drawString(text, x, y + barHeight + 20);
+        }
+
+        // Nếu đang tu luyện, vẽ nút hủy
+        if (p.isCultivating()) {
+            HUDUtils.drawSubWindow(g2, cancelRect.x, cancelRect.y, cancelRect.width, cancelRect.height,
+                    BAR_BACK, BAR_BORDER);
+            g2.setColor(Color.WHITE);
+            g2.drawString("Huỷ", cancelRect.x + 20, cancelRect.y + cancelRect.height - 10);
+        }
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int w, int h,
@@ -62,5 +86,14 @@ public class GameHUD {
         g2.fillRect(x, y, filled, h);
         g2.setColor(BAR_BORDER);
         g2.drawRect(x, y, w, h);
+    }
+
+    /** Xử lý click chuột trên HUD. */
+    public boolean handleMousePress(int mx, int my, int button) {
+        if (button == MouseEvent.BUTTON1 && gp.getPlayer().isCultivating() && cancelRect.contains(mx, my)) {
+            gp.getPlayer().cancelCultivation();
+            return true;
+        }
+        return false;
     }
 }
