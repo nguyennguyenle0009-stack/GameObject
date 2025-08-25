@@ -6,6 +6,14 @@
 
 ## Cập nhật
 
+## [1.0.5] - 2025-08-25
+
+### Thay đổi
+- Điều chỉnh hệ thống tăng cấp theo **Cảnh giới**:
+  - Luyện thể và Luyện khí tăng chỉ số theo công thức mới.
+  - Đột phá đại cảnh giới nhân đôi (hoặc gấp ba với DEF) chỉ số và cộng thêm Linh hồn.
+- Bổ sung file `level_changes.txt` mô tả chi tiết hệ số mới.
+
 ## [1.0.4] - 2025-08-09
 
 ### Thêm

@@ -390,19 +390,18 @@ public class Player extends GameActor implements DrawableEntity {
             case PHAM_NHAN -> {
                 realm = Realm.LUYEN_THE;
                 realmStage = 1;
-                applyLuyenTheGrowth();
-                spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+                initializeLuyenThe();
+                spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                atts().add(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
-                    realm = Realm.LUYEN_KHI;
-                    realmStage = 1;
-                    multiplyAllStats(2);
-                    spiritToNextLevel = (int) (oldReq * 3 * physique.getSpiritReqFactor());
+                    breakThroughToLuyenKhi(oldReq);
+                    atts().add(Attr.SOULD, 10);
                 } else {
-                    applyLuyenTheGrowth();
-                    spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+                    applyStageGrowth();
+                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
                 }
             }
             case LUYEN_KHI -> {
@@ -410,8 +409,8 @@ public class Player extends GameActor implements DrawableEntity {
                 if (realmStage > physique.getMaxStage()) {
                     realmStage = physique.getMaxStage();
                 } else {
-                    applyLuyenKhiGrowth(oldReq);
-                    spiritToNextLevel = (int) (oldReq * 3 * physique.getSpiritReqFactor());
+                    applyStageGrowth();
+                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
                 }
             }
         }
@@ -422,67 +421,85 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     /**
-     * Tăng chỉ số khi ở Luyện thể kỳ.
+     * Thiết lập chỉ số cơ bản khi bước vào Luyện thể tầng 1.
      */
-    private void applyLuyenTheGrowth() {
-        int hp = (int) (atts().getMax(Attr.HEALTH) * 1.5 * physique.getStatFactor());
+    private void initializeLuyenThe() {
+        int hp = (int) (150 * physique.getStatFactor());
         atts().setMax(Attr.HEALTH, hp);
         atts().set(Attr.HEALTH, hp);
 
-        int pep = (int) (atts().getMax(Attr.PEP) * 1.5 * physique.getStatFactor());
+        int pep = (int) (150 * physique.getStatFactor());
         atts().setMax(Attr.PEP, pep);
         atts().set(Attr.PEP, pep);
 
-        int atk = (int) (atts().get(Attr.ATTACK) * 1.5 * physique.getStatFactor());
-        atts().set(Attr.ATTACK, atk);
-
-        int def = (int) (atts().get(Attr.DEF) * 3 * physique.getDefFactor());
-        atts().set(Attr.DEF, def);
+        atts().set(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
+        atts().set(Attr.DEF, (int) (5 * physique.getDefFactor()));
+        atts().set(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
     }
 
     /**
-     * Tăng chỉ số khi ở Luyện khí kỳ.
+     * Tăng chỉ số khi thăng một tiểu cảnh giới.
+     * Áp dụng cho cả Luyện thể và Luyện khí.
      */
-    private void applyLuyenKhiGrowth(int oldReq) {
+    private void applyStageGrowth() {
+        int stage = realmStage;
+
+        // HEALTH & PEP: cộng 50 cho mỗi tiểu cảnh giới
+        int hpInc = (int) (stage * 50 * physique.getStatFactor());
+        int newHp = atts().getMax(Attr.HEALTH) + hpInc;
+        atts().setMax(Attr.HEALTH, newHp);
+        atts().set(Attr.HEALTH, newHp);
+
+        int pepInc = (int) (stage * 50 * physique.getStatFactor());
+        int newPep = atts().getMax(Attr.PEP) + pepInc;
+        atts().setMax(Attr.PEP, newPep);
+        atts().set(Attr.PEP, newPep);
+
+        // ATTACK: +1, riêng bội số của 3 cộng thêm chính số đó
+        int atkInc = (stage % 3 == 0) ? stage : 1;
+        atts().add(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
+
+        // DEF: +1, bội số của 3 cộng thêm stage/2 (làm tròn lên)
+        int defInc = 1;
+        if (stage % 3 == 0) {
+            defInc = (stage + 1) / 2;
+        }
+        atts().add(Attr.DEF, (int) (defInc * physique.getDefFactor()));
+
+        // STRENGTH: +1 ở bội số của 3
+        if (stage % 3 == 0) {
+            atts().add(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
+        }
+    }
+
+    /**
+     * Đột phá từ Luyện thể sang Luyện khí.
+     */
+    private void breakThroughToLuyenKhi(int oldReq) {
+        realm = Realm.LUYEN_KHI;
+        realmStage = 1;
+
         int hp = (int) (atts().getMax(Attr.HEALTH) * 2 * physique.getStatFactor());
         atts().setMax(Attr.HEALTH, hp);
         atts().set(Attr.HEALTH, hp);
 
+        int pep = (int) (atts().getMax(Attr.PEP) * 2 * physique.getStatFactor());
+        atts().setMax(Attr.PEP, pep);
+        atts().set(Attr.PEP, pep);
+
         int atk = (int) (atts().get(Attr.ATTACK) * 2 * physique.getStatFactor());
         atts().set(Attr.ATTACK, atk);
 
-        int pep = (int) (atts().getMax(Attr.PEP) + oldReq / 5.0);
-        pep = (int) (pep * physique.getStatFactor());
-        atts().setMax(Attr.PEP, pep);
-        atts().set(Attr.PEP, pep);
-
-        int def = (int) (atts().get(Attr.DEF) * 1.5 * physique.getDefFactor());
-        atts().set(Attr.DEF, def);
-    }
-
-    /**
-     * Nhân toàn bộ chỉ số khi đột phá đại cảnh giới.
-     */
-    private void multiplyAllStats(double factor) {
-        int hp = (int) (atts().getMax(Attr.HEALTH) * factor * physique.getStatFactor());
-        atts().setMax(Attr.HEALTH, hp);
-        atts().set(Attr.HEALTH, hp);
-
-        int pep = (int) (atts().getMax(Attr.PEP) * factor * physique.getStatFactor());
-        atts().setMax(Attr.PEP, pep);
-        atts().set(Attr.PEP, pep);
-
-        int atk = (int) (atts().get(Attr.ATTACK) * factor * physique.getStatFactor());
-        atts().set(Attr.ATTACK, atk);
-
-        int def = (int) (atts().get(Attr.DEF) * factor * physique.getDefFactor());
+        int def = (int) (atts().get(Attr.DEF) * 3 * physique.getDefFactor());
         atts().set(Attr.DEF, def);
 
-        int str = (int) (atts().get(Attr.STRENGTH) * factor * physique.getStatFactor());
+        int str = (int) (atts().get(Attr.STRENGTH) * 2 * physique.getStatFactor());
         atts().set(Attr.STRENGTH, str);
 
-        int soul = (int) (atts().get(Attr.SOULD) * factor * physique.getStatFactor());
+        int soul = (int) (atts().get(Attr.SOULD) * 2 * physique.getStatFactor());
         atts().set(Attr.SOULD, soul);
+
+        spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
     }
 
     private void logRealmState() {
