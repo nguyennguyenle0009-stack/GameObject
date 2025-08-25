@@ -18,3 +18,7 @@ Sửa lỗi và cải tiến:
 - Bảng công pháp chuyển sang bên phải, có nút **Dùng** và **Gán**, tooltip chi tiết và cuộn bằng con lăn.
 - Kho đồ hỗ trợ cuộn bằng con lăn chuột.
 - Hồ sơ .txt ghi thêm công pháp khi học mới.
+
+## 1.0.9
+- Sửa lỗi HUD và chữ bị phóng to khi rê chuột vào item.
+- Loại bỏ dòng "Hồi chiêu" khỏi HUD, chỉ giữ thông tin hiệu ứng đang dùng.

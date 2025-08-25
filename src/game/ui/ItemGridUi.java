@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class ItemGridUi {
                      int selected, int hover, int offset) {
         int total = (items == null) ? 0 : items.size();
         Dimension d = getPreferredSize();
+        Font oldFont = g2.getFont();
+        Stroke oldStroke = g2.getStroke();
 
         // Khung lớn
         HUDUtils.drawSubWindow(g2, x, y, d.width, d.height,
@@ -84,11 +87,11 @@ public class ItemGridUi {
                     g2.setStroke(new BasicStroke(3f));
                     g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
                 }
-                g2.setStroke(new BasicStroke(1f));
+                g2.setStroke(oldStroke);
 
                 if (it != null) {
                     String q = String.valueOf(it.getQuantity());
-                    g2.setFont(g2.getFont().deriveFont(Font.BOLD, 12f));
+                    g2.setFont(oldFont.deriveFont(Font.BOLD, 12f));
                     FontMetrics fm = g2.getFontMetrics();
                     int tw = fm.stringWidth(q), th = fm.getAscent();
                     int boxX = xx + slotSize - tw - 8;
@@ -115,6 +118,8 @@ public class ItemGridUi {
             g2.setColor(new Color(255,255,255,150));
             g2.fillRect(barX, barY, 3, barH);
         }
+        g2.setFont(oldFont);
+        g2.setStroke(oldStroke);
     }
 
     public int getCols() { return cols; }
