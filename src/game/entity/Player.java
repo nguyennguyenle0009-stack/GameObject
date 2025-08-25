@@ -413,7 +413,9 @@ public class Player extends GameActor implements DrawableEntity {
      * Tăng Spirit và tự động kiểm tra lên cấp.
      */
     public void gainSpirit(int amount) {
-        atts().add(Attr.SPIRIT, amount);
+        // Tiên Linh Thể tu luyện nhanh gấp 3 lần
+        int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
+        atts().add(Attr.SPIRIT, modified);
         while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
             atts().add(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
@@ -629,12 +631,15 @@ public class Player extends GameActor implements DrawableEntity {
         StringBuilder sb = new StringBuilder();
         sb.append("=============================\n");
         sb.append("cảnh giới " + getRealmName().toLowerCase() + " - " + time + "\n");
-        sb.append("HEALTH: " + atts().getMax(Attr.HEALTH) + "\n");
+        // Ghi cả máu hiện tại và tối đa
+        sb.append("HEALTH: " + atts().get(Attr.HEALTH) + "/" + atts().getMax(Attr.HEALTH) + "\n");
         sb.append("ATTACK: " + atts().get(Attr.ATTACK) + "\n");
-        sb.append("PEP: " + atts().getMax(Attr.PEP) + "\n");
+        // Ghi cả PEP hiện tại và tối đa
+        sb.append("PEP: " + atts().get(Attr.PEP) + "/" + atts().getMax(Attr.PEP) + "\n");
         sb.append("DEF: " + atts().get(Attr.DEF) + "\n");
         sb.append("SOULD: " + atts().get(Attr.SOULD) + "\n");
-        sb.append("SPIRIT " + spiritToNextLevel + "\n");
+        // SPIRIT hiện có và yêu cầu kế tiếp
+        sb.append("SPIRIT: " + atts().get(Attr.SPIRIT) + "/" + spiritToNextLevel + "\n");
         sb.append("STRENGTH: " + atts().get(Attr.STRENGTH) + "\n");
         sb.append("PHYSIQUE: " + physique.getDisplay() + "\n");
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
@@ -738,23 +743,54 @@ public class Player extends GameActor implements DrawableEntity {
             for (int i = 2; i < block.size(); i++) {
                 String line = block.get(i);
                 if (line.startsWith("HEALTH: ")) {
-                    int v = Integer.parseInt(line.substring(8).trim());
-                    atts().setMax(Attr.HEALTH, v);
-                    atts().set(Attr.HEALTH, v);
+                    String val = line.substring(8).trim();
+                    int cur, max;
+                    if (val.contains("/")) {
+                        String[] parts2 = val.split("/");
+                        cur = Integer.parseInt(parts2[0].trim());
+                        max = Integer.parseInt(parts2[1].trim());
+                    } else {
+                        cur = max = Integer.parseInt(val);
+                    }
+                    atts().setMax(Attr.HEALTH, max);
+                    atts().set(Attr.HEALTH, cur);
                 } else if (line.startsWith("ATTACK: ")) {
                     int v = Integer.parseInt(line.substring(8).trim());
                     atts().set(Attr.ATTACK, v);
                 } else if (line.startsWith("PEP: ")) {
-                    int v = Integer.parseInt(line.substring(5).trim());
-                    atts().setMax(Attr.PEP, v);
-                    atts().set(Attr.PEP, v);
+                    String val = line.substring(5).trim();
+                    int cur, max;
+                    if (val.contains("/")) {
+                        String[] parts2 = val.split("/");
+                        cur = Integer.parseInt(parts2[0].trim());
+                        max = Integer.parseInt(parts2[1].trim());
+                    } else {
+                        cur = max = Integer.parseInt(val);
+                    }
+                    atts().setMax(Attr.PEP, max);
+                    atts().set(Attr.PEP, cur);
                 } else if (line.startsWith("DEF: ")) {
                     int v = Integer.parseInt(line.substring(5).trim());
                     atts().set(Attr.DEF, v);
                 } else if (line.startsWith("SOULD: ")) {
                     int v = Integer.parseInt(line.substring(7).trim());
                     atts().set(Attr.SOULD, v);
+                } else if (line.startsWith("SPIRIT: ")) {
+                    String val = line.substring(8).trim();
+                    int cur, max;
+                    if (val.contains("/")) {
+                        String[] parts2 = val.split("/");
+                        cur = Integer.parseInt(parts2[0].trim());
+                        max = Integer.parseInt(parts2[1].trim());
+                    } else {
+                        cur = 0;
+                        max = Integer.parseInt(val);
+                    }
+                    spiritToNextLevel = max;
+                    atts().setMax(Attr.SPIRIT, max);
+                    atts().set(Attr.SPIRIT, cur);
                 } else if (line.startsWith("SPIRIT ")) {
+                    // Hỗ trợ định dạng cũ không có dấu ':'
                     spiritToNextLevel = Integer.parseInt(line.substring(7).trim());
                     atts().setMax(Attr.SPIRIT, spiritToNextLevel);
                     atts().set(Attr.SPIRIT, 0);
