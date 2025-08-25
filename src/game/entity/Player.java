@@ -120,7 +120,7 @@ public class Player extends GameActor implements DrawableEntity {
             affinities = randomAffinities();
 
             // Ngũ Hành Linh Căn có chỉ số gấp 5 lần nên yêu cầu SPIRIT cũng gấp 5
-            spiritToNextLevel = (int) (spiritToNextLevel * physique.getSpiritReqFactor());
+            spiritToNextLevel = Math.max(1, (int) (spiritToNextLevel * physique.getSpiritReqFactor()));
             atts().setMax(Attr.SPIRIT, spiritToNextLevel);
 
             // Thêm vài item test: bình hồi máu & tinh thần
@@ -416,7 +416,7 @@ public class Player extends GameActor implements DrawableEntity {
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
         atts().add(Attr.SPIRIT, modified);
-        while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
+        while (spiritToNextLevel > 0 && atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
             atts().add(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
         }
@@ -538,6 +538,7 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
         }
+        spiritToNextLevel = Math.max(1, spiritToNextLevel);
         // Cập nhật max Spirit cho HUD
         atts().setMax(Attr.SPIRIT, spiritToNextLevel);
         logRealmState();
@@ -624,6 +625,7 @@ public class Player extends GameActor implements DrawableEntity {
         atts().set(Attr.SOULD, soul);
 
         spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+        spiritToNextLevel = Math.max(1, spiritToNextLevel);
     }
 
     private void logRealmState() {
@@ -827,6 +829,9 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
 
+            if (physique == null) {
+                physique = Physique.NORMAL;
+            }
             return true;
         } catch (IOException e) {
             e.printStackTrace();
