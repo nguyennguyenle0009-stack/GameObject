@@ -6,10 +6,19 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -54,6 +63,9 @@ public class Player extends GameActor implements DrawableEntity {
 
     private final Random random = new Random();
 
+    private final LocalDate creationDate = LocalDate.now();
+    private final List<String> realmLog = new ArrayList<>();
+
 	public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
@@ -92,8 +104,11 @@ public class Player extends GameActor implements DrawableEntity {
                 affinities = randomAffinities();
 
                 // Thêm vài item test: bình hồi máu & tinh thần
-                bag.add(new game.entity.item.elixir.HealthPotion(50, 3));
-                bag.add(new game.entity.item.elixir.SpiritPotion(200, 3));
+                addItem(new game.entity.item.elixir.HealthPotion(50, 3));
+                addItem(new game.entity.item.elixir.SpiritPotion(200, 3));
+
+                logRealmState();
+                saveProfile();
 
                 setScaleEntityX(gp.getTileSize());
                 setScaleEntityY(gp.getTileSize());
@@ -339,10 +354,17 @@ public class Player extends GameActor implements DrawableEntity {
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
     
+    // Thêm item vào túi và lưu
+    public void addItem(Item item) {
+        bag.add(item);
+        saveProfile();
+    }
+
     // Sử dụng item
     public void useItem(Item i) {
         i.use(this);
         if(i.getQuantity() == 0) bag.remove(i);
+        saveProfile();
     }
 
     /**
@@ -392,6 +414,8 @@ public class Player extends GameActor implements DrawableEntity {
         }
         // Cập nhật max Spirit cho HUD
         atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+        logRealmState();
+        saveProfile();
     }
 
     /**
@@ -456,6 +480,46 @@ public class Player extends GameActor implements DrawableEntity {
 
         int soul = (int) (atts().get(Attr.SOULD) * factor * physique.getStatFactor());
         atts().set(Attr.SOULD, soul);
+    }
+
+    private void logRealmState() {
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        StringBuilder sb = new StringBuilder();
+        sb.append("=============================\n");
+        sb.append("cảnh giới " + getRealmName().toLowerCase() + " - " + time + "\n");
+        sb.append("HEALTH: " + atts().getMax(Attr.HEALTH) + "\n");
+        sb.append("ATTACK: " + atts().get(Attr.ATTACK) + "\n");
+        sb.append("PEP: " + atts().getMax(Attr.PEP) + "\n");
+        sb.append("DEF: " + atts().get(Attr.DEF) + "\n");
+        sb.append("SOULD: " + atts().get(Attr.SOULD) + "\n");
+        sb.append("SPIRIT " + spiritToNextLevel + "\n");
+        sb.append("STRENGTH: " + atts().get(Attr.STRENGTH) + "\n");
+        sb.append("PHYSIQUE: " + physique.getDisplay() + "\n");
+        sb.append("AFFINITY: " + getAffinityNames() + "\n");
+        realmLog.add(sb.toString());
+    }
+
+    private void saveProfile() {
+        try {
+            Path file = getProfilePath();
+            List<String> lines = new ArrayList<>();
+            String fileName = file.getFileName().toString();
+            lines.add("============" + fileName + "==============");
+            String items = bag.all().stream()
+                    .map(it -> it.getName() + " (" + it.getQuantity() + ")")
+                    .collect(Collectors.joining(", "));
+            lines.add("Itemcủa nhân vật: " + items);
+            lines.addAll(realmLog);
+            Files.write(file, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Path getProfilePath() {
+        String safeName = getName().replaceAll("\\s+", "_");
+        String date = creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        return Paths.get("player." + safeName + "." + date + ".txt");
     }
 
     // -------- Random Physique/Affinity ---------
