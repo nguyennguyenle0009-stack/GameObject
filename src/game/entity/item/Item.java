@@ -54,8 +54,6 @@ public abstract class Item {
         } else if ("Drop".equalsIgnoreCase(action)) {
             p.getBag().remove(this);
         }
-        // Lưu lại thay đổi vào hồ sơ người chơi
-        p.saveProfileToFile();
     }
 
     // Mỗi item có hình ảnh riêng
