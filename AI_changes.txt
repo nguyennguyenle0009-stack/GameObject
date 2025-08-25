@@ -1,0 +1,14 @@
+Thay đổi bởi AI:
+
+1. Sửa lỗi Tiên Linh Thể không tăng tốc tu luyện:
+   - Thêm thuộc tính `cultivationSpeedFactor` vào enum Physique.
+   - `gainSpirit` nhân lượng SPIRIT nhận được với hệ số này.
+
+2. Định dạng lại tệp lưu người chơi:
+   - `HEALTH`, `PEP` được ghi theo dạng hiện tại/tối đa.
+   - `SPIRIT` được ghi theo dạng hiện tại/tổng cần để lên cấp.
+   - Cập nhật cả phần ghi (`logRealmState`) và đọc (`loadProfile`).
+   - Cập nhật ví dụ tệp `player.Nguyeen_pro.20250825.txt`.
+
+3. Cập nhật README với mô tả thay đổi.
+

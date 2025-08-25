@@ -35,6 +35,14 @@
 - Hồi chiêu công pháp hiển thị đầy đủ trong HUD và bảng công pháp.
 - Công pháp học mới được lưu vào tệp `.txt` ngay lập tức.
 
+## [1.0.10]
+
+### Sửa lỗi
+- Thể chất **Tiên Linh Thể** nay tăng tốc tu luyện gấp 3 lần như mong đợi.
+
+### Thay đổi
+- Tệp lưu nhân vật ghi `HEALTH`, `PEP`, `SPIRIT` theo dạng còn lại/tổng để game đọc đúng giá trị khi khởi động.
+
 ## [1.0.9]
 
 ### Sửa lỗi
