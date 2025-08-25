@@ -1,7 +1,7 @@
 ============player.Nguyeen_pro.20250825.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược hồi máu (100), Đan dược hồi máu (100), Đan dược hồi máu (43), Đan dược tinh thần (100), Đan dược tinh thần (38), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (52), Đan dược tinh thần (60), Đan dược tinh thần (60)
+Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược hồi máu (13), Đan dược tinh thần (83), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (37), Đan dược tinh thần (40), Đan dược tinh thần (55)
 =============================
-cảnh giới phàm nhân - 2025-08-25 11:01:05
+cảnh giới phàm nhân - 2025-08-25 12:47:31
 HEALTH: 100
 ATTACK: 5
 PEP: 100
@@ -9,102 +9,258 @@ DEF: 4
 SOULD: 5
 SPIRIT 100
 STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Mộc, Thủy, Hỏa, Thổ, Kim
 
 =============================
-cảnh giới luyện thể tầng 1 - 2025-08-25 11:01:22
-HEALTH: 150
-ATTACK: 5
-PEP: 150
-DEF: 4
-SOULD: 5
-SPIRIT 200
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 1 - 2025-08-25 12:48:10
+HEALTH: 750
+ATTACK: 50
+PEP: 750
+DEF: 5
+SOULD: 15
+SPIRIT 150
+STRENGTH: 10
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 2 - 2025-08-25 11:01:23
-HEALTH: 225
-ATTACK: 5
-PEP: 225
-DEF: 4
-SOULD: 5
-SPIRIT 400
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 2 - 2025-08-25 12:48:18
+HEALTH: 1250
+ATTACK: 55
+PEP: 1250
+DEF: 6
+SOULD: 15
+SPIRIT 225
+STRENGTH: 10
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 3 - 2025-08-25 11:49:08
-HEALTH: 337
-ATTACK: 7
-PEP: 337
-DEF: 12
-SOULD: 5
-SPIRIT 800
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 3 - 2025-08-25 12:48:19
+HEALTH: 2000
+ATTACK: 70
+PEP: 2000
+DEF: 8
+SOULD: 15
+SPIRIT 337
+STRENGTH: 15
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 4 - 2025-08-25 11:55:34
-HEALTH: 505
-ATTACK: 10
-PEP: 505
-DEF: 36
-SOULD: 5
-SPIRIT 1600
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 4 - 2025-08-25 12:48:20
+HEALTH: 3000
+ATTACK: 75
+PEP: 3000
+DEF: 9
+SOULD: 15
+SPIRIT 505
+STRENGTH: 15
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 5 - 2025-08-25 11:55:38
-HEALTH: 757
-ATTACK: 15
-PEP: 757
-DEF: 108
-SOULD: 5
-SPIRIT 3200
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 5 - 2025-08-25 12:48:21
+HEALTH: 4250
+ATTACK: 80
+PEP: 4250
+DEF: 10
+SOULD: 15
+SPIRIT 757
+STRENGTH: 15
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 6 - 2025-08-25 11:55:47
-HEALTH: 1135
-ATTACK: 22
-PEP: 1135
-DEF: 324
-SOULD: 5
-SPIRIT 6400
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 6 - 2025-08-25 12:48:22
+HEALTH: 5750
+ATTACK: 110
+PEP: 5750
+DEF: 13
+SOULD: 15
+SPIRIT 1135
+STRENGTH: 20
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 7 - 2025-08-25 11:56:07
-HEALTH: 1702
-ATTACK: 33
-PEP: 1702
-DEF: 972
-SOULD: 5
-SPIRIT 12800
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 7 - 2025-08-25 12:48:24
+HEALTH: 7500
+ATTACK: 115
+PEP: 7500
+DEF: 14
+SOULD: 15
+SPIRIT 1702
+STRENGTH: 20
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 
 =============================
-cảnh giới luyện thể tầng 8 - 2025-08-25 11:56:12
-HEALTH: 2553
-ATTACK: 49
-PEP: 2553
-DEF: 2916
-SOULD: 5
-SPIRIT 25600
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Thổ
+cảnh giới luyện thể tầng 8 - 2025-08-25 12:48:24
+HEALTH: 9500
+ATTACK: 120
+PEP: 9500
+DEF: 15
+SOULD: 15
+SPIRIT 2553
+STRENGTH: 20
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện thể tầng 9 - 2025-08-25 12:48:25
+HEALTH: 11750
+ATTACK: 165
+PEP: 11750
+DEF: 20
+SOULD: 15
+SPIRIT 3829
+STRENGTH: 25
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện thể tầng 10 - 2025-08-25 12:48:26
+HEALTH: 14250
+ATTACK: 170
+PEP: 14250
+DEF: 21
+SOULD: 15
+SPIRIT 5743
+STRENGTH: 25
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 1 - 2025-08-25 12:48:27
+HEALTH: 142500
+ATTACK: 1700
+PEP: 142500
+DEF: 63
+SOULD: 160
+SPIRIT 11486
+STRENGTH: 250
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 2 - 2025-08-25 12:48:30
+HEALTH: 143000
+ATTACK: 1705
+PEP: 143000
+DEF: 64
+SOULD: 160
+SPIRIT 17229
+STRENGTH: 250
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 3 - 2025-08-25 12:48:33
+HEALTH: 143750
+ATTACK: 1720
+PEP: 143750
+DEF: 66
+SOULD: 160
+SPIRIT 25843
+STRENGTH: 255
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 4 - 2025-08-25 12:48:35
+HEALTH: 144750
+ATTACK: 1725
+PEP: 144750
+DEF: 67
+SOULD: 160
+SPIRIT 38764
+STRENGTH: 255
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 5 - 2025-08-25 12:48:36
+HEALTH: 146000
+ATTACK: 1730
+PEP: 146000
+DEF: 68
+SOULD: 160
+SPIRIT 58146
+STRENGTH: 255
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 6 - 2025-08-25 12:48:38
+HEALTH: 147500
+ATTACK: 1760
+PEP: 147500
+DEF: 71
+SOULD: 160
+SPIRIT 87219
+STRENGTH: 260
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 7 - 2025-08-25 12:48:40
+HEALTH: 149250
+ATTACK: 1765
+PEP: 149250
+DEF: 72
+SOULD: 160
+SPIRIT 130828
+STRENGTH: 260
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 8 - 2025-08-25 12:48:43
+HEALTH: 151250
+ATTACK: 1770
+PEP: 151250
+DEF: 73
+SOULD: 160
+SPIRIT 196242
+STRENGTH: 260
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 9 - 2025-08-25 12:48:46
+HEALTH: 153500
+ATTACK: 1815
+PEP: 153500
+DEF: 78
+SOULD: 160
+SPIRIT 294363
+STRENGTH: 265
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 10 - 2025-08-25 12:48:52
+HEALTH: 156000
+ATTACK: 1820
+PEP: 156000
+DEF: 79
+SOULD: 160
+SPIRIT 441544
+STRENGTH: 265
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
+
+=============================
+cảnh giới luyện khí tầng 10 - 2025-08-25 12:48:57
+HEALTH: 156000
+ATTACK: 1820
+PEP: 156000
+DEF: 79
+SOULD: 160
+SPIRIT 441544
+STRENGTH: 265
+PHYSIQUE: Ngũ Hành Linh Căn
+AFFINITY: Hỏa, Mộc, Thủy, Kim, Thổ
 

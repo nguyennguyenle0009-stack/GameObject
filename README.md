@@ -6,7 +6,13 @@
 
 ## Cập nhật
 
-## [1.0.4] - 2025-08-09
+## [1.0.5] - 2025-08-25
+
+### Thay đổi
+- Điều chỉnh hệ thống tăng cấp theo **Cảnh giới**:
+  - Luyện thể và Luyện khí tăng chỉ số theo công thức mới.
+  - Đột phá đại cảnh giới nhân đôi (hoặc gấp ba với DEF) chỉ số và cộng thêm Linh hồn.
+  lỗi: attack và def không cộng dồn khi thể chất bình thường
 
 ### Thêm
 - Hệ thống **Thể chất** và **Linh căn** khi khởi tạo nhân vật.
