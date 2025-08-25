@@ -39,7 +39,9 @@ public class InventoryUi {
     }
 
     public void draw(Graphics2D g2) {
-        int charH = gp.getTileSize() * 8;
+        Font oldFont = g2.getFont();
+        try {
+            int charH = gp.getTileSize() * 8;
         Dimension d = itemGrid.getPreferredSize();
         int gridX = gp.getTileSize() * 8; // default position with one tile gap after character panel
         int gridY = gp.getTileSize() * 2;
@@ -77,6 +79,9 @@ public class InventoryUi {
         }
 
         drawContextMenu(g2);
+        } finally {
+            g2.setFont(oldFont);
+        }
     }
 
     private int computeSlotIndex(int originX, int originY, Point mouse) {
