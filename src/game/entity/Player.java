@@ -413,10 +413,17 @@ public class Player extends GameActor implements DrawableEntity {
      * Tăng Spirit và tự động kiểm tra lên cấp.
      */
     public void gainSpirit(int amount) {
+        // Nếu chưa thiết lập yêu cầu Spirit (ví dụ đã đạt cảnh giới tối đa) thì bỏ qua
+        if (spiritToNextLevel <= 0) {
+            return;
+        }
+
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
         atts().add(Attr.SPIRIT, modified);
-        while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
+
+        // Kiểm tra lên cấp cho đến khi Spirit không còn đủ
+        while (atts().get(Attr.SPIRIT) >= spiritToNextLevel && spiritToNextLevel > 0) {
             atts().add(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
         }
@@ -531,7 +538,10 @@ public class Player extends GameActor implements DrawableEntity {
             case LUYEN_KHI -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
+                    // Đã đạt cảnh giới tối đa: cố định tầng và đặt yêu cầu SPIRIT rất lớn
                     realmStage = physique.getMaxStage();
+                    spiritToNextLevel = Integer.MAX_VALUE;
+                    atts().set(Attr.SPIRIT, 0);
                 } else {
                     applyStageGrowth();
                     spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
@@ -826,6 +836,17 @@ public class Player extends GameActor implements DrawableEntity {
                     }
                 }
             }
+            // Đảm bảo các thuộc tính quan trọng luôn hợp lệ
+            if (physique == null) {
+                physique = Physique.NORMAL;
+            }
+            if (affinities == null) {
+                affinities = EnumSet.noneOf(Affinity.class);
+            }
+            if (spiritToNextLevel <= 0) {
+                spiritToNextLevel = 1;
+                atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+            }
 
             return true;
         } catch (IOException e) {
@@ -921,7 +942,7 @@ public class Player extends GameActor implements DrawableEntity {
 
     public int getRealmStage() { return realmStage; }
     public int getSpiritToNextLevel() { return spiritToNextLevel; }
-    public Physique getPhysique() { return physique; }
+    public Physique getPhysique() { return physique != null ? physique : Physique.NORMAL; }
     public EnumSet<Affinity> getAffinities() { return affinities; }
 
     /**
