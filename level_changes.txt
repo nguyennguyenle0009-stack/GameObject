@@ -1,0 +1,14 @@
+Các chỉnh sửa hệ thống tăng cấp:
+- Luyện thể/Luyện khí: mỗi lần tăng tiểu cảnh giới
+  + HEALTH, PEP: cộng stage * 50.
+  + ATTACK: +1, riêng bội số của 3 cộng thêm chính số đó.
+  + DEF: +1, nếu là bội số của 3 cộng thêm stage/2 (làm tròn lên).
+  + SPIRIT yêu cầu: cộng thêm một nửa SPIRIT yêu cầu hiện tại.
+  + STRENGTH: cộng 1 khi đạt bội số của 3.
+- Đột phá từ Luyện thể → Luyện khí
+  + HEALTH, ATTACK, PEP, SPIRIT, STRENGTH, SOULD: x2.
+  + DEF: x3.
+  + SOULD nhận thêm 10 điểm.
+- Khi tăng đại cảnh giới bất kỳ nhận thêm 10 SOULD.
+
+File này mô tả các thay đổi để so sánh với yêu cầu ban đầu.
