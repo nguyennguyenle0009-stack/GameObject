@@ -60,20 +60,32 @@ public class GameHUD {
         drawBar(g2, x, y, barWidth, barHeight,
                 p.atts().get(Attr.SPIRIT), p.atts().getMax(Attr.SPIRIT), EXP_FILL);
 
-        // Hiển thị thông tin buff đan dược dưới thanh SPIRIT
+        // Hiển thị thông tin buff đan dược hoặc thời gian tu luyện
+        int infoY = y + barHeight + 20;
         if (p.getPillSpiritBonus() > 0) {
             long sec = p.getPillTimeLeft() / 1000;
             String text = p.getActivePillName() + " " + (sec / 60) + ":" + String.format("%02d", sec % 60);
             g2.setColor(Color.WHITE);
-            g2.drawString(text, x, y + barHeight + 20);
+            g2.drawString(text, x, infoY);
+            infoY += 20;
         }
 
-        // Nếu đang tu luyện, vẽ nút hủy
+        // Thời gian tu luyện/cooldown
         if (p.isCultivating()) {
+            long sec = p.getCultivationTimeLeft() / 1000;
+            String text = p.getActiveTechnique().getName() + " " + (sec / 60) + ":" + String.format("%02d", sec % 60);
+            g2.setColor(Color.WHITE);
+            g2.drawString(text, x, infoY);
+            // Nếu đang tu luyện, vẽ nút hủy
             HUDUtils.drawSubWindow(g2, cancelRect.x, cancelRect.y, cancelRect.width, cancelRect.height,
                     BAR_BACK, BAR_BORDER);
             g2.setColor(Color.WHITE);
             g2.drawString("Huỷ", cancelRect.x + 20, cancelRect.y + cancelRect.height - 10);
+        } else if (p.getCultivationCooldownLeft() > 0) {
+            long sec = p.getCultivationCooldownLeft() / 1000;
+            String text = "Hồi chiêu: " + (sec / 60) + ":" + String.format("%02d", sec % 60);
+            g2.setColor(Color.WHITE);
+            g2.drawString(text, x, infoY);
         }
     }
 

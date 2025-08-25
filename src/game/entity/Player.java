@@ -425,6 +425,9 @@ public class Player extends GameActor implements DrawableEntity {
     /** Người chơi học một công pháp mới. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
+        // Ghi lại vào nhật ký để lưu ra file
+        logRealmState();
+        saveProfile();
     }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
@@ -479,6 +482,25 @@ public class Player extends GameActor implements DrawableEntity {
     public int getPillSpiritBonus() { return pillSpiritBonus; }
     public String getActivePillName() { return activePillName; }
     public long getPillTimeLeft() { return Math.max(0, pillBuffEnd - System.currentTimeMillis()); }
+
+    /**
+     * @return tên công pháp đang tu luyện, hoặc {@code null} nếu không tu luyện.
+     */
+    public CultivationTechnique getActiveTechnique() { return activeTechnique; }
+
+    /**
+     * @return thời gian còn lại của lần tu luyện hiện tại (ms).
+     */
+    public long getCultivationTimeLeft() {
+        return Math.max(0, cultivationEndTime - System.currentTimeMillis());
+    }
+
+    /**
+     * @return thời gian hồi chiêu còn lại trước khi có thể tu luyện tiếp (ms).
+     */
+    public long getCultivationCooldownLeft() {
+        return Math.max(0, cultivationCooldownEnd - System.currentTimeMillis());
+    }
 
     /**
      * Thực hiện lên cấp theo cảnh giới hiện tại.
@@ -619,7 +641,8 @@ public class Player extends GameActor implements DrawableEntity {
         realmLog.add(sb.toString());
     }
 
-    private void saveProfile() {
+    // Lưu trạng thái người chơi ra file để dùng lại ở lần chơi sau
+    public void saveProfile() {
         try {
             Path file = getProfilePath();
             List<String> lines = new ArrayList<>();

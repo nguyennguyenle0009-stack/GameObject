@@ -1,0 +1,6 @@
+Các thay đổi đã thực hiện:
+- Sửa lỗi không giảm số lượng khi dùng sách công pháp và đan dược bằng cách gọi Player.useItem và lưu hồ sơ.
+- Hiển thị thời gian tu luyện còn lại và thời gian hồi chiêu trên HUD.
+- Lưu danh sách công pháp đã học vào file lưu trữ.
+- Thu nhỏ kích thước ô vật phẩm, thêm khả năng cuộn và chỉnh sửa UI kho để gọn gàng hơn.
+- Giảm cỡ chữ và căn lề khung thuộc tính cho đẹp mắt.
