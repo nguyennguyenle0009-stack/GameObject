@@ -17,6 +17,14 @@
 - Bảng thuộc tính có nút mở danh sách công pháp.
 - Tệp lưu người chơi thêm mục `SKILL` ghi lại công pháp đã học.
 
+### Sửa lỗi
+- Sử dụng sách công pháp/đan dược giảm đúng số lượng và được ghi vào tệp lưu.
+- HUD hiện thời gian hồi chiêu tu luyện.
+
+### Cải thiện
+- Ô chứa item nhỏ 32px, kho có thêm thanh cuộn để tránh tràn.
+- Khung thuộc tính thu gọn, chữ cỡ nhỏ và căn lề sát hơn.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi

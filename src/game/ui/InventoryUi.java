@@ -21,8 +21,9 @@ public class InventoryUi {
     private final GamePanel gp;
     private final ItemGridUi itemGrid;
 
-    private int selectedSlot = -1;
-    private int hoverSlot = -1;
+    private int selectedSlot = 0; // chỉ số item toàn cục đang chọn
+    private int hoverSlot = -1;   // chỉ số item toàn cục đang trỏ vào
+    private int scrollOffset = 0; // vị trí bắt đầu của trang hiện tại
     private boolean contextVisible = false;
     private String[] contextOptions = new String[0];
     private int contextSelection = 0;
@@ -56,9 +57,10 @@ public class InventoryUi {
 
         var items = gp.getPlayer().getBag().all();
         handleInventoryInput(items, gridX, gridY);
-        hoverSlot = computeSlotIndex(gridX, gridY, gp.getMousePosition());
+        int hoverLocal = computeSlotIndex(gridX, gridY, gp.getMousePosition());
+        hoverSlot = (hoverLocal >= 0) ? scrollOffset + hoverLocal : -1;
 
-        itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot);
+        itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot, scrollOffset);
 
         int infoIdx = hoverSlot;
         if (infoIdx >= 0 && infoIdx < items.size()) {
@@ -94,7 +96,9 @@ public class InventoryUi {
 
     private void handleInventoryInput(List<Item> items, int baseX, int baseY) {
         var kh = gp.keyH;
-        int totalSlots = itemGrid.getCols() * itemGrid.getRows();
+        int cols = itemGrid.getCols();
+        int rows = itemGrid.getRows();
+        int visible = cols * rows;
         if (contextVisible) {
             if (kh.isUpPressed()) {
                 contextSelection = (contextSelection - 1 + contextOptions.length) % contextOptions.length;
@@ -114,25 +118,29 @@ public class InventoryUi {
             }
             return;
         }
-        if (kh.isUpPressed()) {
-            selectedSlot = (selectedSlot - itemGrid.getCols() + totalSlots) % totalSlots;
-            kh.setUpPressed(false);
+
+        if (kh.isUpPressed()) { selectedSlot -= cols; kh.setUpPressed(false); }
+        if (kh.isDownPressed()) { selectedSlot += cols; kh.setDownPressed(false); }
+        if (kh.isLeftPressed()) { selectedSlot--; kh.setLeftPressed(false); }
+        if (kh.isRightPressed()) { selectedSlot++; kh.setRightPressed(false); }
+
+        int maxIndex = Math.max(0, items.size() - 1);
+        if (selectedSlot < 0) selectedSlot = 0;
+        if (selectedSlot > maxIndex) selectedSlot = maxIndex;
+
+        // Điều chỉnh offset để item được chọn luôn nằm trong trang
+        if (selectedSlot < scrollOffset) {
+            scrollOffset = (selectedSlot / cols) * cols;
+        } else if (selectedSlot >= scrollOffset + visible) {
+            scrollOffset = (selectedSlot / cols - rows + 1) * cols;
         }
-        if (kh.isDownPressed()) {
-            selectedSlot = (selectedSlot + itemGrid.getCols()) % totalSlots;
-            kh.setDownPressed(false);
-        }
-        if (kh.isLeftPressed()) {
-            selectedSlot = (selectedSlot - 1 + totalSlots) % totalSlots;
-            kh.setLeftPressed(false);
-        }
-        if (kh.isRightPressed()) {
-            selectedSlot = (selectedSlot + 1) % totalSlots;
-            kh.setRightPressed(false);
-        }
+        int maxOffset = Math.max(0, items.size() - visible);
+        if (scrollOffset > maxOffset) scrollOffset = maxOffset;
+        if (scrollOffset < 0) scrollOffset = 0;
+
         if (kh.isEnterPressed()) {
             if (selectedSlot >= 0 && selectedSlot < items.size()) {
-                openContextMenu(baseX, baseY, selectedSlot, items.get(selectedSlot));
+                openContextMenu(baseX, baseY, selectedSlot - scrollOffset, items.get(selectedSlot));
             }
             kh.setEnterPressed(false);
         }
@@ -192,35 +200,35 @@ public class InventoryUi {
     private void characterScreen(Graphics2D g2, int topY) {
         int x = gp.getTileSize();
         int y = topY;
-        int width = x * 6;
-        int height = gp.getTileSize() * 8; // keep character box size constant
+        int width = x * 5;
+        int height = gp.getTileSize() * 6;
         drawSubWindow(x, y, width, height, g2);
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
-        int textX = x + gp.getTileSize();
-        int textY = y + gp.getTileSize();
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 12f));
+        int textX = x + 10;
+        int textY = y + 20;
 
         var p = gp.getPlayer();
         var attrs = p.atts();
 
-        g2.drawString("Realm: " + p.getRealmName(), textX, textY); textY += 30;
-        g2.drawString("Health: " + attrs.get(Attr.HEALTH) + "/" + attrs.getMax(Attr.HEALTH), textX, textY); textY += 30;
-        g2.drawString("Pep: " + attrs.get(Attr.PEP) + "/" + attrs.getMax(Attr.PEP), textX, textY); textY += 30;
-        g2.drawString("Spirit: " + attrs.get(Attr.SPIRIT) + "/" + p.getSpiritToNextLevel(), textX, textY); textY += 30;
-        g2.drawString("Attack: " + attrs.get(Attr.ATTACK), textX, textY); textY += 30;
-        g2.drawString("Def: " + attrs.get(Attr.DEF), textX, textY); textY += 30;
-        g2.drawString("Strength: " + attrs.get(Attr.STRENGTH), textX, textY); textY += 30;
-        g2.drawString("Sould: " + attrs.get(Attr.SOULD), textX, textY); textY += 30;
-        g2.drawString("Physique: " + p.getPhysique().getDisplay(), textX, textY); textY += 30;
-        g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY); textY += 40;
+        g2.drawString("Realm: " + p.getRealmName(), textX, textY); textY += 15;
+        g2.drawString("Health: " + attrs.get(Attr.HEALTH) + "/" + attrs.getMax(Attr.HEALTH), textX, textY); textY += 15;
+        g2.drawString("Pep: " + attrs.get(Attr.PEP) + "/" + attrs.getMax(Attr.PEP), textX, textY); textY += 15;
+        g2.drawString("Spirit: " + attrs.get(Attr.SPIRIT) + "/" + p.getSpiritToNextLevel(), textX, textY); textY += 15;
+        g2.drawString("Attack: " + attrs.get(Attr.ATTACK), textX, textY); textY += 15;
+        g2.drawString("Def: " + attrs.get(Attr.DEF), textX, textY); textY += 15;
+        g2.drawString("Strength: " + attrs.get(Attr.STRENGTH), textX, textY); textY += 15;
+        g2.drawString("Sould: " + attrs.get(Attr.SOULD), textX, textY); textY += 15;
+        g2.drawString("Physique: " + p.getPhysique().getDisplay(), textX, textY); textY += 15;
+        g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY); textY += 20;
 
         // Vẽ nút mở bảng công pháp
-        int btnW = gp.getTileSize() * 4;
-        int btnH = gp.getTileSize();
+        int btnW = gp.getTileSize() * 3;
+        int btnH = gp.getTileSize() / 2;
         int btnX = x + (width - btnW) / 2;
-        int btnY = y + height - btnH - gp.getTileSize() / 2;
+        int btnY = y + height - btnH - 10;
         HUDUtils.drawSubWindow(g2, btnX, btnY, btnW, btnH, new Color(40,40,40,200), Color.WHITE);
         g2.setColor(Color.WHITE);
-        g2.drawString("Công pháp", btnX + 20, btnY + btnH - 10);
+        g2.drawString("Công pháp", btnX + 10, btnY + btnH - 5);
         skillBtn.setBounds(btnX, btnY, btnW, btnH);
     }
 
@@ -247,12 +255,13 @@ public class InventoryUi {
             return true;
         }
 
-        int idx = computeSlotIndex(baseX, baseY, new Point(mx, my));
+        int local = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
-        if (idx >= 0 && idx < itemGrid.getCols() * itemGrid.getRows()) {
-            selectedSlot = idx;
-            if (button == MouseEvent.BUTTON3 && idx < items.size()) {
-                openContextMenu(baseX, baseY, idx, items.get(idx));
+        if (local >= 0 && local < itemGrid.getCols() * itemGrid.getRows()) {
+            int global = scrollOffset + local;
+            selectedSlot = global;
+            if (button == MouseEvent.BUTTON3 && global < items.size()) {
+                openContextMenu(baseX, baseY, local, items.get(global));
             } else if (button == MouseEvent.BUTTON1) {
                 contextVisible = false;
             }
