@@ -1,5 +1,5 @@
 ============player.Nguyeen_pro.20250825.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược hồi máu (13), Đan dược tinh thần (5), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (60), Đan dược tinh thần (60), Đan dược tinh thần (60)
+Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược hồi máu (100), Đan dược tinh thần (100), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược hồi máu (33), Đan dược tinh thần (100), Đan dược tinh thần (65), Đan dược hồi máu (100), Đan dược hồi máu (12), Đan dược tinh thần (60), Đan dược tinh thần (60), Đan dược tinh thần (60)
 =============================
 cảnh giới phàm nhân - 2025-08-25 13:23:08
 HEALTH: 100
@@ -181,3 +181,16 @@ STRENGTH: 11
 PHYSIQUE: Bình thường
 AFFINITY: Thủy
 SKILL: None
+=============================
+cảnh giới luyện khí tầng 3 - 2025-08-25 20:09:25
+HEALTH: 5950
+ATTACK: 72
+PEP: 5950
+DEF: 66
+SOULD: 40
+SPIRIT 259443
+STRENGTH: 11
+PHYSIQUE: Bình thường
+AFFINITY: Thủy
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+

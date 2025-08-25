@@ -17,7 +17,7 @@ public class CultivationBook extends Item {
     static {
         try {
             // Tạm dùng icon bình thuốc làm placeholder
-            icon = ImageIO.read(CultivationBook.class.getResourceAsStream("/data/item/elixir/HealthPotion.png"));
+            icon = ImageIO.read(CultivationBook.class.getResourceAsStream("/data/item/book/cultivation_book.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }

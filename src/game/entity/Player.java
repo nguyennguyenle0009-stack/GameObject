@@ -422,9 +422,13 @@ public class Player extends GameActor implements DrawableEntity {
 
     // ------------ Hệ thống kỹ năng & tu luyện ------------
 
-    /** Người chơi học một công pháp mới. */
+    /** Người chơi học một công pháp mới.
+     *  Sau khi học sẽ lưu lại vào tệp cấu hình để lần chơi sau vẫn còn. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
+        // Ghi log để dòng SKILL trong file cập nhật đúng
+        logRealmState();
+        saveProfile();
     }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
@@ -479,6 +483,11 @@ public class Player extends GameActor implements DrawableEntity {
     public int getPillSpiritBonus() { return pillSpiritBonus; }
     public String getActivePillName() { return activePillName; }
     public long getPillTimeLeft() { return Math.max(0, pillBuffEnd - System.currentTimeMillis()); }
+
+    /** Thời gian hồi chiêu tu luyện còn lại (ms). */
+    public long getCultivationCooldownLeft() {
+        return Math.max(0, cultivationCooldownEnd - System.currentTimeMillis());
+    }
 
     /**
      * Thực hiện lên cấp theo cảnh giới hiện tại.
@@ -636,6 +645,9 @@ public class Player extends GameActor implements DrawableEntity {
         }
     }
 
+    /** Cho phép class bên ngoài yêu cầu lưu hồ sơ xuống tệp. */
+    public void saveProfileToFile() { saveProfile(); }
+
     private Path getProfilePath() {
         String safeName = getName().replaceAll("\\s+", "_");
         String date = creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -755,7 +767,7 @@ public class Player extends GameActor implements DrawableEntity {
                             String name = (i1 > 0) ? tk.substring(0, i1).trim() : tk.trim();
                             int lvl = (i1 > 0 && i2 > i1) ? Integer.parseInt(tk.substring(i1 + 1, i2)) : 1;
                             String gradeStr = (i3 > i2 && i4 > i3) ? tk.substring(i3 + 1, i4) : SkillGrade.HA.getDisplay();
-                            techniques.add(new game.entity.skill.CultivationTechnique(name, SkillGrade.fromDisplay(gradeStr), lvl, 0, 0));
+                            techniques.add(new CultivationTechnique(name, SkillGrade.fromDisplay(gradeStr), lvl, 0, 0));
                         }
                     }
                 }
