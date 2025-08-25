@@ -6,9 +6,16 @@ Cập nhật:
 - HUD hiển thị buff đan dược và nút hủy khi đang tu luyện.
 - Bảng thuộc tính có nút mở danh sách công pháp.
 - Định dạng file lưu tiến trình bổ sung dòng SKILL.
+
 Sửa lỗi và cải tiến:
 - Đọc sách công pháp hoặc uống đan dược giờ trừ đúng số lượng và tự lưu hồ sơ.
 - Khi học công pháp mới sẽ được ghi vào tệp .txt, khởi động lại vẫn còn.
 - HUD hiển thị thời gian hồi chiêu tu luyện.
 - Kho đồ thu nhỏ ô 32px và có thanh cuộn để chứa nhiều item.
 - Khung thuộc tính dùng font nhỏ, lề sát hơn để tránh đè giao diện.
+
+## 1.0.8
+- Sửa lỗi bảng công pháp không hiển thị thời gian hồi chiêu.
+- Bảng công pháp chuyển sang bên phải, có nút **Dùng** và **Gán**, tooltip chi tiết và cuộn bằng con lăn.
+- Kho đồ hỗ trợ cuộn bằng con lăn chuột.
+- Hồ sơ .txt ghi thêm công pháp khi học mới.

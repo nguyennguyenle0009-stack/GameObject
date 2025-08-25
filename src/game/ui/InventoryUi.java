@@ -24,6 +24,9 @@ public class InventoryUi {
     private int selectedSlot = 0; // chỉ số item toàn cục đang chọn
     private int hoverSlot = -1;   // chỉ số item toàn cục đang trỏ vào
     private int scrollOffset = 0; // vị trí bắt đầu của trang hiện tại
+    // Lưu lại toạ độ khung để dùng cho cuộn bằng chuột.
+    private int lastGridX, lastGridY;
+    private java.awt.Dimension lastDim = new java.awt.Dimension();
     private boolean contextVisible = false;
     private String[] contextOptions = new String[0];
     private int contextSelection = 0;
@@ -49,6 +52,9 @@ public class InventoryUi {
         int outerY = gridY - gp.getTileSize() / 2; // keep margin similar to original
         int outerW = gridX + d.width + gp.getTileSize() / 2 - outerX;
         int outerH = Math.max(charH, d.height) + gp.getTileSize();
+        lastGridX = gridX;
+        lastGridY = gridY;
+        lastDim.setSize(d);
         HUDUtils.drawSubWindow(g2, outerX, outerY, outerW, outerH,
                 new Color(40,40,40,180), Color.YELLOW);
 
@@ -192,6 +198,22 @@ public class InventoryUi {
         g2.drawString(line2, x + padding, y + padding + 35);
     }
 
+    /** Xử lý cuộn bằng con lăn chuột. */
+    public void handleMouseWheel(int rotation, int mx, int my) {
+        if (!(mx >= lastGridX && mx <= lastGridX + lastDim.width &&
+              my >= lastGridY && my <= lastGridY + lastDim.height)) {
+            return;
+        }
+        int cols = itemGrid.getCols();
+        int rows = itemGrid.getRows();
+        int visible = cols * rows;
+        int total = gp.getPlayer().getBag().all().size();
+        int maxOffset = Math.max(0, total - visible);
+        scrollOffset += Integer.signum(rotation) * cols;
+        if (scrollOffset < 0) scrollOffset = 0;
+        if (scrollOffset > maxOffset) scrollOffset = maxOffset;
+    }
+    
     /**
      * Draws the character attribute box at a given vertical offset.
      *

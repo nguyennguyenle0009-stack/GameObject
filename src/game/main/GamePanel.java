@@ -68,23 +68,24 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setDoubleBuffered(true);
 		this.addKeyListener(keyH);
 		this.addMouseListener(mounseH);
+		this.addMouseWheelListener(mounseH);
 		this.setFocusable(true);
 	}
 	
 	public void setUpGame() { 
-        player.addItem(new HealthPotion(30, 50));
-        player.addItem(new HealthPotion(30, 60)); 
-        player.addItem(new SpiritPotion(2000, 60));
-        player.addItem(new SpiritPotion(20000, 60));
-        player.addItem(new SpiritPotion(200000, 60));
+//        player.addItem(new HealthPotion(30, 50));
+//        player.addItem(new HealthPotion(30, 60)); 
+//        player.addItem(new SpiritPotion(2000, 60));
+//        player.addItem(new SpiritPotion(20000, 60));
+//        player.addItem(new SpiritPotion(200000, 60));
 
-		
-                objectManager.setObject();
-                objectManager.setEntity();
-                objectManager.setMonsters();
-                objectManager.setMonsterZones();
-                gameState = playState;
-        }
+
+        objectManager.setObject();
+        objectManager.setEntity();
+        objectManager.setMonsters();
+        objectManager.setMonsterZones();
+        gameState = playState;
+    }
 	
 	public void startGame() { this.thread = new Thread(this); thread.start(); }
 	

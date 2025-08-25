@@ -1,5 +1,5 @@
 ============player.Nguyeen_pro.20250825.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược tinh thần (100), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Đan dược hồi máu (14), Đan dược tinh thần (83), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (60), Đan dược tinh thần (60), Đan dược tinh thần (60)
+Itemcủa nhân vật: Đan dược hồi máu (100), Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược tinh thần (100), Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược tinh thần (100), Đan dược hồi máu (100), Đan dược tinh thần (100), Đan dược tinh thần (100), Đan dược hồi máu (41), Đan dược tinh thần (100), Đan dược tinh thần (20), Đan dược hồi máu (100), Đan dược hồi máu (10), Đan dược tinh thần (60), Đan dược tinh thần (60), Đan dược tinh thần (60)
 =============================
 cảnh giới phàm nhân - 2025-08-25 20:18:07
 HEALTH: 100
@@ -12,4 +12,17 @@ STRENGTH: 1
 PHYSIQUE: Bình thường
 AFFINITY: Mộc
 SKILL: None
+
+=============================
+cảnh giới phàm nhân - 2025-08-25 21:07:02
+HEALTH: 100
+ATTACK: 5
+PEP: 100
+DEF: 4
+SOULD: 5
+SPIRIT 1000
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Mộc
+SKILL: Công pháp trung phẩm(1)(Trung phẩm)
 

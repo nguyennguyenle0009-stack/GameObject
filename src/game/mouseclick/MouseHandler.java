@@ -2,10 +2,15 @@ package game.mouseclick;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import game.main.GamePanel;
 
-public class MouseHandler implements MouseListener {
+/**
+ * Xử lý các sự kiện chuột cho trò chơi.
+ */
+public class MouseHandler implements MouseListener, MouseWheelListener {
     public int targetX, targetY;
     public boolean moving = false;
     GamePanel gp;
@@ -42,6 +47,11 @@ public class MouseHandler implements MouseListener {
     public void mouseEntered(MouseEvent e) { }
     @Override
     public void mouseExited(MouseEvent e) { }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        gp.getUi().handleMouseWheel(e.getWheelRotation(), e.getX(), e.getY());
+    }
     public int getTargetX() { return targetX; }
     public MouseHandler setTargetX(int targetX) { this.targetX = targetX; return this; }
     public int getTargetY() { return targetY; }

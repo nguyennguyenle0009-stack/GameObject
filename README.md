@@ -25,6 +25,16 @@
 - Ô chứa item nhỏ 32px, kho có thêm thanh cuộn để tránh tràn.
 - Khung thuộc tính thu gọn, chữ cỡ nhỏ và căn lề sát hơn.
 
+## [1.0.8] - 2025-08-27
+
+### Thêm
+- Bảng công pháp chuyển sang bên phải, có nút **Dùng**/**Gán**, hiển thị hồi chiêu và tooltip khi hover.
+- Kho đồ hỗ trợ cuộn bằng con lăn chuột.
+
+### Sửa lỗi
+- Hồi chiêu công pháp hiển thị đầy đủ trong HUD và bảng công pháp.
+- Công pháp học mới được lưu vào tệp `.txt` ngay lập tức.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi
@@ -136,4 +146,3 @@
 - va chạm player với npc (đã làm)
 
 - 
-
