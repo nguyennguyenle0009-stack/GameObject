@@ -34,10 +34,14 @@ public class Inventory {
         }
     }
     
-	public boolean remove(Item i) {
-		return items.remove(i);
-	}
-	public List<Item> all(){
-		return List.copyOf(items);
-	}
+        public boolean remove(Item i) {
+                return items.remove(i);
+        }
+        public List<Item> all(){
+                return List.copyOf(items);
+        }
+
+    public void clear() {
+        items.clear();
+    }
 }

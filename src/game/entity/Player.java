@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,7 +64,7 @@ public class Player extends GameActor implements DrawableEntity {
 
     private final Random random = new Random();
 
-    private final LocalDate creationDate = LocalDate.now();
+    private LocalDate creationDate = LocalDate.now();
     private final List<String> realmLog = new ArrayList<>();
 
 	public Player(GamePanel gp) {
@@ -82,36 +83,38 @@ public class Player extends GameActor implements DrawableEntity {
                 setSpeed(4);
                 setDirection("down");
                 setSpriteCouter(0);
-                setSpriteNum(1);
-                setName("Nguyeen pro");
+        setSpriteNum(1);
+        setName("Nguyeen pro");
 
-                // Thuộc tính cơ bản
-                atts().setMax(Attr.HEALTH, 100);
-                atts().set(Attr.HEALTH, 100);
-                atts().setMax(Attr.PEP, 100);
-                atts().set(Attr.PEP, 100);
-                atts().setMax(Attr.SPIRIT, spiritToNextLevel);
-                atts().set(Attr.SPIRIT, 0);
-                atts().setMax(Attr.ATTACK, 5);
-                atts().set(Attr.ATTACK, 5);
-                atts().setMax(Attr.DEF, 4);
-                atts().set(Attr.DEF, 4);
-                atts().set(Attr.STRENGTH, 1);
-                atts().set(Attr.SOULD, 5);
+        if (!loadProfile()) {
+            // Thuộc tính cơ bản
+            atts().setMax(Attr.HEALTH, 100);
+            atts().set(Attr.HEALTH, 100);
+            atts().setMax(Attr.PEP, 100);
+            atts().set(Attr.PEP, 100);
+            atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+            atts().set(Attr.SPIRIT, 0);
+            atts().setMax(Attr.ATTACK, 5);
+            atts().set(Attr.ATTACK, 5);
+            atts().setMax(Attr.DEF, 4);
+            atts().set(Attr.DEF, 4);
+            atts().set(Attr.STRENGTH, 1);
+            atts().set(Attr.SOULD, 5);
 
-                // Thiết lập thể chất và linh căn ngẫu nhiên
-                physique = randomPhysique();
-                affinities = randomAffinities();
+            // Thiết lập thể chất và linh căn ngẫu nhiên
+            physique = randomPhysique();
+            affinities = randomAffinities();
 
-                // Thêm vài item test: bình hồi máu & tinh thần
-                addItem(new game.entity.item.elixir.HealthPotion(50, 3));
-                addItem(new game.entity.item.elixir.SpiritPotion(200, 3));
+            // Thêm vài item test: bình hồi máu & tinh thần
+            addItem(new game.entity.item.elixir.HealthPotion(50, 3));
+            addItem(new game.entity.item.elixir.SpiritPotion(200, 3));
 
-                logRealmState();
-                saveProfile();
+            logRealmState();
+            saveProfile();
+        }
 
-                setScaleEntityX(gp.getTileSize());
-                setScaleEntityY(gp.getTileSize());
+        setScaleEntityX(gp.getTileSize());
+        setScaleEntityY(gp.getTileSize());
         }
 	
     private void setCollision() {
@@ -520,6 +523,155 @@ public class Player extends GameActor implements DrawableEntity {
         String safeName = getName().replaceAll("\\s+", "_");
         String date = creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         return Paths.get("player." + safeName + "." + date + ".txt");
+    }
+
+    private boolean loadProfile() {
+        try {
+            Path file = findExistingProfile();
+            if (file == null) return false;
+
+            List<String> lines = Files.readAllLines(file);
+            if (lines.size() < 2) return false;
+
+            // cập nhật ngày tạo từ tên file
+            String fileName = file.getFileName().toString();
+            String[] parts = fileName.split("\\.");
+            if (parts.length >= 3) {
+                creationDate = LocalDate.parse(parts[2], DateTimeFormatter.ofPattern("yyyyMMdd"));
+            }
+
+            // Items
+            String itemLine = lines.get(1);
+            String prefix = "Itemcủa nhân vật: ";
+            if (itemLine.startsWith(prefix)) {
+                String items = itemLine.substring(prefix.length()).trim();
+                bag.clear();
+                if (!items.isEmpty()) {
+                    String[] tokens = items.split(",\\s*");
+                    for (String token : tokens) {
+                        int idx = token.lastIndexOf(" (");
+                        int end = token.lastIndexOf(")");
+                        if (idx > 0 && end > idx) {
+                            String name = token.substring(0, idx).trim();
+                            int qty = Integer.parseInt(token.substring(idx + 2, end));
+                            Item it = createItemByName(name, qty);
+                            if (it != null) bag.add(it);
+                        }
+                    }
+                }
+            }
+
+            // Realm log
+            realmLog.clear();
+            if (lines.size() > 2) {
+                realmLog.addAll(lines.subList(2, lines.size()));
+            }
+
+            // Parse last block for stats
+            int last = -1;
+            for (int i = 2; i < lines.size(); i++) {
+                if (lines.get(i).startsWith("=============================")) {
+                    last = i;
+                }
+            }
+            if (last == -1 || last + 1 >= lines.size()) return true;
+
+            List<String> block = lines.subList(last, lines.size());
+            if (block.size() < 2) return true;
+
+            String realmLine = block.get(1);
+            String realmPart = realmLine.substring("cảnh giới ".length(), realmLine.indexOf(" - ")).trim();
+            String lower = realmPart.toLowerCase();
+            if (lower.startsWith("phàm nhân")) {
+                realm = Realm.PHAM_NHAN;
+                realmStage = 0;
+            } else if (lower.startsWith("luyện thể")) {
+                realm = Realm.LUYEN_THE;
+                int idx = lower.lastIndexOf("tầng");
+                if (idx >= 0) realmStage = Integer.parseInt(lower.substring(idx + 4).trim());
+            } else if (lower.startsWith("luyện khí")) {
+                realm = Realm.LUYEN_KHI;
+                int idx = lower.lastIndexOf("tầng");
+                if (idx >= 0) realmStage = Integer.parseInt(lower.substring(idx + 4).trim());
+            }
+
+            for (int i = 2; i < block.size(); i++) {
+                String line = block.get(i);
+                if (line.startsWith("HEALTH: ")) {
+                    int v = Integer.parseInt(line.substring(8).trim());
+                    atts().setMax(Attr.HEALTH, v);
+                    atts().set(Attr.HEALTH, v);
+                } else if (line.startsWith("ATTACK: ")) {
+                    int v = Integer.parseInt(line.substring(8).trim());
+                    atts().set(Attr.ATTACK, v);
+                } else if (line.startsWith("PEP: ")) {
+                    int v = Integer.parseInt(line.substring(5).trim());
+                    atts().setMax(Attr.PEP, v);
+                    atts().set(Attr.PEP, v);
+                } else if (line.startsWith("DEF: ")) {
+                    int v = Integer.parseInt(line.substring(5).trim());
+                    atts().set(Attr.DEF, v);
+                } else if (line.startsWith("SOULD: ")) {
+                    int v = Integer.parseInt(line.substring(7).trim());
+                    atts().set(Attr.SOULD, v);
+                } else if (line.startsWith("SPIRIT ")) {
+                    spiritToNextLevel = Integer.parseInt(line.substring(7).trim());
+                    atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+                    atts().set(Attr.SPIRIT, 0);
+                } else if (line.startsWith("STRENGTH: ")) {
+                    int v = Integer.parseInt(line.substring(10).trim());
+                    atts().set(Attr.STRENGTH, v);
+                } else if (line.startsWith("PHYSIQUE: ")) {
+                    physique = parsePhysique(line.substring(10).trim());
+                } else if (line.startsWith("AFFINITY: ")) {
+                    affinities = parseAffinities(line.substring(10).trim());
+                }
+            }
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private Path findExistingProfile() throws IOException {
+        String safeName = getName().replaceAll("\\s+", "_");
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("."), "player." + safeName + ".*.txt")) {
+            for (Path p : ds) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private Physique parsePhysique(String display) {
+        for (Physique p : Physique.values()) {
+            if (p.getDisplay().equals(display)) return p;
+        }
+        return Physique.NORMAL;
+    }
+
+    private EnumSet<Affinity> parseAffinities(String list) {
+        EnumSet<Affinity> set = EnumSet.noneOf(Affinity.class);
+        if (list == null || list.isBlank() || list.equalsIgnoreCase("None")) return set;
+        String[] parts = list.split(",\\s*");
+        for (String part : parts) {
+            for (Affinity a : Affinity.values()) {
+                if (a.getDisplay().equals(part)) {
+                    set.add(a);
+                }
+            }
+        }
+        return set;
+    }
+
+    private Item createItemByName(String name, int qty) {
+        return switch (name) {
+            case "Đan dược hồi máu" -> new game.entity.item.elixir.HealthPotion(50, qty);
+            case "Đan dược tinh thần" -> new game.entity.item.elixir.SpiritPotion(200, qty);
+            default -> null;
+        };
     }
 
     // -------- Random Physique/Affinity ---------
