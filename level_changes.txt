@@ -11,4 +11,8 @@ Các chỉnh sửa hệ thống tăng cấp:
   + SOULD nhận thêm 10 điểm.
 - Khi tăng đại cảnh giới bất kỳ nhận thêm 10 SOULD.
 
+Sửa lỗi:
+- Attack và Def không còn bị giới hạn 5/4, có thể tăng khi lên cấp.
+- Thể chất Ngũ Hành yêu cầu SPIRIT gấp 5 lần thể chất thường.
+
 File này mô tả các thay đổi để so sánh với yêu cầu ban đầu.

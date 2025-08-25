@@ -11,7 +11,8 @@ public enum Physique {
     THANH_THE("Thánh Thể", 10, 1.0, 2.0, 1.0),
     TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0/3.0, 1.0, 1.0),
     THAN_THE("Thần Thể", 10, 1.0, 1.0, 1.0),
-    NGU_HANH("Ngũ Hành Linh Căn", 10, 1.0, 1.0, 5.0);
+    // Ngũ Hành: chỉ số gấp 5 lần nên yêu cầu SPIRIT cũng gấp 5
+    NGU_HANH("Ngũ Hành Linh Căn", 10, 5.0, 1.0, 5.0);
 
     private final String display;
     private final int maxStage;
