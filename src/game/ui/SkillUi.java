@@ -1,9 +1,11 @@
 package game.ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -44,6 +46,11 @@ public class SkillUi {
      */
     public void draw(Graphics2D g2) {
         if (!visible) return;
+
+        var oldFont = g2.getFont();
+        var oldStroke = g2.getStroke();
+        var oldColor = g2.getColor();
+        g2.setFont(oldFont.deriveFont(Font.PLAIN, 16f));
 
         int tile = gp.getTileSize();
         int w = tile * 8;
@@ -144,6 +151,10 @@ public class SkillUi {
             g2.drawString(line3, tipX + padding, tipY + padding + 55);
             g2.drawString(line4, tipX + padding, tipY + padding + 75);
         }
+
+        g2.setFont(oldFont);
+        g2.setStroke(oldStroke);
+        g2.setColor(oldColor);
     }
 
     /**
