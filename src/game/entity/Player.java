@@ -25,8 +25,10 @@ import javax.imageio.ImageIO;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.item.manual.CultivationManual;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
+import game.entity.skill.Skill;
 import game.enums.Affinity;
 import game.enums.Attr;
 import game.enums.Physique;
@@ -53,6 +55,23 @@ public class Player extends GameActor implements DrawableEntity {
     private static final int ATTACK_COOLDOWN = 20;
     private static final int ATTACK_DURATION = 10;
 
+    // Danh sách kỹ năng mà người chơi sở hữu
+    private final List<Skill> skills = new ArrayList<>();
+
+    // -------- Trạng thái tu luyện --------
+    private boolean cultivating = false;
+    private long cultivationEndTime = 0;
+    private long cultivationCooldownEnd = 0;
+    private int cultivationSpiritPerSec = 0;
+    private long lastSpiritTick = 0;
+    private String currentManualName;
+
+    // -------- Hiệu ứng đan dược tu luyện --------
+    private int pillBonusSpirit = 0;
+    private long pillBonusEndTime = 0;
+    private String activePillName = null;
+
+    
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
     private int realmStage = 0;
@@ -152,6 +171,22 @@ public class Player extends GameActor implements DrawableEntity {
 	@Override
         public void update() {
             if (gp.keyH.isiPressed()) return;
+            long now = System.currentTimeMillis();
+
+            // Nếu đang tu luyện thì chỉ xử lý cộng SPIRIT
+            if (cultivating) {
+                if (now - lastSpiritTick >= 1000) {
+                    int gain = cultivationSpiritPerSec;
+                    if (now < pillBonusEndTime) gain += pillBonusSpirit;
+                    gainSpirit(gain);
+                    lastSpiritTick += 1000;
+                }
+                if (now >= cultivationEndTime) {
+                    stopCultivation();
+                }
+                return; // Đang tu luyện -> không di chuyển, không tấn công
+            }
+
             if (invincible) {
                 invincibleCounter++;
                 if (invincibleCounter > 60) {
@@ -372,6 +407,46 @@ public class Player extends GameActor implements DrawableEntity {
         if(i.getQuantity() == 0) bag.remove(i);
         saveProfile();
     }
+    
+ // -------- Quản lý kỹ năng ---------
+    public void addSkill(Skill s) { skills.add(s); }
+    public List<Skill> getSkills() { return skills; }
+
+    // -------- Tu luyện ---------
+
+    /** Bắt đầu tu luyện từ một công pháp. */
+    public void startCultivation(CultivationManual manual) {
+        long now = System.currentTimeMillis();
+        if (now < cultivationCooldownEnd || cultivating) return;
+        cultivating = true;
+        cultivationEndTime = now + manual.getDurationMs();
+        cultivationSpiritPerSec = manual.getSpiritPerSecond(this);
+        lastSpiritTick = now;
+        currentManualName = manual.getName();
+    }
+
+    /** Hủy hoặc kết thúc trạng thái tu luyện. */
+    public void stopCultivation() {
+        cultivating = false;
+        cultivationCooldownEnd = System.currentTimeMillis() + 60 * 60 * 1000L; // 1 giờ hồi chiêu
+    }
+
+    public boolean isCultivating() { return cultivating; }
+    public String getCurrentManualName() { return currentManualName; }
+
+    /**
+     * Áp dụng hiệu ứng đan dược tu luyện.
+     * @param name tên đan dược (để hiển thị)
+     * @param bonusSpirit lượng SPIRIT cộng thêm mỗi giây
+     */
+    public void applyCultivationPill(String name, int bonusSpirit) {
+        pillBonusSpirit = bonusSpirit;
+        pillBonusEndTime = System.currentTimeMillis() + 10 * 60 * 1000L; // 10 phút
+        activePillName = name;
+    }
+
+    public String getActivePillName() { return activePillName; }
+    public long getPillRemainingMs() { return Math.max(0, pillBonusEndTime - System.currentTimeMillis()); }
 
     /**
      * Tăng Spirit và tự động kiểm tra lên cấp.

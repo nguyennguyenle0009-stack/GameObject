@@ -51,6 +51,27 @@ public class GameHUD {
         y += barHeight + 6;
         drawBar(g2, x, y, barWidth, barHeight,
                 p.atts().get(Attr.SPIRIT), p.atts().getMax(Attr.SPIRIT), EXP_FILL);
+
+        // Hiển thị thông tin đan dược đang dùng (nếu có)
+        if (p.getActivePillName() != null && p.getPillRemainingMs() > 0) {
+            String text = p.getActivePillName() + " " + formatTime(p.getPillRemainingMs());
+            int tw = g2.getFontMetrics().stringWidth(text) + 10;
+            HUDUtils.drawSubWindow(g2, x, y + barHeight + 6, tw, barHeight, BAR_BACK, BAR_BORDER);
+            g2.setColor(Color.WHITE);
+            g2.drawString(text, x + 5, y + barHeight + barHeight); // text dưới thanh SPIRIT
+        }
+
+        // Khi đang tu luyện, vẽ nút hủy ở góc trái
+        if (p.isCultivating()) {
+            HUDUtils.drawSubWindow(g2, margin, gp.getTileSize()*2, 80, barHeight, PURPLE_BG, PURPLE_BORDER);
+            g2.setColor(Color.WHITE);
+            g2.drawString("Huỷ", margin + 25, gp.getTileSize()*2 + barHeight - 6);
+        }
+
+        // Nút mở bảng công pháp (chưa xử lý click)
+        HUDUtils.drawSubWindow(g2, margin, gp.getTileSize()*3, 100, barHeight, PURPLE_BG, PURPLE_BORDER);
+        g2.setColor(Color.WHITE);
+        g2.drawString("Công pháp", margin + 10, gp.getTileSize()*3 + barHeight - 6);
     }
 
     private void drawBar(Graphics2D g2, int x, int y, int w, int h,
@@ -62,5 +83,12 @@ public class GameHUD {
         g2.fillRect(x, y, filled, h);
         g2.setColor(BAR_BORDER);
         g2.drawRect(x, y, w, h);
+    }
+    
+    private String formatTime(long ms) {
+        long totalSeconds = ms / 1000;
+        long m = totalSeconds / 60;
+        long s = totalSeconds % 60;
+        return String.format("%02d:%02d", m, s);
     }
 }
