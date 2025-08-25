@@ -1,0 +1,59 @@
+item của nhân vật: tên (số lượng),....... 
+=============================
+cảnh giới phàm nhân - thời gian lên cấp
+HEALTH: 100
+ATTACK: 10
+PEP: 0
+DEF: 5
+SOULD: 5
+STRENGTH: 1
+SPIRIT 100
+PHYSIQUE:
+AFFINITY:
+=============================
+cảnh giới luyện thể tầng 1 - thời gian lên cấp
+HEALTH: 150
+ATTACK: 10
+PEP: 150
+DEF: 5
+SOULD: 5
+SPIRIT 1000
+STRENGTH: 2
+AFFINITY
+hệ thống cấp độ nhân vật:
+- Luyện thể kỳ: Có tất cả 10 tiểu cảnh giới và có thể chất đặc biệt mới có thể lên được 15 hoặc 20 tiểu cảnh giới mỗi khi tăng mỗi tiểu cảnh giới HEALTH, PEP và ATTACK tăng thêm 1,5 lần, SPIRIT nhân 2, DEF nhân 3 còn lại giữ nguyên
+- Luyện thể kỳ đột phá lên Luyện khí kỳ tất cả chỉ số nhân 2
+- Luyện khí kỳ: Có tất cả 10 tiểu cảnh giới và có thể chất đặc biệt mới có thể lên được 15 hoặc 20 tiểu cảnh giới mỗi khi tăng mỗi tiểu cảnh giới HEALTH và ATTACK tăng thêm 2 lần, PEP = PEP + SPIRIT cảnh giới trước chia 5,   SPIRIT nhân 3, DEF nhân 1.5 còn lại giữ nguyên
+....còn nhiều cảnh giới để lần sau thêm
+
+ngoài thể chất (PHYSIQUE) và Linh căn (AFFINITY) thì tất cả các thuộc tính đều là đều là thuộc tính chiến đấu
+
+thể chất (PHYSIQUE)
+- Hư không: giúp nhân vật có thể tu luyện lên 15 tiểu cảnh giới trong mỗi đại cảnh giới tỉ lệ xuất hiện 1% 
+- Hư không đại đế: giúp nhân vật có thể tu luyện lên 20 tiểu cảnh giới trong mỗi đại cảnh giới
+- Thánh Thể: (mỗi khi tăng một tiểu cảnh giới DEF x 2 cộng thêm tổng số DEF cảnh giới trước đó nhân với số phần trăm DEF tăng khi tăng cảnh giới tỉ lệ xuất hiện 1% 
+- Tiên Linh Thể: tăng tốc độ tu luyện x3 tỉ lệ xuất hiện 1% 
+- Thần Thể: uy lực tấn công tăng 10 phần(khi sử dụng kỷ năng hay đánh thường tổng số đam cộng thêm 10 lần ATTACK) tỉ lệ xuất hiện 1% 
+- Ngũ hành linh căn: Có 5 linh căn trong tổng số 6 linh căn( ngẫu nhiên) tu luyện chia 5, tất cả chỉ số nhân 5 khi lên mỗi tiểu hoặc đại cảnh giới cộng với chỉ số nhân của mỗi tiểu hoặc đại cảnh giới tỉ lệ xuất hiện 1% 
+- thể chất bình thường, không có gì nỗi bật tu luyện chiến đấu bình thường tỉ lệ xuất hiện 100% nếu người chơi không mở ra thể chất khác thì mặc định thể chất này
+
+Linh căn (AFFINITY)
+người chơi có ít nhất 1 linh căn, tỉ lệ ra 2 linh căn là 15%%, tỉ lệ ra 3 linh căn là 10%
+- Hỏa linh căn tu luyện công pháp hệ hỏa tỉ lệ xuất hiện 20%
+- mộc linh căn tu luyện công pháp hệ mộc tỉ lệ xuất hiện 20% 
+- thủy linh căn tu luyện công pháp hệ thủy tỉ lệ xuất hiện 20%
+- kim linh căn tu luyện công pháp hệ thủy tỉ lệ xuất hiện 20%
+- thổ linh căn tu luyện công pháp hệ thủy tỉ lệ xuất hiện 20%
+- lôi linh căn tu luyện công pháp hệ thủy tỉ lệ xuất hiện 5%
+
+tạo hệ thống cảnh giới, thể chất, linh căn mà tôi đã liệt kê ở trên
+viết comment, README.md dùm tôi
+thể chất và linh căn có được khi khởi tạo nhân vật nếu là game đăng nhập thì lúc tạo nhân vật còn bây giờ chưa có thì set nó trong contructor, sử dụng hình ảnh hiện có tạo một item cộng SPIRIT để test lên cấp
+
+về yêu cầu tôi muốn bạn viết ra hệ thống tu luyện của nhân vật và hệ thống linh căn(AFFINITY) và hệ thống thể chất(PHYSIQUE) hệ thống linh căn tôi chỉ mới để hiễn thị thôi hệ thống thể chất thì có một số đặc điểm có lẽ rất khó để làm nhưng tôi mong bạn có thể đọc kỹ và làm dùm tôi, và tôi có viết tỉ lệ  xuất hiện nghĩa là đó là tỉ lệ mà nhân vật đó có khả năng sở hữu thể chất đó, các chỉ số được cộng dồn trong tiểu cảnh giới và mỗi đại cảnh giới được cộng dồn khác nhau, mỗi tiểu cảnh giới số SPIRIT cũng hoàn toàn cộng dồn nên không thể sử dụng mặc định để lên cấp được.  về phần lỗi đã gặp trong nhánh  
++ sau khi lên cấp thì tất cả chỉ số là vĩnh viễn( có thể dùng file .txt hay json để lưu lại), lỗi sau khi sử dụng item khác thì máu quay lại 100    
++ lỗi trong hình ảnh ATTACK về 0: tôi mong bạn hiểu là ngoài thể chất và linh căn thì tất cả thuộc tính đều cố định vĩnh viễn và các thuộc tính health, pep, là thuộc tính tiêu hao khi bị đánh khi sử dụng kỹ năng nhưng nó sẽ không ảnh hưởng đến chỉ số góc là chỉ số tối đa và tất cả nó không thể thay đổi nếu không lên cấp
+tôi muốn bạn thêm tên cảnh giới, tên thể chất và tên linh căn nhân vật có được ở trong bảng thuộc tính đối với cảnh giới tầng nào bạn để tầng đó dùm tôi nha ví dụ luyện khí tầng 1.( có thể giảm cở chữ nếu như bảng thuộc tính không đủ chỗ).
+comment những phương thức hay biến mà bạn làm, viết README.md những thay đổi dùm tôi nha
+tôi có rất nhiều thời gian nên bạn hãy xem xét kỹ và làm cho tôi nha
+cảm ơn bạn
