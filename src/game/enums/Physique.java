@@ -9,8 +9,8 @@ public enum Physique {
     HU_KHONG("Hư không", 15, 1.0, 1.0, 1.0, 1.0),
     HU_KHONG_DAI_DE("Hư không đại đế", 20, 1.0, 1.0, 1.0, 1.0),
     THANH_THE("Thánh Thể", 10, 1.0, 2.0, 1.0, 1.0),
-    // Tiên Linh Thể: tu luyện nhanh gấp 3 lần
-    TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0/3.0, 1.0, 1.0, 3.0),
+    // Tiên Linh Thể: tu luyện nhanh gấp 3 lần, yêu cầu SPIRIT giữ nguyên
+    TIEN_LINH_THE("Tiên Linh Thể", 10, 1.0, 1.0, 1.0, 3.0),
     THAN_THE("Thần Thể", 10, 1.0, 1.0, 1.0, 1.0),
     // Ngũ Hành: chỉ số gấp 2 lần nên yêu cầu SPIRIT gấp 3
     NGU_HANH("Ngũ Hành Linh Căn", 10, 2.0, 1.0, 3.0, 1.0);

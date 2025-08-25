@@ -416,7 +416,7 @@ public class Player extends GameActor implements DrawableEntity {
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
         atts().add(Attr.SPIRIT, modified);
-        while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
+        while (spiritToNextLevel > 0 && atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
             atts().add(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
         }
@@ -515,7 +515,7 @@ public class Player extends GameActor implements DrawableEntity {
                 realm = Realm.LUYEN_THE;
                 realmStage = 1;
                 initializeLuyenThe();
-                spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                spiritToNextLevel = nextSpiritRequirement(oldReq);
                 atts().add(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
@@ -525,16 +525,18 @@ public class Player extends GameActor implements DrawableEntity {
                     atts().add(Attr.SOULD, 10);
                 } else {
                     applyStageGrowth();
-                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                    spiritToNextLevel = nextSpiritRequirement(oldReq);
                 }
             }
             case LUYEN_KHI -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
                     realmStage = physique.getMaxStage();
+                    // yêu cầu cực lớn để ngăn tiến cấp thêm
+                    spiritToNextLevel = Integer.MAX_VALUE;
                 } else {
                     applyStageGrowth();
-                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                    spiritToNextLevel = nextSpiritRequirement(oldReq);
                 }
             }
         }
@@ -623,7 +625,19 @@ public class Player extends GameActor implements DrawableEntity {
         int soul = (int) (atts().get(Attr.SOULD) * 2 * physique.getStatFactor());
         atts().set(Attr.SOULD, soul);
 
-        spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+        spiritToNextLevel = breakthroughSpiritRequirement(oldReq);
+    }
+
+    private int nextSpiritRequirement(int oldReq) {
+        double factor = Math.max(1.0, physique.getSpiritReqFactor());
+        int next = (int) ((oldReq + oldReq / 2) * factor);
+        return Math.max(next, oldReq + 1);
+    }
+
+    private int breakthroughSpiritRequirement(int oldReq) {
+        double factor = Math.max(1.0, physique.getSpiritReqFactor());
+        int next = (int) (oldReq * 2 * factor);
+        return Math.max(next, oldReq + 1);
     }
 
     private void logRealmState() {
@@ -824,9 +838,12 @@ public class Player extends GameActor implements DrawableEntity {
                             techniques.add(new CultivationTechnique(name, grade, lvl, sps));
                         }
                     }
-                }
             }
+        }
 
+            if (physique == null) {
+                physique = Physique.NORMAL;
+            }
             return true;
         } catch (IOException e) {
             e.printStackTrace();
