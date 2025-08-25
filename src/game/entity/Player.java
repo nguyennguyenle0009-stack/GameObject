@@ -128,10 +128,10 @@ public class Player extends GameActor implements DrawableEntity {
             addItem(new game.entity.item.elixir.SpiritPotion(200, 3));
 
             // Các sách công pháp và đan dược tu luyện để thử nghiệm
-            var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 5, 1);
-            var mid = new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 10, 2);
-            var high = new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 15, 3);
-            var top = new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 25, 5);
+            var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1);
+            var mid = new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2);
+            var high = new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3);
+            var top = new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5);
             addItem(new game.entity.item.book.CultivationBook(low));
             addItem(new game.entity.item.book.CultivationBook(mid));
             addItem(new game.entity.item.book.CultivationBook(high));
@@ -442,7 +442,7 @@ public class Player extends GameActor implements DrawableEntity {
         cultivating = true;
         activeTechnique = tech;
         lastSpiritTick = now;
-        cultivationEndTime = now + tech.getDurationMillis();
+        cultivationEndTime = now + 3600_000L;
     }
 
     public void cancelCultivation() {
@@ -466,6 +466,15 @@ public class Player extends GameActor implements DrawableEntity {
             lastSpiritTick += 1000;
             gainSpirit(activeTechnique.getSpiritPerSecond() + pillSpiritBonus);
         }
+    }
+
+    public long getCultivationCooldownRemaining() {
+        return Math.max(0, cultivationCooldownEnd - System.currentTimeMillis());
+    }
+
+    public long getCultivationTimeLeft() {
+        if (!cultivating) return 0;
+        return Math.max(0, cultivationEndTime - System.currentTimeMillis());
     }
 
     public boolean isCultivating() { return cultivating; }
@@ -755,7 +764,14 @@ public class Player extends GameActor implements DrawableEntity {
                             String name = (i1 > 0) ? tk.substring(0, i1).trim() : tk.trim();
                             int lvl = (i1 > 0 && i2 > i1) ? Integer.parseInt(tk.substring(i1 + 1, i2)) : 1;
                             String gradeStr = (i3 > i2 && i4 > i3) ? tk.substring(i3 + 1, i4) : SkillGrade.HA.getDisplay();
-                            techniques.add(new CultivationTechnique(name, SkillGrade.fromDisplay(gradeStr), lvl, 0, 0));
+                            SkillGrade grade = SkillGrade.fromDisplay(gradeStr);
+                            int sps = switch (grade) {
+                                case HA -> 1;
+                                case TRUNG -> 2;
+                                case THUONG -> 3;
+                                case CUC -> 5;
+                            };
+                            techniques.add(new CultivationTechnique(name, grade, lvl, sps));
                         }
                     }
                 }
@@ -807,10 +823,10 @@ public class Player extends GameActor implements DrawableEntity {
             case "Đan trung phẩm" -> new game.entity.item.elixir.CultivationPill("Đan trung phẩm", 2, qty);
             case "Đan thượng phẩm" -> new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, qty);
             case "Đan cực phẩm" -> new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, qty);
-            case "Sách Công pháp hạ phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 5, 1));
-            case "Sách Công pháp trung phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 10, 2));
-            case "Sách Công pháp thượng phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 15, 3));
-            case "Sách Công pháp cực phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 25, 5));
+            case "Sách Công pháp hạ phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1));
+            case "Sách Công pháp trung phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2));
+            case "Sách Công pháp thượng phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3));
+            case "Sách Công pháp cực phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5));
             default -> null;
         };
     }

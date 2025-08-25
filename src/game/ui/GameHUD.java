@@ -60,12 +60,19 @@ public class GameHUD {
         drawBar(g2, x, y, barWidth, barHeight,
                 p.atts().get(Attr.SPIRIT), p.atts().getMax(Attr.SPIRIT), EXP_FILL);
 
-        // Hiển thị thông tin buff đan dược dưới thanh SPIRIT
+        int infoY = y + barHeight + 20;
         if (p.getPillSpiritBonus() > 0) {
             long sec = p.getPillTimeLeft() / 1000;
             String text = p.getActivePillName() + " " + (sec / 60) + ":" + String.format("%02d", sec % 60);
             g2.setColor(Color.WHITE);
-            g2.drawString(text, x, y + barHeight + 20);
+            g2.drawString(text, x, infoY);
+            infoY += 20;
+        }
+        if (p.isCultivating()) {
+            long sec = p.getCultivationTimeLeft() / 1000;
+            String text = "Tu luyện: " + (sec / 60) + ":" + String.format("%02d", sec % 60);
+            g2.setColor(Color.WHITE);
+            g2.drawString(text, x, infoY);
         }
 
         // Nếu đang tu luyện, vẽ nút hủy
