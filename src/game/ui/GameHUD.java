@@ -71,12 +71,6 @@ public class GameHUD {
             g2.setColor(Color.WHITE);
             g2.drawString(text, x, infoY);
             infoY += 20;
-        } else if (p.getCultivationCooldownRemaining() > 0) {
-            long sec = p.getCultivationCooldownRemaining() / 1000;
-            String text = "Hồi chiêu: " + (sec / 60) + ":" + String.format("%02d", sec % 60);
-            g2.setColor(Color.WHITE);
-            g2.drawString(text, x, infoY);
-            infoY += 20;
         }
 
         // Nếu đang tu luyện, vẽ nút hủy
