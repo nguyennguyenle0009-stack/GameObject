@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.16]
+
+### Thêm
+- Lưu và tải lại trang bị đang mặc vào tệp `.txt` thông qua khối `===EQUIPMENT===`.
+- Mỗi trang bị sở hữu mã định danh duy nhất.
+
 ## [1.0.14]
 
 ### Thêm

@@ -152,7 +152,9 @@ public class Player extends GameActor implements DrawableEntity {
 
             // Thêm vài item test: bình hồi máu & tinh thần
             addItem(new game.entity.item.elixir.HealthPotion(50, 3));
-            addItem(new game.entity.item.elixir.SpiritPotion(200, 3));
+            addItem(new game.entity.item.elixir.SpiritPotion(200, 100));
+            addItem(new game.entity.item.elixir.SpiritPotion(2000, 100));
+            addItem(new game.entity.item.elixir.SpiritPotion(20000, 100));
 
             // Các sách công pháp và đan dược tu luyện để thử nghiệm
             var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1);
@@ -710,6 +712,29 @@ public class Player extends GameActor implements DrawableEntity {
                     .map(it -> it.getName() + " (" + it.getQuantity() + ")")
                     .collect(Collectors.joining(", "));
             lines.add("Itemcủa nhân vật: " + items);
+
+            lines.add("===EQUIPMENT===");
+            EquipSlot[] order = {
+                EquipSlot.ARMOR,
+                EquipSlot.HELMET,
+                EquipSlot.PANTS,
+                EquipSlot.SHOES,
+                EquipSlot.WEAPON1,
+                EquipSlot.WEAPON2,
+                EquipSlot.NECKLACE,
+                EquipSlot.RING1,
+                EquipSlot.RING2,
+                EquipSlot.AMULET
+            };
+            for (EquipSlot slot : order) {
+                EquipmentItem eq = equipment.get(slot);
+                if (eq != null) {
+                    lines.add("- " + slot.name() + ": " + eq.getId() + "|" + eq.getName() + "|" + eq.getDecription());
+                } else {
+                    lines.add("- " + slot.name() + ": none");
+                }
+            }
+
             lines.addAll(realmLog);
             Files.write(file, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
@@ -747,11 +772,11 @@ public class Player extends GameActor implements DrawableEntity {
                 if (!items.isEmpty()) {
                     String[] tokens = items.split(",\\s*");
                     for (String token : tokens) {
-                        int idx = token.lastIndexOf(" (");
+                        int idxTok = token.lastIndexOf(" (");
                         int end = token.lastIndexOf(")");
-                        if (idx > 0 && end > idx) {
-                            String name = token.substring(0, idx).trim();
-                            int qty = Integer.parseInt(token.substring(idx + 2, end));
+                        if (idxTok > 0 && end > idxTok) {
+                            String name = token.substring(0, idxTok).trim();
+                            int qty = Integer.parseInt(token.substring(idxTok + 2, end));
                             Item it = createItemByName(name, qty);
                             if (it != null) bag.add(it);
                         }
@@ -759,15 +784,48 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
 
+            int idxLine = 2;
+            if (idxLine < lines.size() && lines.get(idxLine).trim().equals("===EQUIPMENT===")) {
+                idxLine++;
+                equipment.clear();
+                while (idxLine < lines.size()) {
+                    String line = lines.get(idxLine).trim();
+                    if (!line.startsWith("-")) break;
+                    line = line.substring(1).trim();
+                    int colon = line.indexOf(":");
+                    if (colon < 0) { idxLine++; continue; }
+                    String slotName = line.substring(0, colon).trim();
+                    String data = line.substring(colon + 1).trim();
+                    EquipSlot slot;
+                    try {
+                        slot = EquipSlot.valueOf(slotName);
+                    } catch (IllegalArgumentException e) {
+                        idxLine++; continue;
+                    }
+                    if (!data.equalsIgnoreCase("none")) {
+                        String[] partsEq = data.split("\\|");
+                        String id = partsEq.length > 0 ? partsEq[0].trim() : "";
+                        String nameEq = partsEq.length > 1 ? partsEq[1].trim() : "";
+                        String descEq = partsEq.length > 2 ? partsEq[2].trim() : "";
+                        EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
+                        if (eq != null) {
+                            equipment.put(slot, eq);
+                            applyBonuses(eq);
+                        }
+                    }
+                    idxLine++;
+                }
+            }
+
             // Realm log
             realmLog.clear();
-            if (lines.size() > 2) {
-                realmLog.addAll(lines.subList(2, lines.size()));
+            if (lines.size() > idxLine) {
+                realmLog.addAll(lines.subList(idxLine, lines.size()));
             }
 
             // Parse last block for stats
             int last = -1;
-            for (int i = 2; i < lines.size(); i++) {
+            for (int i = idxLine; i < lines.size(); i++) {
                 if (lines.get(i).startsWith("=============================")) {
                     last = i;
                 }
@@ -974,6 +1032,39 @@ public class Player extends GameActor implements DrawableEntity {
             
             default -> null;
         };
+    }
+
+    private EquipmentItem createEquipmentFromSlot(String id, String name, String desc, EquipSlot slot) {
+        EquipType type = switch (slot) {
+            case ARMOR -> EquipType.ARMOR;
+            case HELMET -> EquipType.HELMET;
+            case PANTS -> EquipType.PANTS;
+            case SHOES -> EquipType.SHOES;
+            case NECKLACE -> EquipType.NECKLACE;
+            case AMULET -> EquipType.AMULET;
+            case RING1, RING2 -> EquipType.RING;
+            case WEAPON1, WEAPON2 -> EquipType.WEAPON;
+        };
+        String icon = switch (slot) {
+            case ARMOR -> "/data/item/equipment/armor.png";
+            case HELMET -> "/data/item/equipment/helmet.png";
+            case PANTS -> "/data/item/equipment/pants.png";
+            case SHOES -> "/data/item/equipment/shoes.png";
+            case NECKLACE -> "/data/item/equipment/ring.png";
+            case AMULET -> "/data/item/equipment/d_1.png";
+            case RING1, RING2 -> "/data/item/equipment/ring.png";
+            case WEAPON1, WEAPON2 -> "/data/item/equipment/sword.png";
+        };
+        if (desc == null || desc.isEmpty()) {
+            desc = switch (type) {
+                case ARMOR, HELMET, PANTS, SHOES -> "+3 DEF";
+                case WEAPON -> "+10 ATTACK";
+                case NECKLACE -> "+10 SOULD";
+                case RING -> "+10 ô kho";
+                case AMULET -> "Chưa có tác dụng";
+            };
+        }
+        return new EquipmentItem(id, name, desc, icon, type);
     }
 
     // -------- Random Physique/Affinity ---------

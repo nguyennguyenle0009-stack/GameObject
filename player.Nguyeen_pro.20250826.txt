@@ -1,7 +1,18 @@
 ============player.Nguyeen_pro.20250826.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (3), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Bùa hộ mệnh (1), Mũ sắt (1), Giày da (1), Quần vải (1), Dây chuyền (1), Kiếm gỗ (1), Kiếm sắt (1), Nhẫn đá (1), Nhẫn bạc (1)
+Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (100), Đan dược tinh thần (100), Đan dược tinh thần (100), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Áo giáp (1), Mũ sắt (1), Quần vải (1), Giày da (1), Kiếm gỗ (1), Kiếm sắt (1), Dây chuyền (1), Nhẫn đá (1), Nhẫn bạc (1), Bùa hộ mệnh (1)
+===EQUIPMENT===
+- ARMOR: none
+- HELMET: none
+- PANTS: none
+- SHOES: none
+- WEAPON1: none
+- WEAPON2: none
+- NECKLACE: none
+- RING1: none
+- RING2: none
+- AMULET: none
 =============================
-cảnh giới phàm nhân - 2025-08-26 14:47:54
+cảnh giới phàm nhân - 2025-08-26 16:09:16
 HEALTH: 100/100
 ATTACK: 5
 PEP: 100/100
@@ -10,32 +21,19 @@ SOULD: 5
 SPIRIT: 0/1000
 STRENGTH: 1
 PHYSIQUE: Bình thường
-AFFINITY: Kim
+AFFINITY: Mộc
 SKILL: None
 
 =============================
-cảnh giới phàm nhân - 2025-08-26 14:54:44
-HEALTH: 71/100
+cảnh giới phàm nhân - 2025-08-26 16:09:19
+HEALTH: 100/100
 ATTACK: 5
 PEP: 100/100
-DEF: 7
+DEF: 4
 SOULD: 5
 SPIRIT: 0/1000
 STRENGTH: 1
 PHYSIQUE: Bình thường
-AFFINITY: Kim
-SKILL: None
-
-=============================
-cảnh giới phàm nhân - 2025-08-26 14:55:50
-HEALTH: 71/100
-ATTACK: 5
-PEP: 100/100
-DEF: 7
-SOULD: 5
-SPIRIT: 0/1000
-STRENGTH: 1
-PHYSIQUE: Bình thường
-AFFINITY: Kim
+AFFINITY: Mộc
 SKILL: None
 
