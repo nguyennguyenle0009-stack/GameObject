@@ -316,7 +316,13 @@ public abstract class Monster extends GameActor {
      */
     public void dropItem() {
         if (random.nextInt(100) < getDropChance()) {
-        	 gp.getPlayer().addItem(new game.entity.item.elixir.HealthPotion(30, 1));
+            game.entity.item.Item loot = new game.entity.item.elixir.HealthPotion(30, 1);
+            int dx = random.nextInt(41) - 20;
+            int dy = random.nextInt(41) - 20;
+            game.object.DroppedItem obj = new game.object.DroppedItem(loot);
+            obj.setWorldX(getWorldX() + dx);
+            obj.setWorldY(getWorldY() + dy);
+            gp.getObjects().add(obj);
         }
     }
 

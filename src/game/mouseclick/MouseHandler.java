@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.Rectangle;
 
 import game.main.GamePanel;
 
@@ -19,14 +20,39 @@ public class MouseHandler implements MouseListener, MouseWheelListener {
     public void mouseClicked(MouseEvent e) { }
     @Override
     public void mousePressed(MouseEvent e) {
-    	// Ưu tiên xử lý click cho UI (kho đồ, nút hủy, bảng công pháp...)
+        // Ưu tiên xử lý click cho UI (kho đồ, nút hủy, bảng công pháp...)
         if (gp.getUi().handleInventoryMousePress(e.getX(), e.getY(), e.getButton())) {
             return;
         }
         if (gp.keyH.isiPressed()) {
             return;
         }
-            // Right mouse pressed
+
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
+            int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
+            for (int i = 0; i < gp.getObjects().size(); i++) {
+                var obj = gp.getObjects().get(i);
+                if (obj instanceof game.object.DroppedItem di) {
+                    Rectangle r = di.getCollisionArea();
+                    int ox = di.getWorldX();
+                    int oy = di.getWorldY();
+                    if (worldX >= ox + r.x && worldX <= ox + r.x + r.width &&
+                        worldY >= oy + r.y && worldY <= oy + r.y + r.height) {
+                        if (!gp.getPlayer().getBag().isFull()) {
+                            gp.getPlayer().getBag().add(di.getItem());
+                            gp.getObjects().remove(i);
+                        } else {
+                            gp.getUi().showMessage("Kho vật phẩm đầy");
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        // Right mouse pressed
         if (e.getButton() == MouseEvent.BUTTON3) {
             //Tọa độ x,y trên màn hình
             int mouseX = e.getX();

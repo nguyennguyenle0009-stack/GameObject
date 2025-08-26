@@ -19,6 +19,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.EnumMap;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -29,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.item.equipment.Equipment;
+import game.entity.item.equipment.SimpleEquipment;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Affinity;
@@ -36,6 +39,7 @@ import game.enums.Attr;
 import game.enums.Physique;
 import game.enums.Realm;
 import game.enums.SkillGrade;
+import game.enums.EquipSlot;
 import game.entity.skill.CultivationTechnique;
 
 import game.main.GamePanel;
@@ -50,6 +54,7 @@ public class Player extends GameActor implements DrawableEntity {
     private static final int INTERACTION_RANGE = 80;
 
     private final Inventory bag = new Inventory();
+    private final EnumMap<EquipSlot, Equipment> equips = new EnumMap<>(EquipSlot.class);
     private boolean invincible = false;
     private int invincibleCounter = 0;
     private final Rectangle attackArea;
@@ -134,6 +139,12 @@ public class Player extends GameActor implements DrawableEntity {
             atts().set(Attr.DEF, 4);
             atts().set(Attr.STRENGTH, 1);
             atts().set(Attr.SOULD, 5);
+
+            bag.add(new SimpleEquipment("Helmet", "", EquipSlot.HELMET, 0, 3, 0, 0, Color.GRAY));
+            bag.add(new SimpleEquipment("Armor", "", EquipSlot.ARMOR, 0, 3, 0, 0, Color.BLUE));
+            bag.add(new SimpleEquipment("Boots", "", EquipSlot.BOOTS, 0, 3, 0, 0, Color.ORANGE));
+            bag.add(new SimpleEquipment("Sword", "", EquipSlot.WEAPON1, 10, 0, 0, 0, Color.RED));
+            bag.add(new SimpleEquipment("Ring", "", EquipSlot.RING1, 0, 0, 0, 10, Color.GREEN));
 
             // Thiết lập thể chất và linh căn ngẫu nhiên
             physique = randomPhysique();
@@ -1016,4 +1027,34 @@ public class Player extends GameActor implements DrawableEntity {
 
     public static int getInteractionRange() { return INTERACTION_RANGE; }
     public Inventory getBag() { return bag; }
+
+    public EnumMap<EquipSlot, Equipment> getEquips() { return equips; }
+
+    public void equip(Equipment e) {
+        EquipSlot slot = e.getSlot();
+        Equipment old = equips.get(slot);
+        if (old != null) {
+            old.onUnequip(this);
+            bag.add(old);
+        }
+        equips.put(slot, e);
+        e.onEquip(this);
+    }
+
+    public void unequip(EquipSlot slot) {
+        Equipment old = equips.remove(slot);
+        if (old != null) {
+            bag.add(old);
+            old.onUnequip(this);
+        }
+    }
+
+    public void dropItem(Item it) {
+        int dx = random.nextInt(41) - 20;
+        int dy = random.nextInt(41) - 20;
+        game.object.DroppedItem obj = new game.object.DroppedItem(it);
+        obj.setWorldX(getWorldX() + dx);
+        obj.setWorldY(getWorldY() + dy);
+        gp.getObjects().add(obj);
+    }
 }

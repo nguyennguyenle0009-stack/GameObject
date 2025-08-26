@@ -6,7 +6,8 @@ import java.util.List;
 import game.entity.item.Item;
 
 public class Inventory {
-	private final List<Item> items = new ArrayList<Item>();
+        private final List<Item> items = new ArrayList<Item>();
+        private int capacity = 30;
 	
     // Thêm item có cộng dồn + tràn ô (stacking)
     public void add(Item incoming) {
@@ -26,7 +27,7 @@ public class Inventory {
         }
 
         // Tạo thêm các stack mới cho phần còn lại (chia theo maxStack)
-        while (remain > 0) {
+        while (remain > 0 && items.size() < capacity) {
             int chunk = Math.min(incoming.getMaxStack(), remain);
             Item piece = incoming.copyWithQuantity(chunk);
             items.add(piece);
@@ -40,6 +41,11 @@ public class Inventory {
         public List<Item> all(){
                 return List.copyOf(items);
         }
+
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
+
+    public boolean isFull() { return items.size() >= capacity; }
 
     public void clear() {
         items.clear();
