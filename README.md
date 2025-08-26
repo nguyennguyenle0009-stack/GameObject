@@ -6,6 +6,13 @@
 
 ## Cập nhật
 
+## [1.0.18]
+
+### Thêm
+- Quái vật rơi vật phẩm 100%, vật phẩm xuất hiện trên đất tại vị trí ngẫu nhiên quanh nơi chết.
+- Người chơi phải nhấp vào vật phẩm trên đất để nhặt, item biến mất sau 2 phút nếu không nhặt.
+- Hiện thông báo "Khung vật phẩm đầy" bên phải màn hình trong 3 giây khi túi đồ đầy.
+
 ## [1.0.17]
 
 ### Sửa lỗi

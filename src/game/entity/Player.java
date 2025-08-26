@@ -440,10 +440,11 @@ public class Player extends GameActor implements DrawableEntity {
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
     
-    // Thêm item vào túi và lưu
-    public void addItem(Item item) {
-        bag.add(item);
+    // Thêm item vào túi và lưu, trả về true nếu thành công
+    public boolean addItem(Item item) {
+        boolean added = bag.add(item);
         saveProfile();
+        return added;
     }
 
     // Sử dụng item
