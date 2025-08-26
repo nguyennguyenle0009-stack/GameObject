@@ -16,6 +16,11 @@
 ### Sửa lỗi
 - Khi kho đồ đầy và cố nhặt vật phẩm, trò chơi hiển thị thông báo "Khung vật phẩm đầy".
 
+## [1.0.19]
+
+### Sửa lỗi
+- Thuộc tính ATTACK và DEF hiển thị 0 khiến nhân vật không gây sát thương khi tấn công.
+
 ## [1.0.17]
 
 ### Sửa lỗi

@@ -39,8 +39,11 @@ public class Attributes {
 
     /**
      * Lấy giá trị tối đa của thuộc tính.
+     * <p>
+     * Mặc định các thuộc tính như ATTACK, DEF không có giới hạn nên giá trị
+     * tối đa sẽ là {@link Integer#MAX_VALUE} nếu chưa được thiết lập.
      */
-    public int getMax(Attr k) { return maxStats.getOrDefault(k, 0); }
+    public int getMax(Attr k) { return maxStats.getOrDefault(k, Integer.MAX_VALUE); }
 
     /**
      * Gán giá trị tối đa của thuộc tính.

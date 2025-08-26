@@ -79,3 +79,7 @@ Sửa lỗi và cải tiến:
 - Vật phẩm rơi xuất hiện ngẫu nhiên quanh vị trí quái và người chơi phải click để nhặt.
 - Khi kho đồ đầy, hiển thị thông báo "Khung vật phẩm đầy" ở góc phải trong 3 giây.
 - Vật phẩm rơi sẽ biến mất sau 2 phút nếu không được nhặt.
+
+## 1.0.19
+- Sửa lỗi thuộc tính ATTACK/DEF bị đặt về 0 khiến đòn tấn công không gây sát thương.
+- Các thuộc tính không có giới hạn nay mặc định dùng giá trị tối đa vô hạn.
