@@ -1,0 +1,54 @@
+============player.Nguyeen_pro.20250825.txt==============
+Itemcủa nhân vật: Đan dược hồi máu (63), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (99), Đan dược tinh thần (58)
+=============================
+cảnh giới phàm nhân - 2025-08-25 22:28:11
+HEALTH: 100/100
+ATTACK: 5
+PEP: 100/100
+DEF: 4
+SOULD: 5
+SPIRIT: 0/1000
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Kim
+SKILL: None
+
+=============================
+cảnh giới phàm nhân - 2025-08-25 22:28:29
+HEALTH: 100/100
+ATTACK: 5
+PEP: 100/100
+DEF: 4
+SOULD: 5
+SPIRIT: 600/1000
+STRENGTH: 1
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 1 - 2025-08-26 11:08:05
+HEALTH: 150/150
+ATTACK: 10
+PEP: 150/150
+DEF: 5
+SOULD: 15
+SPIRIT: 0/1500
+STRENGTH: 2
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 2 - 2025-08-26 11:12:59
+HEALTH: 250/250
+ATTACK: 11
+PEP: 250/250
+DEF: 6
+SOULD: 15
+SPIRIT: 0/2250
+STRENGTH: 2
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+

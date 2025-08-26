@@ -50,9 +50,8 @@
 ## [1.0.11]
 
 ### Sửa lỗi
-- Yêu cầu **Spirit** tăng đúng sau khi lên cấp, không còn giảm với thể chất *Tiên Linh Thể*.
-- Đạt Luyện khí tầng 10 vẫn có thể tiếp tục tích luỹ Spirit thay vì bị đặt về 0/0.
-- Mở bảng item/thuộc tính không còn lỗi khi hồ sơ thiếu thông tin thể chất.
+- Yêu cầu SPIRIT không còn giảm dần theo cấp và sẽ tự tính lại nếu tệp lưu có giá trị 0.
+- Bảng thuộc tính không còn lỗi NullPointerException khi mở.
 
 ## [1.0.6] - 2025-08-25
 
