@@ -12,6 +12,7 @@ import java.util.Random;
 
 import game.entity.GameActor;
 import game.entity.Entity;
+import game.entity.item.Item;
 import game.enums.Attr;
 import game.main.GamePanel;
 
@@ -315,15 +316,23 @@ public abstract class Monster extends GameActor {
      * Rơi vật phẩm khi chết.
      */
     public void dropItem() {
-        if (random.nextInt(100) < getDropChance()) {
-        	 gp.getPlayer().addItem(new game.entity.item.elixir.HealthPotion(30, 1));
+        List<Item> drops = createDropItems();
+        for (Item it : drops) {
+            int dx = random.nextInt(41) - 20;
+            int dy = random.nextInt(41) - 20;
+            gp.spawnGroundItem(it, getWorldX() + dx, getWorldY() + dy);
         }
     }
 
     /**
-     * @return tỉ lệ rơi vật phẩm
+     * Danh sách vật phẩm rơi ra khi quái vật chết.
+     * Mặc định rơi 1 bình máu nhỏ.
      */
-    protected int getDropChance() { return 30; }
+    protected List<Item> createDropItems() {
+        List<Item> list = new ArrayList<>();
+        list.add(new game.entity.item.elixir.HealthPotion(30, 1));
+        return list;
+    }
 
     /**
      * @return thời gian hồi chiêu tấn công

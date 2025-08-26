@@ -52,7 +52,7 @@ public abstract class Item {
                 p.getBag().remove(this);
             }
         } else if ("Drop".equalsIgnoreCase(action)) {
-            p.getBag().remove(this);
+            p.dropItem(this);
         }
     }
 

@@ -1,75 +1,12 @@
 Cập nhật:
-- Thêm hệ thống kỹ năng cơ bản và lớp Skill.
-- Tạo công pháp tu luyện 4 phẩm cấp cùng sách học tương ứng.
-- Thêm đan dược tăng tốc tu luyện 4 phẩm cấp, hiệu lực 10 phút.
-- Nhân vật có thể tu luyện, kèm nút Huỷ và thời gian hồi chiêu 1 giờ.
-- HUD hiển thị buff đan dược và nút hủy khi đang tu luyện.
-- Bảng thuộc tính có nút mở danh sách công pháp.
-- Định dạng file lưu tiến trình bổ sung dòng SKILL.
-
-Sửa lỗi và cải tiến:
-- Đọc sách công pháp hoặc uống đan dược giờ trừ đúng số lượng và tự lưu hồ sơ.
-- Khi học công pháp mới sẽ được ghi vào tệp .txt, khởi động lại vẫn còn.
-- HUD hiển thị thời gian hồi chiêu tu luyện.
-- Kho đồ thu nhỏ ô 32px và có thanh cuộn để chứa nhiều item.
-- Khung thuộc tính dùng font nhỏ, lề sát hơn để tránh đè giao diện.
-
-## 1.0.8
-- Sửa lỗi bảng công pháp không hiển thị thời gian hồi chiêu.
-- Bảng công pháp chuyển sang bên phải, có nút **Dùng** và **Gán**, tooltip chi tiết và cuộn bằng con lăn.
-- Kho đồ hỗ trợ cuộn bằng con lăn chuột.
-- Hồ sơ .txt ghi thêm công pháp khi học mới.
-
-## 1.0.9
-- Fix HUD và bảng công pháp phóng to chữ khi hover item.
-- HUD bỏ hiển thị dòng "Hồi chiêu", chỉ còn tên và thời gian hiệu lực của đan dược/tu luyện.
-
-## 1.0.10
-        1. Sửa lỗi Tiên Linh Thể không tăng tốc tu luyện:
-           - Thêm thuộc tính `cultivationSpeedFactor` vào enum Physique.
-           - `gainSpirit` nhân lượng SPIRIT nhận được với hệ số này.
-	
-	2. Định dạng lại tệp lưu người chơi:
-	   - `HEALTH`, `PEP` được ghi theo dạng hiện tại/tối đa.
-	   - `SPIRIT` được ghi theo dạng hiện tại/tổng cần để lên cấp.
-	   - Cập nhật cả phần ghi (`logRealmState`) và đọc (`loadProfile`).
-	   - Cập nhật ví dụ tệp `player.Nguyeen_pro.20250825.txt`.
-	
-        3. Cập nhật README với mô tả thay đổi.
-
-## 1.0.11
-- Sửa lỗi yêu cầu SPIRIT giảm dần theo cấp khiến SPIRIT về 0 và không thể tu luyện tiếp.
-- Đảm bảo `Physique` luôn có giá trị hợp lệ và bảng thuộc tính không bị lỗi khi mở.
-- Tải hồ sơ sẽ tự tính lại yêu cầu SPIRIT nếu tệp lưu chứa giá trị không hợp lệ.
-- bug: sử dụng đan dược tăng SPIRIT x nhân 3 yêu cầu tăng như bình thường
-
-## 1.0.12
-- Tự động lưu hồ sơ mỗi 10 phút và khi thoát game.
-- Sửa lỗi không ghi lại chỉ số HEALTH/PEP/SPIRIT còn lại vào tệp lưu.
-- Cập nhật README mô tả cơ chế tự lưu.
-
-## 1.0.13
-- Bug: phát hiện lỗi khi đang tu luyện nhấp vào tu luyện lần nữa thì vẫn có thể tu luyện thêm một tiếng
-- Sửa lỗi có thể nhấp tu luyện nhiều lần để kéo dài thời gian.
-- Hồi chiêu tu luyện bắt đầu khi bắt đầu tu luyện và kéo dài 2 giờ.
-
-## 1.0.14
-- Thêm khung trang bị nhân vật với 10 ô tương ứng và hình ảnh nhân vật minh họa.
-- Khung thuộc tính được chuyển xuống dưới kho đồ, bề rộng bằng với kho đồ.
-- Hệ thống trang bị cơ bản: mũ/áo/quần/giày +3 DEF, vũ khí +10 ATTACK, dây chuyền +10 SOULD, nhẫn +10 ô kho.
-- Kho mặc định 30 ô, màu trắng cho ô trống và hỗ trợ cuộn theo tổng số ô kể cả khi chưa có item.
-
-## 1.0.15
-- Thêm trang bị vào game
-- test sử dụng trang bị
-- bug lỗi chưa lưu trang bị đang sử dụng
-
-## 1.0.16
-- Lưu và tải lại trang bị đang mặc vào tệp `.txt` với khối `===EQUIPMENT===`.
-- Mỗi trang bị có mã định danh riêng để phân biệt.
 
 ## 1.0.17
 - Tách riêng **thuộc tính gốc** và **thuộc tính từ trang bị**.
 - Lên cấp chỉ tăng thuộc tính gốc, trang bị cộng thêm vào bảng thuộc tính mà không làm thay đổi giá trị gốc.
 - Cập nhật ghi log thuộc tính trong tệp lưu theo hai phần "Thuộc tính gốc" và "Thuộc tính sau khi mặc đồ".
 - Chỉnh sửa README mô tả thay đổi.
+
+## 1.0.18
+- Thêm hệ thống rớt vật phẩm: quái vật chết sẽ tạo vật phẩm trên mặt đất theo thiết lập từng quái.
+- Vật phẩm trên đất tự biến mất sau 2 phút, nhấp vào để nhặt trong phạm vi.
+- Khi kho đồ đầy, hiển thị thông báo "Khung vật phẩm đầy" bên phải màn hình trong 3 giây.
