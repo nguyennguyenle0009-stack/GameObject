@@ -6,6 +6,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import game.main.GamePanel;
+import game.object.OBJ_DroppedItem;
 
 /**
  * Xử lý các sự kiện chuột cho trò chơi.
@@ -25,6 +26,22 @@ public class MouseHandler implements MouseListener, MouseWheelListener {
         }
         if (gp.keyH.isiPressed()) {
             return;
+        }
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
+            int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
+            OBJ_DroppedItem di = gp.getDroppedItemAt(worldX, worldY);
+            if (di != null) {
+                if (gp.getPlayer().getBag().canAdd(di.getItem())) {
+                    gp.getPlayer().addItem(di.getItem());
+                    gp.getDroppedItems().remove(di);
+                } else {
+                    gp.getUi().showMessage("Khung vật phẩm đầy");
+                }
+                return;
+            }
         }
             // Right mouse pressed
         if (e.getButton() == MouseEvent.BUTTON3) {

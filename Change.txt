@@ -73,3 +73,9 @@ Sửa lỗi và cải tiến:
 - Lên cấp chỉ tăng thuộc tính gốc, trang bị cộng thêm vào bảng thuộc tính mà không làm thay đổi giá trị gốc.
 - Cập nhật ghi log thuộc tính trong tệp lưu theo hai phần "Thuộc tính gốc" và "Thuộc tính sau khi mặc đồ".
 - Chỉnh sửa README mô tả thay đổi.
+
+## 1.0.18
+- Quái vật rơi vật phẩm dựa trên danh sách định nghĩa với tỷ lệ 100%.
+- Vật phẩm rơi xuất hiện ngẫu nhiên quanh vị trí quái và người chơi phải click để nhặt.
+- Khi kho đồ đầy, hiển thị thông báo "Khung vật phẩm đầy" ở góc phải trong 3 giây.
+- Vật phẩm rơi sẽ biến mất sau 2 phút nếu không được nhặt.
