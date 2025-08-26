@@ -52,6 +52,9 @@ public abstract class Item {
                 p.getBag().remove(this);
             }
         } else if ("Drop".equalsIgnoreCase(action)) {
+            // Rớt vật phẩm ra ngoài bản đồ
+            Item dropped = copyWithQuantity(getQuantity());
+            p.dropItem(dropped);
             p.getBag().remove(this);
         }
     }

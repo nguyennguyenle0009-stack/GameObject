@@ -6,6 +6,18 @@
 
 ## Cập nhật
 
+## [1.0.14]
+
+### Thêm
+- Khung trang bị với 10 ô, hiển thị hình nhân vật và cho phép đeo/tháo trang bị.
+- Trang bị cộng chỉ số (mũ/áo/quần/giày +3 DEF, kiếm +10 ATTACK, dây chuyền +10 SOULD, nhẫn +10 ô chứa).
+- Kho đồ mặc định 30 ô và có thể mở rộng bằng nhẫn; ô trống hiển thị màu trắng và cuộn ngay cả khi chưa đầy.
+- Quái rơi vật phẩm trên đất 100% và có thể nhặt bằng chuột, vật rơi tự xoá sau 2 phút.
+
+### Thay đổi
+- Bỏ vật phẩm trong kho sẽ rơi ra đất quanh người chơi thay vì biến mất.
+- Bảng thuộc tính chuyển xuống dưới khung item với chiều rộng tương ứng.
+
 ## [1.0.13]
 
 ### Sửa lỗi

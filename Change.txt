@@ -52,3 +52,10 @@ Sửa lỗi và cải tiến:
 - Bug: phát hiện lỗi khi đang tu luyện nhấp vào tu luyện lần nữa thì vẫn có thể tu luyện thêm một tiếng
 - Sửa lỗi có thể nhấp tu luyện nhiều lần để kéo dài thời gian.
 - Hồi chiêu tu luyện bắt đầu khi bắt đầu tu luyện và kéo dài 2 giờ.
+
+## 1.0.14
+- Thêm khung trang bị và hình ảnh nhân vật trong kho đồ.
+- Kho đồ mặc định 30 ô, nhẫn tăng thêm 10 ô; ô trống hiển thị màu trắng.
+- Trang bị đúng ô sẽ cộng chỉ số, nhấn phải vào ô trang bị để tháo.
+- Vật phẩm khi Drop rơi ra đất; quái rơi vật phẩm 100% và tự xoá sau 2 phút.
+- Bảng thuộc tính chuyển xuống dưới khung item.

@@ -6,11 +6,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
 import game.entity.item.Item;
+import game.entity.item.equipment.Equipment;
 import game.enums.Attr;
+import game.enums.EquipSlot;
 import game.main.GamePanel;
 
 /**
@@ -32,6 +35,13 @@ public class InventoryUi {
     private int contextSelection = 0;
     private int contextX, contextY;
     private java.awt.Rectangle skillBtn = new java.awt.Rectangle();
+    private Rectangle[] equipSlots = new Rectangle[EquipSlot.values().length];
+    private int equipHover = -1;
+    private static final EquipSlot[] SLOT_ORDER = {
+        EquipSlot.HELMET, EquipSlot.ARMOR, EquipSlot.BOOTS,
+        EquipSlot.PANTS, EquipSlot.NECKLACE, EquipSlot.TALISMAN,
+        EquipSlot.RING1, EquipSlot.RING2, EquipSlot.WEAPON1, EquipSlot.WEAPON2
+    };
 
     public InventoryUi(GamePanel gp) {
         this.gp = gp;
@@ -41,34 +51,32 @@ public class InventoryUi {
     public void draw(Graphics2D g2) {
         Font oldFont = g2.getFont();
         try {
-            int charH = gp.getTileSize() * 8;
         Dimension d = itemGrid.getPreferredSize();
-        int gridX = gp.getTileSize() * 8; // default position with one tile gap after character panel
+        int gridX = gp.getTileSize() * 8;
         int gridY = gp.getTileSize() * 2;
-        // ensure grid within screen
         if (gridX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
             gridX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
         }
 
+        int attrH = gp.getTileSize() * 6;
         int outerX = gp.getTileSize() / 2;
-        int outerY = gridY - gp.getTileSize() / 2; // keep margin similar to original
+        int outerY = gridY - gp.getTileSize() / 2;
         int outerW = gridX + d.width + gp.getTileSize() / 2 - outerX;
-        int outerH = Math.max(charH, d.height) + gp.getTileSize();
-        lastGridX = gridX;
-        lastGridY = gridY;
-        lastDim.setSize(d);
+        int outerH = d.height + attrH + gp.getTileSize();
         HUDUtils.drawSubWindow(g2, outerX, outerY, outerW, outerH,
                 new Color(40,40,40,180), Color.YELLOW);
 
-        // Draw character panel on the left
-        characterScreen(g2, gridY);
+        drawEquipmentPanel(g2, gp.getTileSize(), gridY);
 
         var items = gp.getPlayer().getBag().all();
         handleInventoryInput(items, gridX, gridY);
         int hoverLocal = computeSlotIndex(gridX, gridY, gp.getMousePosition());
         hoverSlot = (hoverLocal >= 0) ? scrollOffset + hoverLocal : -1;
-
-        itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot, scrollOffset);
+        int capacity = gp.getPlayer().getBag().getCapacity();
+        lastGridX = gridX;
+        lastGridY = gridY;
+        lastDim.setSize(d);
+        itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot, scrollOffset, capacity);
 
         int infoIdx = hoverSlot;
         if (infoIdx >= 0 && infoIdx < items.size()) {
@@ -77,6 +85,20 @@ public class InventoryUi {
             int tipY = (m != null ? m.y + 15 : gridY);
             drawItemTooltip(g2, tipX, tipY, items.get(infoIdx));
         }
+
+        if (equipHover >= 0) {
+            Equipment eq = gp.getPlayer().getEquips().get(SLOT_ORDER[equipHover]);
+            if (eq != null) {
+                Point m = gp.getMousePosition();
+                int tipX = (m != null ? m.x + 15 : gridX);
+                int tipY = (m != null ? m.y + 15 : gridY);
+                drawItemTooltip(g2, tipX, tipY, eq);
+            }
+        }
+
+        int attrX = gridX;
+        int attrY = gridY + d.height + gp.getTileSize() / 2;
+        drawAttributePanel(g2, attrX, attrY, d.width, attrH);
 
         drawContextMenu(g2);
         } finally {
@@ -135,7 +157,7 @@ public class InventoryUi {
         if (kh.isLeftPressed()) { selectedSlot--; kh.setLeftPressed(false); }
         if (kh.isRightPressed()) { selectedSlot++; kh.setRightPressed(false); }
 
-        int maxIndex = Math.max(0, items.size() - 1);
+        int maxIndex = Math.max(0, gp.getPlayer().getBag().getCapacity() - 1);
         if (selectedSlot < 0) selectedSlot = 0;
         if (selectedSlot > maxIndex) selectedSlot = maxIndex;
 
@@ -145,7 +167,7 @@ public class InventoryUi {
         } else if (selectedSlot >= scrollOffset + visible) {
             scrollOffset = (selectedSlot / cols - rows + 1) * cols;
         }
-        int maxOffset = Math.max(0, items.size() - visible);
+        int maxOffset = Math.max(0, gp.getPlayer().getBag().getCapacity() - visible);
         if (scrollOffset > maxOffset) scrollOffset = maxOffset;
         if (scrollOffset < 0) scrollOffset = 0;
 
@@ -212,7 +234,7 @@ public class InventoryUi {
         int cols = itemGrid.getCols();
         int rows = itemGrid.getRows();
         int visible = cols * rows;
-        int total = gp.getPlayer().getBag().all().size();
+        int total = gp.getPlayer().getBag().getCapacity();
         int maxOffset = Math.max(0, total - visible);
         scrollOffset += Integer.signum(rotation) * cols;
         if (scrollOffset < 0) scrollOffset = 0;
@@ -224,11 +246,7 @@ public class InventoryUi {
      *
      * @param topY starting Y position of the box
      */
-    private void characterScreen(Graphics2D g2, int topY) {
-        int x = gp.getTileSize();
-        int y = topY;
-        int width = x * 5;
-        int height = gp.getTileSize() * 6;
+    private void drawAttributePanel(Graphics2D g2, int x, int y, int width, int height) {
         drawSubWindow(x, y, width, height, g2);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 12f));
         int textX = x + 10;
@@ -250,7 +268,6 @@ public class InventoryUi {
         g2.drawString("Physique: " + physName, textX, textY); textY += 15;
         g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY); textY += 20;
 
-        // Vẽ nút mở bảng công pháp
         int btnW = gp.getTileSize() * 3;
         int btnH = gp.getTileSize() / 2;
         int btnX = x + (width - btnW) / 2;
@@ -259,6 +276,49 @@ public class InventoryUi {
         g2.setColor(Color.WHITE);
         g2.drawString("Công pháp", btnX + 10, btnY + btnH - 5);
         skillBtn.setBounds(btnX, btnY, btnW, btnH);
+    }
+
+    private void drawEquipmentPanel(Graphics2D g2, int x, int y) {
+        int padding = 8;
+        int charSize = gp.getTileSize() * 3;
+        int slotSize = itemGrid.getSlotSize();
+        int gap = itemGrid.getGap();
+        int width = charSize + padding * 2 + gap + (slotSize + gap) * 5;
+        int height = Math.max(charSize, (slotSize + gap) * 2) + padding * 2;
+        HUDUtils.drawSubWindow(g2, x, y, width, height, new Color(0,80,120,180), Color.CYAN);
+
+        int charX = x + padding;
+        int charY = y + padding;
+        g2.setColor(new Color(128,0,128,200));
+        g2.fillRect(charX, charY, charSize, charSize);
+        g2.drawImage(gp.getPlayer().getDown1(), charX, charY, charSize, charSize, null);
+
+        int startX = charX + charSize + gap;
+        int startY = charY;
+        Point mouse = gp.getMousePosition();
+        equipHover = -1;
+        for (int i = 0; i < SLOT_ORDER.length; i++) {
+            int cx = startX + (i % 5) * (slotSize + gap);
+            int cy = startY + (i / 5) * (slotSize + gap);
+            Rectangle rect = new Rectangle(cx, cy, slotSize, slotSize);
+            equipSlots[i] = rect;
+            g2.setColor(new Color(90,90,90,220));
+            g2.fillRoundRect(cx, cy, slotSize, slotSize, 10, 10);
+            g2.setColor(new Color(0,0,0,160));
+            g2.drawRoundRect(cx, cy, slotSize, slotSize, 10, 10);
+
+            Equipment eq = gp.getPlayer().getEquips().get(SLOT_ORDER[i]);
+            if (eq != null) {
+                g2.drawImage(eq.getIcon(), cx + 4, cy + 4, slotSize - 8, slotSize - 8, null);
+            }
+            if (mouse != null && rect.contains(mouse)) {
+                equipHover = i;
+                g2.setColor(Color.YELLOW);
+                g2.setStroke(new BasicStroke(3f));
+                g2.drawRoundRect(cx, cy, slotSize, slotSize, 10, 10);
+                g2.setStroke(new BasicStroke(1f));
+            }
+        }
     }
 
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
@@ -282,6 +342,17 @@ public class InventoryUi {
         if (skillBtn.contains(mx, my)) {
             gp.getUi().getSkillUi().toggle();
             return true;
+        }
+
+        for (int i = 0; i < equipSlots.length; i++) {
+            Rectangle r = equipSlots[i];
+            if (r != null && r.contains(mx, my)) {
+                Equipment eq = gp.getPlayer().getEquips().get(SLOT_ORDER[i]);
+                if (button == MouseEvent.BUTTON3 && eq != null) {
+                    gp.getPlayer().unequip(SLOT_ORDER[i]);
+                }
+                return true;
+            }
         }
 
         int local = computeSlotIndex(baseX, baseY, new Point(mx, my));

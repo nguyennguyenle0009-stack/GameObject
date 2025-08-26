@@ -117,7 +117,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void update() {
-		if(gameState == playState) {
+                if(gameState == playState) {
                     player.update();
                     for (MonsterZone zone : monsterZones) {
                         zone.update();
@@ -131,6 +131,8 @@ public class GamePanel extends JPanel implements Runnable {
                             m.update();
                         }
                     }
+                    long now = System.currentTimeMillis();
+                    objects.removeIf(o -> o instanceof game.object.DroppedItem di && now - di.getSpawnTime() > 120_000);
                 }
                 if(gameState == pauseState) {}
         }

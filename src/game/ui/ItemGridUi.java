@@ -41,8 +41,8 @@ public class ItemGridUi {
      * @param offset   vị trí bắt đầu hiển thị trong danh sách
      */
     public void draw(Graphics2D g2, int x, int y, List<Item> items,
-                     int selected, int hover, int offset) {
-        int total = (items == null) ? 0 : items.size();
+                     int selected, int hover, int offset, int capacity) {
+        int total = capacity;
         Dimension d = getPreferredSize();
 
         // Khung lớn
@@ -57,15 +57,19 @@ public class ItemGridUi {
             for (int c = 0; c < cols; c++) {
                 int xx = startX + c * (slotSize + gap);
 
+                int idx = offset + r * cols + c;
+                Item it = (idx < items.size()) ? items.get(idx) : null;
+
                 // vẽ nền ô
-                g2.setColor(new Color(90,90,90,220));
+                if (it != null) {
+                    g2.setColor(new Color(90,90,90,220));
+                } else {
+                    g2.setColor(Color.WHITE);
+                }
                 g2.fillRoundRect(xx, yy, slotSize, slotSize, 10, 10);
                 // vẽ khung ô
                 g2.setColor(new Color(0,0,0,160));
                 g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
-
-                int idx = offset + r * cols + c;
-                Item it = (idx < total) ? items.get(idx) : null;
 
                 if (it != null) {
                     BufferedImage icon = it.getIcon();
