@@ -67,3 +67,8 @@ Sửa lỗi và cải tiến:
 ## 1.0.16
 - Lưu và tải lại trang bị đang mặc vào tệp `.txt` với khối `===EQUIPMENT===`.
 - Mỗi trang bị có mã định danh riêng để phân biệt.
+
+## 1.0.17
+- Giữ riêng bảng thuộc tính gốc và chỉ cộng thêm khi mặc trang bị.
+- Khi thăng cấp, chỉ số tăng vào thuộc tính gốc rồi áp dụng lại bonus trang bị.
+- Bảng thuộc tính và file lưu ghi rõ phần gốc và phần sau khi mặc đồ.

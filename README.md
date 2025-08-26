@@ -6,6 +6,11 @@
 
 ## Cập nhật
 
+## [1.0.17]
+
+### Sửa lỗi
+- Thuộc tính gốc được giữ riêng, trang bị chỉ cộng thêm và bảng thuộc tính hiển thị cả hai.
+
 ## [1.0.16]
 
 ### Thêm
