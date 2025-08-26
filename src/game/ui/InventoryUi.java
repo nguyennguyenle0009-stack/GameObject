@@ -245,7 +245,8 @@ public class InventoryUi {
         g2.drawString("Def: " + attrs.get(Attr.DEF), textX, textY); textY += 15;
         g2.drawString("Strength: " + attrs.get(Attr.STRENGTH), textX, textY); textY += 15;
         g2.drawString("Sould: " + attrs.get(Attr.SOULD), textX, textY); textY += 15;
-        g2.drawString("Physique: " + p.getPhysique().getDisplay(), textX, textY); textY += 15;
+        String phys = (p.getPhysique() != null) ? p.getPhysique().getDisplay() : "Unknown";
+        g2.drawString("Physique: " + phys, textX, textY); textY += 15;
         g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY); textY += 20;
 
         // Vẽ nút mở bảng công pháp

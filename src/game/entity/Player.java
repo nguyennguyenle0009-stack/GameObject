@@ -145,6 +145,8 @@ public class Player extends GameActor implements DrawableEntity {
             saveProfile();
         }
 
+        if (physique == null) physique = Physique.NORMAL;
+
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
         }
@@ -416,7 +418,14 @@ public class Player extends GameActor implements DrawableEntity {
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
         atts().add(Attr.SPIRIT, modified);
+
         while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
+            // Đã đạt tầng tối đa của đại cảnh giới hiện tại
+            if (realm == Realm.LUYEN_KHI && realmStage >= physique.getMaxStage()) {
+                atts().set(Attr.SPIRIT, spiritToNextLevel); // giữ nguyên ở mức tối đa
+                break;
+            }
+
             atts().add(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
         }
@@ -515,7 +524,7 @@ public class Player extends GameActor implements DrawableEntity {
                 realm = Realm.LUYEN_THE;
                 realmStage = 1;
                 initializeLuyenThe();
-                spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                spiritToNextLevel = oldReq + (int) (oldReq / 2 * physique.getSpiritReqFactor());
                 atts().add(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
@@ -525,7 +534,7 @@ public class Player extends GameActor implements DrawableEntity {
                     atts().add(Attr.SOULD, 10);
                 } else {
                     applyStageGrowth();
-                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                    spiritToNextLevel = oldReq + (int) (oldReq / 2 * physique.getSpiritReqFactor());
                 }
             }
             case LUYEN_KHI -> {
@@ -534,7 +543,7 @@ public class Player extends GameActor implements DrawableEntity {
                     realmStage = physique.getMaxStage();
                 } else {
                     applyStageGrowth();
-                    spiritToNextLevel = (int) ((oldReq + oldReq / 2) * physique.getSpiritReqFactor());
+                    spiritToNextLevel = oldReq + (int) (oldReq / 2 * physique.getSpiritReqFactor());
                 }
             }
         }
@@ -623,7 +632,8 @@ public class Player extends GameActor implements DrawableEntity {
         int soul = (int) (atts().get(Attr.SOULD) * 2 * physique.getStatFactor());
         atts().set(Attr.SOULD, soul);
 
-        spiritToNextLevel = (int) (oldReq * 2 * physique.getSpiritReqFactor());
+        // Yêu cầu SPIRIT mới tăng dựa trên hệ số của thể chất nhưng luôn lớn hơn cấp trước
+        spiritToNextLevel = oldReq + (int) (oldReq * physique.getSpiritReqFactor());
     }
 
     private void logRealmState() {
@@ -740,8 +750,8 @@ public class Player extends GameActor implements DrawableEntity {
                 if (idx >= 0) realmStage = Integer.parseInt(lower.substring(idx + 4).trim());
             }
 
-            for (int i = 2; i < block.size(); i++) {
-                String line = block.get(i);
+        for (int i = 2; i < block.size(); i++) {
+            String line = block.get(i);
                 if (line.startsWith("HEALTH: ")) {
                     String val = line.substring(8).trim();
                     int cur, max;
@@ -824,15 +834,15 @@ public class Player extends GameActor implements DrawableEntity {
                             techniques.add(new CultivationTechnique(name, grade, lvl, sps));
                         }
                     }
-                }
             }
-
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
+        if (physique == null) physique = Physique.NORMAL;
+        return true;
+    } catch (IOException e) {
+        e.printStackTrace();
+        return false;
     }
+}
 
     private Path findExistingProfile() throws IOException {
         String safeName = getName().replaceAll("\\s+", "_");
