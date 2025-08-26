@@ -79,6 +79,10 @@ public class Player extends GameActor implements DrawableEntity {
     private LocalDate creationDate = LocalDate.now();
     private final List<String> realmLog = new ArrayList<>();
 
+    // Tự động lưu
+    private long lastAutoSave = System.currentTimeMillis();
+    private static final long AUTO_SAVE_INTERVAL = 10 * 60 * 1000; // 10 phút
+
     // Danh sách công pháp đã học
     private final List<CultivationTechnique> techniques = new ArrayList<>();
     // Trạng thái tu luyện
@@ -201,6 +205,12 @@ public class Player extends GameActor implements DrawableEntity {
             }
             updateKeyboard();
             handleAttack();
+
+            long now = System.currentTimeMillis();
+            if (now - lastAutoSave >= AUTO_SAVE_INTERVAL) {
+                saveState();
+                lastAutoSave = now;
+            }
         }
 
 	
@@ -658,6 +668,12 @@ public class Player extends GameActor implements DrawableEntity {
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
         sb.append("SKILL: " + getSkillSummary() + "\n");
         realmLog.add(sb.toString());
+    }
+
+    /** Lưu trạng thái hiện tại vào tệp. */
+    public void saveState() {
+        logRealmState();
+        saveProfile();
     }
 
     private void saveProfile() {

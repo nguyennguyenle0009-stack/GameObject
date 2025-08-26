@@ -53,6 +53,14 @@
 - Yêu cầu SPIRIT không còn giảm dần theo cấp và sẽ tự tính lại nếu tệp lưu có giá trị 0.
 - Bảng thuộc tính không còn lỗi NullPointerException khi mở.
 
+## [1.0.12]
+
+### Thêm
+- Tự động lưu trạng thái mỗi 10 phút và khi thoát game.
+
+### Sửa lỗi
+- Đảm bảo HEALTH, PEP và SPIRIT còn lại được ghi vào tệp lưu.
+
 ## [1.0.6] - 2025-08-25
 
 ### Sửa lỗi
