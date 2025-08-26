@@ -36,3 +36,9 @@ Sửa lỗi và cải tiến:
 	   - Cập nhật ví dụ tệp `player.Nguyeen_pro.20250825.txt`.
 	
 	3. Cập nhật README với mô tả thay đổi.
+	
+## 1.0.11
+- Sửa công thức tăng yêu cầu Spirit để không giảm khi lên cấp, đặc biệt cho Tiên Linh Thể.
+- Đạt giới hạn tầng Luyện khí không còn làm Spirit trở về 0 và vẫn tích luỹ được.
+- Bảng item/thuộc tính xử lý trường hợp thiếu dữ liệu thể chất tránh lỗi NullPointerException.
+- bug: Tiên linh thể khi sử dụng đan dược cộng SPIRIT tăng nhân 3, lỗi cộng SPIRIT tăng ít => yêu cầu hai chức năng này tăng như bình thường( Tiên linh thể chỉ có tác dụng tăng 3 lần khi tu luyện còn lại như thể chất bình thường)
