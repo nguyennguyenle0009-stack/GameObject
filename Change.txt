@@ -67,3 +67,9 @@ Sửa lỗi và cải tiến:
 ## 1.0.16
 - Lưu và tải lại trang bị đang mặc vào tệp `.txt` với khối `===EQUIPMENT===`.
 - Mỗi trang bị có mã định danh riêng để phân biệt.
+
+## 1.0.17
+- Tách riêng **thuộc tính gốc** và **thuộc tính từ trang bị**.
+- Lên cấp chỉ tăng thuộc tính gốc, trang bị cộng thêm vào bảng thuộc tính mà không làm thay đổi giá trị gốc.
+- Cập nhật ghi log thuộc tính trong tệp lưu theo hai phần "Thuộc tính gốc" và "Thuộc tính sau khi mặc đồ".
+- Chỉnh sửa README mô tả thay đổi.

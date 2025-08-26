@@ -6,6 +6,13 @@
 
 ## Cập nhật
 
+## [1.0.17]
+
+### Sửa lỗi
+- Tách riêng thuộc tính gốc và thuộc tính cộng từ trang bị.
+- Lên cấp chỉ tăng vào thuộc tính gốc, trang bị chỉ cộng thêm khi hiển thị.
+- Bảng thuộc tính trong tệp lưu thể hiện hai phần "Thuộc tính gốc" và "Thuộc tính sau khi mặc đồ".
+
 ## [1.0.16]
 
 ### Thêm
