@@ -1,5 +1,16 @@
 ============player.Nguyeen_pro.20250826.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (3), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Bùa hộ mệnh (1), Mũ sắt (1), Giày da (1), Quần vải (1), Dây chuyền (1), Kiếm gỗ (1), Kiếm sắt (1), Nhẫn đá (1), Nhẫn bạc (1)
+Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (3), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1)
+===EQUIPMENT===
+ARMOR: Áo giáp#11111111 | +3 DEF
+HELMET: Mũ sắt#22222222 | +3 DEF
+PANTS: Quần vải#33333333 | +3 DEF
+SHOES: Giày da#44444444 | +3 DEF
+WEAPON1: Kiếm gỗ#55555555 | +10 ATTACK
+WEAPON2: Kiếm sắt#66666666 | +10 ATTACK
+NECKLACE: Dây chuyền#77777777 | +10 SOULD
+RING1: Nhẫn đá#88888888 | +10 ô kho
+RING2: Nhẫn bạc#99999999 | +10 ô kho
+AMULET: Bùa hộ mệnh#10101010 | Chưa có tác dụng
 =============================
 cảnh giới phàm nhân - 2025-08-26 14:47:54
 HEALTH: 100/100

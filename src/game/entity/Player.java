@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
@@ -710,11 +711,20 @@ public class Player extends GameActor implements DrawableEntity {
                     .map(it -> it.getName() + " (" + it.getQuantity() + ")")
                     .collect(Collectors.joining(", "));
             lines.add("Itemcủa nhân vật: " + items);
+            lines.add("===EQUIPMENT===");
+            for (EquipSlot slot : EquipSlot.values()) {
+                lines.add(slot.name() + ": " + formatEquipment(equipment.get(slot)));
+            }
             lines.addAll(realmLog);
             Files.write(file, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String formatEquipment(EquipmentItem item) {
+        if (item == null) return "none";
+        return item.getName() + "#" + item.getId() + " | " + item.getDecription();
     }
 
     private Path getProfilePath() {
@@ -738,7 +748,34 @@ public class Player extends GameActor implements DrawableEntity {
                 creationDate = LocalDate.parse(parts[2], DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
 
-            // Items
+            // Equipment block
+            int eqIndex = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if ("===EQUIPMENT===".equals(lines.get(i).trim())) {
+                    eqIndex = i;
+                    break;
+                }
+            }
+            if (eqIndex >= 0) {
+                equipment.clear();
+                int idx = eqIndex + 1;
+                for (EquipSlot slot : EquipSlot.values()) {
+                    if (idx >= lines.size()) break;
+                    String line = lines.get(idx++);
+                    int colon = line.indexOf(":");
+                    if (colon < 0) continue;
+                    String value = line.substring(colon + 1).trim();
+                    if (!value.equalsIgnoreCase("none")) {
+                        EquipmentItem eq = parseEquipmentLine(slot, value);
+                        if (eq != null) {
+                            equipment.put(slot, eq);
+                            applyBonuses(eq);
+                        }
+                    }
+                }
+            }
+
+            // Items (load after equipping to ensure capacity bonuses apply)
             String itemLine = lines.get(1);
             String prefix = "Itemcủa nhân vật: ";
             if (itemLine.startsWith(prefix)) {
@@ -759,10 +796,11 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
 
-            // Realm log
+            // Realm log begins after equipment section
+            int realmStart = (eqIndex >= 0) ? eqIndex + 1 + EquipSlot.values().length : 2;
             realmLog.clear();
-            if (lines.size() > 2) {
-                realmLog.addAll(lines.subList(2, lines.size()));
+            if (lines.size() > realmStart) {
+                realmLog.addAll(lines.subList(realmStart, lines.size()));
             }
 
             // Parse last block for stats
@@ -974,6 +1012,47 @@ public class Player extends GameActor implements DrawableEntity {
             
             default -> null;
         };
+    }
+
+    private EquipmentItem createEquipmentItem(String name, String desc, EquipType type, String id) {
+        String iconPath = switch (name) {
+            case "Áo giáp" -> "/data/item/equipment/armor.png";
+            case "Mũ sắt" -> "/data/item/equipment/helmet.png";
+            case "Quần vải" -> "/data/item/equipment/pants.png";
+            case "Giày da" -> "/data/item/equipment/shoes.png";
+            case "Kiếm gỗ" -> "/data/item/equipment/sword.png";
+            case "Kiếm sắt" -> "/data/item/equipment/sword.png";
+            case "Dây chuyền" -> "/data/item/equipment/ring.png";
+            case "Nhẫn đá" -> "/data/item/equipment/ring.png";
+            case "Nhẫn bạc" -> "/data/item/equipment/ring.png";
+            case "Bùa hộ mệnh" -> "/data/item/equipment/d_1.png";
+            default -> null;
+        };
+        return new EquipmentItem(id, name, desc, iconPath, type);
+    }
+
+    private EquipmentItem parseEquipmentLine(EquipSlot slot, String value) {
+        String main = value;
+        String desc = "";
+        int pipe = value.indexOf('|');
+        if (pipe >= 0) {
+            main = value.substring(0, pipe).trim();
+            desc = value.substring(pipe + 1).trim();
+        }
+        int hash = main.lastIndexOf('#');
+        String name = (hash >= 0) ? main.substring(0, hash).trim() : main.trim();
+        String id = (hash >= 0) ? main.substring(hash + 1).trim() : UUID.randomUUID().toString();
+        EquipType type = switch (slot) {
+            case HELMET -> EquipType.HELMET;
+            case ARMOR -> EquipType.ARMOR;
+            case SHOES -> EquipType.SHOES;
+            case PANTS -> EquipType.PANTS;
+            case NECKLACE -> EquipType.NECKLACE;
+            case AMULET -> EquipType.AMULET;
+            case RING1, RING2 -> EquipType.RING;
+            case WEAPON1, WEAPON2 -> EquipType.WEAPON;
+        };
+        return createEquipmentItem(name, desc, type, id);
     }
 
     // -------- Random Physique/Affinity ---------

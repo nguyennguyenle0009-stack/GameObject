@@ -63,3 +63,7 @@ Sửa lỗi và cải tiến:
 - Thêm trang bị vào game
 - test sử dụng trang bị
 - bug lỗi chưa lưu trang bị đang sử dụng
+
+## 1.0.16
+- Lưu và tải lại trang bị đang mặc vào tệp `player` theo định dạng `===EQUIPMENT===`.
+- Mỗi trang bị được gắn mã định danh duy nhất để không bị nhầm lẫn khi khởi động.

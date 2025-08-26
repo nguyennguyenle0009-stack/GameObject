@@ -16,6 +16,12 @@
 - Bảng thuộc tính chuyển xuống dưới kho đồ và rộng ngang với kho.
 - Trang bị cộng chỉ số: mũ/áo/quần/giày +3 DEF, vũ khí +10 ATTACK, dây chuyền +10 SOULD, nhẫn +10 ô kho.
 
+## [1.0.16]
+
+### Thêm
+- Ghi lại trang bị đang mặc vào tệp lưu với định dạng `===EQUIPMENT===`.
+- Mỗi trang bị có mã định danh duy nhất (`ARMOR#id`) để phục hồi chính xác khi khởi động.
+
 ## [1.0.13]
 
 ### Sửa lỗi
