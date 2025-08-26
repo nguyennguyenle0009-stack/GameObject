@@ -710,6 +710,14 @@ public class Player extends GameActor implements DrawableEntity {
                     .map(it -> it.getName() + " (" + it.getQuantity() + ")")
                     .collect(Collectors.joining(", "));
             lines.add("Itemcủa nhân vật: " + items);
+
+            lines.add("===EQUIPMENT===");
+            String[] order = {"ARMOR","HELMET","PANTS","SHOES","WEAPON1","WEAPON2","NECKLACE","RING1","RING2","AMULET"};
+            EquipSlot[] slots = {EquipSlot.ARMOR,EquipSlot.HELMET,EquipSlot.PANTS,EquipSlot.SHOES,EquipSlot.WEAPON1,EquipSlot.WEAPON2,EquipSlot.NECKLACE,EquipSlot.RING1,EquipSlot.RING2,EquipSlot.AMULET};
+            for (int i = 0; i < order.length; i++) {
+                lines.add("- " + order[i] + ": " + formatEquipment(equipment.get(slots[i])));
+            }
+
             lines.addAll(realmLog);
             Files.write(file, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
@@ -759,10 +767,41 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
 
+            // Equipment section
+            int equipHeader = lines.indexOf("===EQUIPMENT===");
+            int logStart = 2;
+            equipment.clear();
+            if (equipHeader != -1) {
+                int i = equipHeader + 1;
+                for (; i < lines.size(); i++) {
+                    String l = lines.get(i);
+                    if (!l.startsWith("- ")) break;
+                    int colon = l.indexOf(':');
+                    if (colon < 0) continue;
+                    String slotName = l.substring(2, colon).trim();
+                    String data = l.substring(colon + 1).trim();
+                    EquipSlot slot = null;
+                    try { slot = EquipSlot.valueOf(slotName); } catch (IllegalArgumentException e) { /* ignore */ }
+                    if (slot == null) continue;
+                    if (!data.equalsIgnoreCase("none")) {
+                        String[] arr = data.split("\\|");
+                        String id = arr[0].trim();
+                        String name = arr.length > 1 ? arr[1].trim() : "";
+                        String desc = arr.length > 2 ? arr[2].trim() : "";
+                        EquipmentItem eq = createEquipmentFromData(id, name, desc, slot);
+                        if (eq != null) {
+                            equipment.put(slot, eq);
+                            applyBonuses(eq);
+                        }
+                    }
+                }
+                logStart = i;
+            }
+
             // Realm log
             realmLog.clear();
-            if (lines.size() > 2) {
-                realmLog.addAll(lines.subList(2, lines.size()));
+            if (lines.size() > logStart) {
+                realmLog.addAll(lines.subList(logStart, lines.size()));
             }
 
             // Parse last block for stats
@@ -974,6 +1013,29 @@ public class Player extends GameActor implements DrawableEntity {
             
             default -> null;
         };
+    }
+
+    private String formatEquipment(EquipmentItem eq) {
+        if (eq == null) return "none";
+        return eq.getId() + " | " + eq.getName() + " | " + eq.getDecription();
+    }
+
+    private EquipmentItem createEquipmentFromData(String id, String name, String desc, EquipSlot slot) {
+        Item base = createItemByName(name, 1);
+        if (base instanceof EquipmentItem ei) {
+            return new EquipmentItem(id, name, desc, ei.getIconPath(), ei.getType());
+        }
+        EquipType type = switch (slot) {
+            case HELMET -> EquipType.HELMET;
+            case ARMOR -> EquipType.ARMOR;
+            case SHOES -> EquipType.SHOES;
+            case PANTS -> EquipType.PANTS;
+            case NECKLACE -> EquipType.NECKLACE;
+            case AMULET -> EquipType.AMULET;
+            case RING1, RING2 -> EquipType.RING;
+            case WEAPON1, WEAPON2 -> EquipType.WEAPON;
+        };
+        return new EquipmentItem(id, name, desc, null, type);
     }
 
     // -------- Random Physique/Affinity ---------

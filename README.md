@@ -6,6 +6,15 @@
 
 ## Cập nhật
 
+## [1.0.15]
+
+### Thêm
+- Lưu và tải trang bị đang mặc vào tệp `.txt` khi thoát và khởi động game.
+- Mỗi trang bị có mã định danh riêng (ví dụ `ARMOR#0000001`) để phân biệt thuộc tính.
+
+### Sửa lỗi
+- Khắc phục lỗi không lưu lại trang bị đang sử dụng.
+
 ## [1.0.14]
 
 ### Thêm
