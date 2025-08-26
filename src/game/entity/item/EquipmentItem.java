@@ -2,6 +2,7 @@ package game.entity.item;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import game.entity.Player;
@@ -12,11 +13,24 @@ public class EquipmentItem extends Item {
     private final EquipType type;
     private final String iconPath;
     private final BufferedImage icon;
+    /** Unique identifier used when saving/loading equipment. */
+    private final String id;
 
+    /**
+     * Create new equipment with a random unique identifier.
+     */
     public EquipmentItem(String name, String desc, String iconPath, EquipType type) {
+        this(UUID.randomUUID().toString(), name, desc, iconPath, type);
+    }
+
+    /**
+     * Create equipment with explicit identifier (used when loading from file).
+     */
+    public EquipmentItem(String id, String name, String desc, String iconPath, EquipType type) {
         super(name, desc, 1, 1);
         this.type = type;
         this.iconPath = iconPath;
+        this.id = id;
         BufferedImage img = null;
         if (iconPath != null) {
             try {
@@ -32,6 +46,13 @@ public class EquipmentItem extends Item {
         return type;
     }
 
+    /**
+     * @return unique identifier of this equipment instance.
+     */
+    public String getId() {
+        return id;
+    }
+
     @Override
     public void use(Player p) {
         var prev = p.equip(this);
@@ -43,7 +64,7 @@ public class EquipmentItem extends Item {
 
     @Override
     public Item copyWithQuantity(int qty) {
-        // Equipment is non-stackable; return identical copy.
+        // Equipment is non-stackable; return a new copy with a new identifier.
         return new EquipmentItem(getName(), getDecription(), iconPath, type);
     }
 
