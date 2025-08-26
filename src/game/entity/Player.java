@@ -441,9 +441,12 @@ public class Player extends GameActor implements DrawableEntity {
     }
     
     // Thêm item vào túi và lưu
-    public void addItem(Item item) {
-        bag.add(item);
-        saveProfile();
+    public boolean addItem(Item item) {
+        boolean added = bag.add(item);
+        if (added) {
+            saveProfile();
+        }
+        return added;
     }
 
     // Sử dụng item
@@ -1154,7 +1157,10 @@ public class Player extends GameActor implements DrawableEntity {
     private void refreshStats() {
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
-            atts().setMax(a, baseAtts.getMax(a));
+            int max = baseAtts.getMax(a);
+            if (max > 0) {
+                atts().setMax(a, max);
+            }
         }
         for (EquipmentItem eq : equipment.values()) {
             switch (eq.getType()) {
