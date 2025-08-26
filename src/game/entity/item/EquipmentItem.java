@@ -2,6 +2,7 @@ package game.entity.item;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import game.entity.Player;
@@ -12,11 +13,24 @@ public class EquipmentItem extends Item {
     private final EquipType type;
     private final String iconPath;
     private final BufferedImage icon;
+    /** Unique identifier for this equipment. */
+    private final String id;
 
+    /**
+     * Create equipment with an auto-generated unique id.
+     */
     public EquipmentItem(String name, String desc, String iconPath, EquipType type) {
+        this(type.name() + "#" + UUID.randomUUID().toString(), name, desc, iconPath, type);
+    }
+
+    /**
+     * Create equipment with a specified id.
+     */
+    public EquipmentItem(String id, String name, String desc, String iconPath, EquipType type) {
         super(name, desc, 1, 1);
         this.type = type;
         this.iconPath = iconPath;
+        this.id = id;
         BufferedImage img = null;
         if (iconPath != null) {
             try {
@@ -30,6 +44,14 @@ public class EquipmentItem extends Item {
 
     public EquipType getType() {
         return type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getIconPath() {
+        return iconPath;
     }
 
     @Override
