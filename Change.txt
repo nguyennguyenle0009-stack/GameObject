@@ -10,3 +10,6 @@ Cập nhật:
 - Thêm hệ thống rớt vật phẩm: quái vật chết sẽ tạo vật phẩm trên mặt đất theo thiết lập từng quái.
 - Vật phẩm trên đất tự biến mất sau 2 phút, nhấp vào để nhặt trong phạm vi.
 - Khi kho đồ đầy, hiển thị thông báo "Khung vật phẩm đầy" bên phải màn hình trong 3 giây.
+
+## 1.0.19
+- Sửa lỗi thuộc tính Attack/Def bị đặt về 0 khiến nhân vật không gây sát thương và bảng thuộc tính không hiển thị.

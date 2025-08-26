@@ -6,6 +6,11 @@
 
 ## Cập nhật
 
+## [1.0.19]
+
+### Sửa lỗi
+- Hiển thị đúng chỉ số Attack/Def và gây sát thương lên quái.
+
 ## [1.0.18]
 
 ### Thêm
