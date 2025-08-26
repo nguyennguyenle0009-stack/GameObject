@@ -73,3 +73,11 @@ Sửa lỗi và cải tiến:
 - Lên cấp chỉ tăng thuộc tính gốc, trang bị cộng thêm vào bảng thuộc tính mà không làm thay đổi giá trị gốc.
 - Cập nhật ghi log thuộc tính trong tệp lưu theo hai phần "Thuộc tính gốc" và "Thuộc tính sau khi mặc đồ".
 - Chỉnh sửa README mô tả thay đổi.
+
+## 1.0.18
+- Quái vật rơi vật phẩm 100% và xuất hiện trên mặt đất trong bán kính 20px quanh vị trí chết.
+- Người chơi phải nhấp vào vật phẩm để nhặt; nếu túi đầy hiển thị thông báo bên phải màn hình trong 3 giây.
+- Vật phẩm nằm trên đất sẽ tự biến mất sau 2 phút nếu không được nhặt.
+
+## 1.0.19
+- Sửa lỗi tải thuộc tính khiến ATTACK/DEF bằng 0 và không gây sát thương lên quái vật.

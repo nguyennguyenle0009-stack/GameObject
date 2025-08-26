@@ -20,6 +20,7 @@ import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
 import game.object.ObjectManager;
 import game.object.SuperObject;
+import game.object.DroppedItem;
 import game.tile.TileManager;
 import game.ui.Ui;
 import game.entity.monster.MonsterZone;
@@ -49,8 +50,9 @@ public class GamePanel extends JPanel implements Runnable {
 	private final Player player = new Player(this);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
-        private final List<SuperObject> objects = new ArrayList<>();
-        private final List<Entity> npcs = new ArrayList<>();
+    private final List<SuperObject> objects = new ArrayList<>();
+    private final List<DroppedItem> droppedItems = new ArrayList<>();
+    private final List<Entity> npcs = new ArrayList<>();
     private final List<Entity> monsters = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
     private final Ui ui = new Ui(this);
@@ -131,6 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
                             m.update();
                         }
                     }
+                    droppedItems.removeIf(DroppedItem::isExpired);
                 }
                 if(gameState == pauseState) {}
         }
@@ -146,7 +149,8 @@ public class GamePanel extends JPanel implements Runnable {
 		//Check object
 		List<DrawableEntity> drawList = new ArrayList<>();
 
-		drawList.addAll(objects);
+                drawList.addAll(objects);
+                drawList.addAll(droppedItems);
                 drawList.addAll(npcs);
                 drawList.addAll(monsters);
                 drawList.add(player);
@@ -180,7 +184,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public TileManager getTileManager() { return tileManager; }
 	public CollisionChecker getCheckCollision() { return checkCollision; }
 	public ObjectManager getObjectManager() { return objectManager; } 
-	public List<SuperObject> getObjects() { return objects; }
+    public List<SuperObject> getObjects() { return objects; }
+    public List<DroppedItem> getDroppedItems() { return droppedItems; }
     public List<Entity> getNpcs() { return npcs; }
     public List<Entity> getMonsters() { return monsters; }
     public List<MonsterZone> getMonsterZones() { return monsterZones; }

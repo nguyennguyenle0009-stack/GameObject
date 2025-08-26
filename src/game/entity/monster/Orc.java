@@ -70,6 +70,14 @@ public class Orc extends Monster {
         attackRight2 = setup("/data/monster/orc/orc_attack_right_2", gp.getTileSize() * 2, gp.getTileSize());
     }
 
+    @Override
+    protected java.util.List<game.entity.item.Item> createDropItems() {
+        java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
+        list.add(new game.entity.item.MaterialItem("Xương Orc", "Bone", "/data/item/orc/ORC_Bone.png", 1, 20));
+        list.add(new game.entity.item.MaterialItem("Thịt Orc", "Flesh", "/data/item/orc/ORC_Flesh.png", 1, 20));
+        return list;
+    }
+
     /**
      * Vẽ Orc và thanh máu.
      */
