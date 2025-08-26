@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
+import game.entity.item.EquipmentItem;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Affinity;
@@ -36,6 +38,8 @@ import game.enums.Attr;
 import game.enums.Physique;
 import game.enums.Realm;
 import game.enums.SkillGrade;
+import game.enums.EquipSlot;
+import game.enums.EquipType;
 import game.entity.skill.CultivationTechnique;
 
 import game.main.GamePanel;
@@ -50,6 +54,7 @@ public class Player extends GameActor implements DrawableEntity {
     private static final int INTERACTION_RANGE = 80;
 
     private final Inventory bag = new Inventory();
+    private final EnumMap<EquipSlot, EquipmentItem> equipment = new EnumMap<>(EquipSlot.class);
     private boolean invincible = false;
     private int invincibleCounter = 0;
     private final Rectangle attackArea;
@@ -1009,6 +1014,59 @@ public class Player extends GameActor implements DrawableEntity {
                 .map(Affinity::getDisplay)
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("None");
+    }
+
+    // -------- Equipment handling ---------
+
+    public EquipmentItem getEquipment(EquipSlot slot) {
+        return equipment.get(slot);
+    }
+
+    public EquipmentItem equip(EquipmentItem item) {
+        EquipSlot slot = switch (item.getType()) {
+            case HELMET -> EquipSlot.HELMET;
+            case ARMOR -> EquipSlot.ARMOR;
+            case SHOES -> EquipSlot.SHOES;
+            case PANTS -> EquipSlot.PANTS;
+            case NECKLACE -> EquipSlot.NECKLACE;
+            case AMULET -> EquipSlot.AMULET;
+            case RING -> equipment.get(EquipSlot.RING1) == null ? EquipSlot.RING1 : EquipSlot.RING2;
+            case WEAPON -> equipment.get(EquipSlot.WEAPON1) == null ? EquipSlot.WEAPON1 : EquipSlot.WEAPON2;
+        };
+        EquipmentItem prev = equipment.put(slot, item);
+        applyBonuses(item);
+        if (prev != null) removeBonuses(prev);
+        return prev;
+    }
+
+    public EquipmentItem unequip(EquipSlot slot) {
+        EquipmentItem prev = equipment.remove(slot);
+        if (prev != null) removeBonuses(prev);
+        return prev;
+    }
+
+    private void applyBonuses(EquipmentItem item) {
+        switch (item.getType()) {
+            case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
+            case WEAPON -> atts().add(Attr.ATTACK, 10);
+            case NECKLACE -> atts().add(Attr.SOULD, 10);
+            case RING -> bag.increaseCapacity(10);
+            case AMULET -> {
+                // tạm thời chưa có chức năng
+            }
+        }
+    }
+
+    private void removeBonuses(EquipmentItem item) {
+        switch (item.getType()) {
+            case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, -3);
+            case WEAPON -> atts().add(Attr.ATTACK, -10);
+            case NECKLACE -> atts().add(Attr.SOULD, -10);
+            case RING -> bag.decreaseCapacity(10);
+            case AMULET -> {
+                // tạm thời chưa có chức năng
+            }
+        }
     }
 
     public int getScreenX() { return screenX; }

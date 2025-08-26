@@ -52,3 +52,9 @@ Sửa lỗi và cải tiến:
 - Bug: phát hiện lỗi khi đang tu luyện nhấp vào tu luyện lần nữa thì vẫn có thể tu luyện thêm một tiếng
 - Sửa lỗi có thể nhấp tu luyện nhiều lần để kéo dài thời gian.
 - Hồi chiêu tu luyện bắt đầu khi bắt đầu tu luyện và kéo dài 2 giờ.
+
+## 1.0.14
+- Thêm khung trang bị nhân vật với 10 ô tương ứng và hình ảnh nhân vật minh họa.
+- Khung thuộc tính được chuyển xuống dưới kho đồ, bề rộng bằng với kho đồ.
+- Hệ thống trang bị cơ bản: mũ/áo/quần/giày +3 DEF, vũ khí +10 ATTACK, dây chuyền +10 SOULD, nhẫn +10 ô kho.
+- Kho mặc định 30 ô, màu trắng cho ô trống và hỗ trợ cuộn theo tổng số ô kể cả khi chưa có item.

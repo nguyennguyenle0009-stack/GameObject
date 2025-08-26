@@ -6,9 +6,12 @@ import java.util.List;
 import game.entity.item.Item;
 
 public class Inventory {
-	private final List<Item> items = new ArrayList<Item>();
-	
-    // Thêm item có cộng dồn + tràn ô (stacking)
+        private final List<Item> items = new ArrayList<Item>();
+    private int capacity = 30;
+
+    /**
+     * Thêm item có cộng dồn + kiểm tra giới hạn ô.
+     */
     public void add(Item incoming) {
         if (incoming == null || incoming.getQuantity() <= 0) return;
 
@@ -25,13 +28,15 @@ public class Inventory {
             if (remain == 0) return;
         }
 
-        // Tạo thêm các stack mới cho phần còn lại (chia theo maxStack)
-        while (remain > 0) {
+        // 2) Tạo thêm các stack mới cho phần còn lại (chia theo maxStack)
+        while (remain > 0 && items.size() < capacity) {
             int chunk = Math.min(incoming.getMaxStack(), remain);
             Item piece = incoming.copyWithQuantity(chunk);
             items.add(piece);
             remain -= chunk;
         }
+
+        // Nếu vẫn còn dư thì kho đã đầy -> bỏ phần dư
     }
     
         public boolean remove(Item i) {
@@ -44,4 +49,8 @@ public class Inventory {
     public void clear() {
         items.clear();
     }
+
+    public int capacity() { return capacity; }
+    public void increaseCapacity(int d) { capacity += d; }
+    public void decreaseCapacity(int d) { capacity = Math.max(0, capacity - d); }
 }

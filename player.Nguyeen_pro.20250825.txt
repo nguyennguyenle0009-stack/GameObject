@@ -1,5 +1,5 @@
 ============player.Nguyeen_pro.20250825.txt==============
-Itemcủa nhân vật: Đan dược hồi máu (70), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (98), Đan dược tinh thần (57), Đan dược hồi máu (1)
+Itemcủa nhân vật: Đan dược hồi máu (79), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (98), Đan dược tinh thần (57), Đan dược hồi máu (1)
 =============================
 cảnh giới phàm nhân - 2025-08-25 22:28:11
 HEALTH: 100/100
@@ -216,6 +216,84 @@ PEP: 1500/1500
 DEF: 14
 SOULD: 15
 SPIRIT: 10845/17085
+STRENGTH: 4
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-26 12:37:01
+HEALTH: 1900/1900
+ATTACK: 24
+PEP: 1900/1900
+DEF: 15
+SOULD: 15
+SPIRIT: 0/25627
+STRENGTH: 4
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-26 12:39:59
+HEALTH: 1900/1900
+ATTACK: 24
+PEP: 1900/1900
+DEF: 15
+SOULD: 15
+SPIRIT: 2655/25627
+STRENGTH: 4
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-26 12:49:59
+HEALTH: 1635/1900
+ATTACK: 24
+PEP: 1900/1900
+DEF: 15
+SOULD: 15
+SPIRIT: 11655/25627
+STRENGTH: 4
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-26 12:59:59
+HEALTH: 0/1900
+ATTACK: 24
+PEP: 1900/1900
+DEF: 15
+SOULD: 15
+SPIRIT: 20655/25627
+STRENGTH: 4
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-26 13:00:27
+HEALTH: 0/1900
+ATTACK: 24
+PEP: 1900/1900
+DEF: 15
+SOULD: 15
+SPIRIT: 21030/25627
+STRENGTH: 4
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 8 - 2025-08-26 14:07:43
+HEALTH: 0/1900
+ATTACK: 24
+PEP: 1900/1900
+DEF: 15
+SOULD: 15
+SPIRIT: 21030/25627
 STRENGTH: 4
 PHYSIQUE: Tiên Linh Thể
 AFFINITY: Kim
