@@ -12,8 +12,8 @@ public class Inventory {
     /**
      * Thêm item có cộng dồn + kiểm tra giới hạn ô.
      */
-    public void add(Item incoming) {
-        if (incoming == null || incoming.getQuantity() <= 0) return;
+    public boolean add(Item incoming) {
+        if (incoming == null || incoming.getQuantity() <= 0) return true;
 
         int remain = incoming.getQuantity();
 
@@ -25,7 +25,7 @@ public class Inventory {
             int moved = Math.min(space, remain);
             it.increaseQuantity(moved);
             remain -= moved;
-            if (remain == 0) return;
+            if (remain == 0) return true;
         }
 
         // 2) Tạo thêm các stack mới cho phần còn lại (chia theo maxStack)
@@ -37,6 +37,7 @@ public class Inventory {
         }
 
         // Nếu vẫn còn dư thì kho đã đầy -> bỏ phần dư
+        return remain == 0;
     }
     
         public boolean remove(Item i) {

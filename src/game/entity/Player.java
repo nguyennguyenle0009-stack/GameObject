@@ -441,9 +441,12 @@ public class Player extends GameActor implements DrawableEntity {
     }
     
     // Thêm item vào túi và lưu
-    public void addItem(Item item) {
-        bag.add(item);
-        saveProfile();
+    public boolean addItem(Item item) {
+        boolean added = bag.add(item);
+        if (added) {
+            saveProfile();
+        }
+        return added;
     }
 
     // Sử dụng item

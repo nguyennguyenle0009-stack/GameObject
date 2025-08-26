@@ -1,9 +1,13 @@
 package game.mouseclick;
 
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+
+import game.object.DroppedItem;
+import game.object.SuperObject;
 
 import game.main.GamePanel;
 
@@ -25,6 +29,26 @@ public class MouseHandler implements MouseListener, MouseWheelListener {
         }
         if (gp.keyH.isiPressed()) {
             return;
+        }
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
+            int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
+            for (int i = 0; i < gp.getObjects().size(); i++) {
+                SuperObject obj = gp.getObjects().get(i);
+                if (obj instanceof DroppedItem di) {
+                    Rectangle rect = new Rectangle(obj.getWorldX(), obj.getWorldY(), gp.getTileSize(), gp.getTileSize());
+                    if (rect.contains(worldX, worldY)) {
+                        if (gp.getPlayer().addItem(di.getItem())) {
+                            gp.getObjects().remove(i);
+                        } else {
+                            gp.getUi().showMessage("Kho đồ đầy");
+                        }
+                        return;
+                    }
+                }
+            }
         }
             // Right mouse pressed
         if (e.getButton() == MouseEvent.BUTTON3) {

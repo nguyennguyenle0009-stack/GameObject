@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import game.entity.item.Item;
+import game.entity.item.LootItem;
 import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -109,5 +111,13 @@ public class Orc extends Monster {
                 default -> (getSpriteNum() == 1) ? getRight1() : getRight2();
             };
         }
+    }
+
+    @Override
+    protected Item[] createDropItems() {
+        return new Item[] {
+            new LootItem("Xương Orc", "", "/data/item/orc/ORC_Bone.png", random.nextInt(3) + 1, 99),
+            new LootItem("Thịt Orc", "", "/data/item/orc/ORC_Flesh.png", 1, 99)
+        };
     }
 }

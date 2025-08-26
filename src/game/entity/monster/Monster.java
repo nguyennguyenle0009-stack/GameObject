@@ -12,8 +12,10 @@ import java.util.Random;
 
 import game.entity.GameActor;
 import game.entity.Entity;
+import game.entity.item.Item;
 import game.enums.Attr;
 import game.main.GamePanel;
+import game.object.DroppedItem;
 
 /**
  * Lớp cơ sở cho tất cả quái vật trong game.
@@ -312,18 +314,29 @@ public abstract class Monster extends GameActor {
     }
 
     /**
-     * Rơi vật phẩm khi chết.
+     * Rơi vật phẩm khi chết (100%). Các vật phẩm được đặt trên mặt đất và người
+     * chơi cần nhấp để nhặt.
      */
     public void dropItem() {
-        if (random.nextInt(100) < getDropChance()) {
-        	 gp.getPlayer().addItem(new game.entity.item.elixir.HealthPotion(30, 1));
+        Item[] drops = createDropItems();
+        if (drops == null) return;
+        for (Item it : drops) {
+            if (it == null) continue;
+            DroppedItem obj = new DroppedItem(gp, it);
+            int ox = getWorldX() + random.nextInt(41) - 20;
+            int oy = getWorldY() + random.nextInt(41) - 20;
+            obj.setWorldX(ox);
+            obj.setWorldY(oy);
+            gp.getObjects().add(obj);
         }
     }
 
     /**
-     * @return tỉ lệ rơi vật phẩm
+     * Danh sách vật phẩm rơi ra. Mặc định trả về 1 bình máu.
      */
-    protected int getDropChance() { return 30; }
+    protected Item[] createDropItems() {
+        return new Item[] { new game.entity.item.elixir.HealthPotion(30, 1) };
+    }
 
     /**
      * @return thời gian hồi chiêu tấn công
