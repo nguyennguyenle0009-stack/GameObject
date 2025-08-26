@@ -55,6 +55,8 @@ public class Player extends GameActor implements DrawableEntity {
 
     private final Inventory bag = new Inventory();
     private final EnumMap<EquipSlot, EquipmentItem> equipment = new EnumMap<>(EquipSlot.class);
+    private final EnumMap<Attr, Integer> baseAttrs = new EnumMap<>(Attr.class);
+    private final EnumMap<Attr, Integer> equipBonuses = new EnumMap<>(Attr.class);
     private boolean invincible = false;
     private int invincibleCounter = 0;
     private final Rectangle attackArea;
@@ -139,6 +141,11 @@ public class Player extends GameActor implements DrawableEntity {
             atts().set(Attr.DEF, 4);
             atts().set(Attr.STRENGTH, 1);
             atts().set(Attr.SOULD, 5);
+
+            baseAttrs.put(Attr.ATTACK, 5);
+            baseAttrs.put(Attr.DEF, 4);
+            baseAttrs.put(Attr.STRENGTH, 1);
+            baseAttrs.put(Attr.SOULD, 5);
 
             // Thiết lập thể chất và linh căn ngẫu nhiên
             physique = randomPhysique();
@@ -555,13 +562,13 @@ public class Player extends GameActor implements DrawableEntity {
                 initializeLuyenThe();
                 baseSpiritRequirement += baseSpiritRequirement / 2;
                 spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-                atts().add(Attr.SOULD, 10);
+                addBase(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
                     breakThroughToLuyenKhi();
-                    atts().add(Attr.SOULD, 10);
+                    addBase(Attr.SOULD, 10);
                 } else {
                     applyStageGrowth();
                     baseSpiritRequirement += baseSpiritRequirement / 2;
@@ -596,9 +603,9 @@ public class Player extends GameActor implements DrawableEntity {
         atts().setMax(Attr.PEP, pep);
         atts().set(Attr.PEP, pep);
 
-        atts().set(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
-        atts().set(Attr.DEF, (int) (5 * physique.getDefFactor()));
-        atts().set(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
+        setBase(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
+        setBase(Attr.DEF, (int) (5 * physique.getDefFactor()));
+        setBase(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
     }
 
     /**
@@ -621,18 +628,18 @@ public class Player extends GameActor implements DrawableEntity {
 
         // ATTACK: +1, riêng bội số của 3 cộng thêm chính số đó
         int atkInc = (stage % 3 == 0) ? stage : 1;
-        atts().add(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
+        addBase(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
 
         // DEF: +1, bội số của 3 cộng thêm stage/2 (làm tròn lên)
         int defInc = 1;
         if (stage % 3 == 0) {
             defInc = (stage + 1) / 2;
         }
-        atts().add(Attr.DEF, (int) (defInc * physique.getDefFactor()));
+        addBase(Attr.DEF, (int) (defInc * physique.getDefFactor()));
 
         // STRENGTH: +1 ở bội số của 3
         if (stage % 3 == 0) {
-            atts().add(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
+            addBase(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
         }
     }
 
@@ -651,17 +658,17 @@ public class Player extends GameActor implements DrawableEntity {
         atts().setMax(Attr.PEP, pep);
         atts().set(Attr.PEP, pep);
 
-        int atk = (int) (atts().get(Attr.ATTACK) * 2 * physique.getStatFactor());
-        atts().set(Attr.ATTACK, atk);
+        int atk = (int) (getBase(Attr.ATTACK) * 2 * physique.getStatFactor());
+        setBase(Attr.ATTACK, atk);
 
-        int def = (int) (atts().get(Attr.DEF) * 3 * physique.getDefFactor());
-        atts().set(Attr.DEF, def);
+        int def = (int) (getBase(Attr.DEF) * 3 * physique.getDefFactor());
+        setBase(Attr.DEF, def);
 
-        int str = (int) (atts().get(Attr.STRENGTH) * 2 * physique.getStatFactor());
-        atts().set(Attr.STRENGTH, str);
+        int str = (int) (getBase(Attr.STRENGTH) * 2 * physique.getStatFactor());
+        setBase(Attr.STRENGTH, str);
 
-        int soul = (int) (atts().get(Attr.SOULD) * 2 * physique.getStatFactor());
-        atts().set(Attr.SOULD, soul);
+        int soul = (int) (getBase(Attr.SOULD) * 2 * physique.getStatFactor());
+        setBase(Attr.SOULD, soul);
 
         baseSpiritRequirement *= 2;
         spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
@@ -672,16 +679,24 @@ public class Player extends GameActor implements DrawableEntity {
         StringBuilder sb = new StringBuilder();
         sb.append("=============================\n");
         sb.append("cảnh giới " + getRealmName().toLowerCase() + " - " + time + "\n");
-        // Ghi cả máu hiện tại và tối đa
+        sb.append("--------------------------\n");
+        sb.append("Thuộc tính gốc:\n");
         sb.append("HEALTH: " + atts().get(Attr.HEALTH) + "/" + atts().getMax(Attr.HEALTH) + "\n");
-        sb.append("ATTACK: " + atts().get(Attr.ATTACK) + "\n");
-        // Ghi cả PEP hiện tại và tối đa
+        sb.append("ATTACK: " + getBase(Attr.ATTACK) + "\n");
         sb.append("PEP: " + atts().get(Attr.PEP) + "/" + atts().getMax(Attr.PEP) + "\n");
-        sb.append("DEF: " + atts().get(Attr.DEF) + "\n");
-        sb.append("SOULD: " + atts().get(Attr.SOULD) + "\n");
-        // SPIRIT hiện có và yêu cầu kế tiếp
+        sb.append("DEF: " + getBase(Attr.DEF) + "\n");
+        sb.append("SOULD: " + getBase(Attr.SOULD) + "\n");
         sb.append("SPIRIT: " + atts().get(Attr.SPIRIT) + "/" + spiritToNextLevel + "\n");
-        sb.append("STRENGTH: " + atts().get(Attr.STRENGTH) + "\n");
+        sb.append("STRENGTH: " + getBase(Attr.STRENGTH) + "\n");
+        sb.append("Thuộc tính sau khi mặc đồ:\n");
+        sb.append("HEALTH(equip): " + atts().get(Attr.HEALTH) + "/" + atts().getMax(Attr.HEALTH) + "\n");
+        sb.append(formatAttrWithBonus(Attr.ATTACK));
+        sb.append("PEP(equip): " + atts().get(Attr.PEP) + "/" + atts().getMax(Attr.PEP) + "\n");
+        sb.append(formatAttrWithBonus(Attr.DEF));
+        sb.append(formatAttrWithBonus(Attr.SOULD));
+        sb.append(formatAttrWithBonus(Attr.STRENGTH));
+        sb.append("--------------------------\n");
+        sb.append("SPIRIT: " + atts().get(Attr.SPIRIT) + "/" + spiritToNextLevel + "\n");
         sb.append("PHYSIQUE: " + physique.getDisplay() + "\n");
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
         sb.append("SKILL: " + getSkillSummary() + "\n");
@@ -756,6 +771,8 @@ public class Player extends GameActor implements DrawableEntity {
             List<String> lines = Files.readAllLines(file);
             if (lines.size() < 2) return false;
 
+            equipBonuses.clear();
+
             // cập nhật ngày tạo từ tên file
             String fileName = file.getFileName().toString();
             String[] parts = fileName.split("\\.");
@@ -810,7 +827,6 @@ public class Player extends GameActor implements DrawableEntity {
                         EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
                         if (eq != null) {
                             equipment.put(slot, eq);
-                            applyBonuses(eq);
                         }
                     }
                     idxLine++;
@@ -936,6 +952,16 @@ public class Player extends GameActor implements DrawableEntity {
                         }
                     }
                 }
+            }
+
+            baseAttrs.put(Attr.ATTACK, atts().get(Attr.ATTACK));
+            baseAttrs.put(Attr.DEF, atts().get(Attr.DEF));
+            baseAttrs.put(Attr.SOULD, atts().get(Attr.SOULD));
+            baseAttrs.put(Attr.STRENGTH, atts().get(Attr.STRENGTH));
+
+            equipBonuses.clear();
+            for (EquipmentItem eq : equipment.values()) {
+                applyBonuses(eq);
             }
 
             // Sau khi đọc xong, tính lại yêu cầu SPIRIT cơ bản.
@@ -1130,6 +1156,34 @@ public class Player extends GameActor implements DrawableEntity {
                 .orElse("None");
     }
 
+    private int getBase(Attr a) {
+        return baseAttrs.getOrDefault(a, atts().get(a) - equipBonuses.getOrDefault(a, 0));
+    }
+
+    private void setBase(Attr a, int v) {
+        baseAttrs.put(a, v);
+        recalc(a);
+    }
+
+    private void addBase(Attr a, int d) {
+        setBase(a, getBase(a) + d);
+    }
+
+    private void recalc(Attr a) {
+        int total = getBase(a) + equipBonuses.getOrDefault(a, 0);
+        atts().set(a, total);
+    }
+
+    private String formatAttrWithBonus(Attr a) {
+        int base = getBase(a);
+        int bonus = equipBonuses.getOrDefault(a, 0);
+        int total = base + bonus;
+        if (bonus != 0) {
+            return String.format("%s(equip): %d (%d +%d)\n", a.name(), total, base, bonus);
+        }
+        return String.format("%s(equip): %d\n", a.name(), total);
+    }
+
     // -------- Equipment handling ---------
 
     public EquipmentItem getEquipment(EquipSlot slot) {
@@ -1161,9 +1215,18 @@ public class Player extends GameActor implements DrawableEntity {
 
     private void applyBonuses(EquipmentItem item) {
         switch (item.getType()) {
-            case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
-            case WEAPON -> atts().add(Attr.ATTACK, 10);
-            case NECKLACE -> atts().add(Attr.SOULD, 10);
+            case HELMET, ARMOR, SHOES, PANTS -> {
+                equipBonuses.merge(Attr.DEF, 3, Integer::sum);
+                recalc(Attr.DEF);
+            }
+            case WEAPON -> {
+                equipBonuses.merge(Attr.ATTACK, 10, Integer::sum);
+                recalc(Attr.ATTACK);
+            }
+            case NECKLACE -> {
+                equipBonuses.merge(Attr.SOULD, 10, Integer::sum);
+                recalc(Attr.SOULD);
+            }
             case RING -> bag.increaseCapacity(10);
             case AMULET -> {
                 // tạm thời chưa có chức năng
@@ -1173,9 +1236,21 @@ public class Player extends GameActor implements DrawableEntity {
 
     private void removeBonuses(EquipmentItem item) {
         switch (item.getType()) {
-            case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, -3);
-            case WEAPON -> atts().add(Attr.ATTACK, -10);
-            case NECKLACE -> atts().add(Attr.SOULD, -10);
+            case HELMET, ARMOR, SHOES, PANTS -> {
+                equipBonuses.merge(Attr.DEF, -3, Integer::sum);
+                if (equipBonuses.getOrDefault(Attr.DEF, 0) == 0) equipBonuses.remove(Attr.DEF);
+                recalc(Attr.DEF);
+            }
+            case WEAPON -> {
+                equipBonuses.merge(Attr.ATTACK, -10, Integer::sum);
+                if (equipBonuses.getOrDefault(Attr.ATTACK, 0) == 0) equipBonuses.remove(Attr.ATTACK);
+                recalc(Attr.ATTACK);
+            }
+            case NECKLACE -> {
+                equipBonuses.merge(Attr.SOULD, -10, Integer::sum);
+                if (equipBonuses.getOrDefault(Attr.SOULD, 0) == 0) equipBonuses.remove(Attr.SOULD);
+                recalc(Attr.SOULD);
+            }
             case RING -> bag.decreaseCapacity(10);
             case AMULET -> {
                 // tạm thời chưa có chức năng
