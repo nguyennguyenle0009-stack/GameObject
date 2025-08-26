@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
@@ -79,6 +83,13 @@ public class Player extends GameActor implements DrawableEntity {
     private LocalDate creationDate = LocalDate.now();
     private final List<String> realmLog = new ArrayList<>();
 
+    // Tự động lưu hồ sơ
+    private final ScheduledExecutorService autoSaveExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+    });
+
     // Danh sách công pháp đã học
     private final List<CultivationTechnique> techniques = new ArrayList<>();
     // Trạng thái tu luyện
@@ -101,6 +112,7 @@ public class Player extends GameActor implements DrawableEntity {
         getImagePlayer();
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
 
+        startAutoSave();
         }
         public void setDefaultValue() {
                 setWorldX(100);
@@ -151,8 +163,7 @@ public class Player extends GameActor implements DrawableEntity {
             addItem(new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, 1));
             addItem(new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, 1));
 
-            logRealmState();
-            saveProfile();
+            saveState();
         }
 
         setScaleEntityX(gp.getTileSize());
@@ -416,7 +427,7 @@ public class Player extends GameActor implements DrawableEntity {
     public void useItem(Item i) {
         i.use(this);
         if(i.getQuantity() == 0) bag.remove(i);
-        saveProfile();
+        saveState();
     }
 
     /**
@@ -439,8 +450,7 @@ public class Player extends GameActor implements DrawableEntity {
         techniques.add(tech);
         // Lưu lại tiến trình ngay sau khi học để đảm bảo
         // công pháp tồn tại khi thoát game.
-        logRealmState();
-        saveProfile();
+        saveState();
     }
 
     // Công pháp được gán vào phím nhanh (tạm thời lưu 1 kỹ năng).
@@ -552,8 +562,7 @@ public class Player extends GameActor implements DrawableEntity {
         }
         // Cập nhật max Spirit cho HUD
         atts().setMax(Attr.SPIRIT, spiritToNextLevel);
-        logRealmState();
-        saveProfile();
+        saveState();
     }
 
     /**
@@ -658,6 +667,20 @@ public class Player extends GameActor implements DrawableEntity {
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
         sb.append("SKILL: " + getSkillSummary() + "\n");
         realmLog.add(sb.toString());
+    }
+
+    public synchronized void saveState() {
+        logRealmState();
+        saveProfile();
+    }
+
+    private void startAutoSave() {
+        autoSaveExecutor.scheduleAtFixedRate(this::saveState, 10, 10, TimeUnit.MINUTES);
+    }
+
+    public void stopAutoSave() {
+        autoSaveExecutor.shutdownNow();
+        saveState();
     }
 
     private void saveProfile() {

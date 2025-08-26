@@ -47,6 +47,14 @@
 - Khi rê chuột vào item, HUD và khung công pháp không còn bị phóng to chữ.
 - HUD chỉ hiển thị tên và thời gian hiệu lực của đan dược hoặc tu luyện, bỏ dòng hồi chiêu.
 
+## [1.0.12]
+
+### Thêm
+- Tự động lưu hồ sơ mỗi 10 phút và trước khi thoát game.
+
+### Sửa lỗi
+- Ghi lại chính xác lượng HEALTH/PEP/SPIRIT còn lại trong tệp lưu.
+
 ## [1.0.11]
 
 ### Sửa lỗi

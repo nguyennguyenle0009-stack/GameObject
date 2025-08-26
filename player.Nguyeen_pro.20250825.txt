@@ -52,3 +52,29 @@ PHYSIQUE: Tiên Linh Thể
 AFFINITY: Kim
 SKILL: Công pháp cực phẩm(1)(Cực phẩm)
 
+=============================
+cảnh giới luyện thể tầng 2 - 2025-08-26 11:37:29
+HEALTH: 222/250
+ATTACK: 11
+PEP: 250/250
+DEF: 6
+SOULD: 15
+SPIRIT: 0/2250
+STRENGTH: 2
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
+=============================
+cảnh giới luyện thể tầng 2 - 2025-08-26 11:39:48
+HEALTH: 222/250
+ATTACK: 11
+PEP: 250/250
+DEF: 6
+SOULD: 15
+SPIRIT: 90/2250
+STRENGTH: 2
+PHYSIQUE: Tiên Linh Thể
+AFFINITY: Kim
+SKILL: Công pháp cực phẩm(1)(Cực phẩm)
+
