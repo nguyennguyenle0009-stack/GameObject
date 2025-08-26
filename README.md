@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.13]
+
+### Sửa lỗi
+- Không còn có thể nhấp tu luyện nhiều lần để kéo dài thời gian.
+- Hồi chiêu tu luyện bắt đầu ngay khi tu luyện và kéo dài 2 giờ.
+
 ## [1.0.7] - 2025-08-26
 
 ### Thêm

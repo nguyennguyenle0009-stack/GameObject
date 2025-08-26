@@ -474,16 +474,17 @@ public class Player extends GameActor implements DrawableEntity {
 
     public void startCultivating(CultivationTechnique tech) {
         long now = System.currentTimeMillis();
-        if (now < cultivationCooldownEnd) return;
+        if (cultivating || now < cultivationCooldownEnd) return;
         cultivating = true;
         activeTechnique = tech;
         lastSpiritTick = now;
         cultivationEndTime = now + 3600_000L;
+        cultivationCooldownEnd = now + 7200_000L;
     }
 
     public void cancelCultivation() {
         cultivating = false;
-        cultivationCooldownEnd = System.currentTimeMillis() + 3600_000L; // 1h
+        activeTechnique = null;
     }
 
     private void updateCultivation() {
@@ -495,7 +496,7 @@ public class Player extends GameActor implements DrawableEntity {
         if (!cultivating) return;
         if (now >= cultivationEndTime) {
             cultivating = false;
-            cultivationCooldownEnd = now + 3600_000L;
+            activeTechnique = null;
             return;
         }
         if (now - lastSpiritTick >= 1000) {
