@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.entity.item.EquipmentItem;
+import game.entity.attributes.Attributes;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Affinity;
@@ -55,6 +56,7 @@ public class Player extends GameActor implements DrawableEntity {
 
     private final Inventory bag = new Inventory();
     private final EnumMap<EquipSlot, EquipmentItem> equipment = new EnumMap<>(EquipSlot.class);
+    private final Attributes baseAtts = new Attributes();
     private boolean invincible = false;
     private int invincibleCounter = 0;
     private final Rectangle attackArea;
@@ -130,15 +132,15 @@ public class Player extends GameActor implements DrawableEntity {
 
         if (!loadProfile()) {
             // Thuộc tính cơ bản
-            atts().setMax(Attr.HEALTH, 100);
-            atts().set(Attr.HEALTH, 100);
-            atts().setMax(Attr.PEP, 100);
-            atts().set(Attr.PEP, 100);
+            baseAtts.setMax(Attr.HEALTH, 100);
+            baseAtts.set(Attr.HEALTH, 100);
+            baseAtts.setMax(Attr.PEP, 100);
+            baseAtts.set(Attr.PEP, 100);
             // Attack/Def không còn giới hạn max mặc định để có thể tăng khi lên cấp
-            atts().set(Attr.ATTACK, 5);
-            atts().set(Attr.DEF, 4);
-            atts().set(Attr.STRENGTH, 1);
-            atts().set(Attr.SOULD, 5);
+            baseAtts.set(Attr.ATTACK, 5);
+            baseAtts.set(Attr.DEF, 4);
+            baseAtts.set(Attr.STRENGTH, 1);
+            baseAtts.set(Attr.SOULD, 5);
 
             // Thiết lập thể chất và linh căn ngẫu nhiên
             physique = randomPhysique();
@@ -147,8 +149,8 @@ public class Player extends GameActor implements DrawableEntity {
             // Tính lại yêu cầu SPIRIT dựa trên hệ số thể chất
             baseSpiritRequirement = 1000;
             spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-            atts().setMax(Attr.SPIRIT, spiritToNextLevel);
-            atts().set(Attr.SPIRIT, 0);
+            baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
+            baseAtts.set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
             addItem(new game.entity.item.elixir.HealthPotion(50, 3));
@@ -179,10 +181,12 @@ public class Player extends GameActor implements DrawableEntity {
             addItem(new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE));
             addItem(new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING));
             addItem(new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING));
-            addItem(new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET));      
+            addItem(new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET));
 
             saveState();
         }
+
+        refreshStats();
 
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
@@ -350,10 +354,11 @@ public class Player extends GameActor implements DrawableEntity {
         int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
         if (monsterIndex != 999 && !invincible) {
             atts().add(Attr.HEALTH, -1);
+            baseAtts.add(Attr.HEALTH, -1);
             gp.getUi().triggerDamageEffect();
             invincible = true;
         }
-	}
+        }
 	
 	// check NPC trong phạm vi
 	public Entity getClosestNPCInRange(List<Entity> npcs) {
@@ -454,11 +459,12 @@ public class Player extends GameActor implements DrawableEntity {
     public void gainSpirit(int amount) {
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
-        atts().add(Attr.SPIRIT, modified);
-        while (atts().get(Attr.SPIRIT) >= spiritToNextLevel) {
-            atts().add(Attr.SPIRIT, -spiritToNextLevel);
+        baseAtts.add(Attr.SPIRIT, modified);
+        while (baseAtts.get(Attr.SPIRIT) >= spiritToNextLevel) {
+            baseAtts.add(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
         }
+        refreshStats();
     }
 
     // ------------ Hệ thống kỹ năng & tu luyện ------------
@@ -555,13 +561,13 @@ public class Player extends GameActor implements DrawableEntity {
                 initializeLuyenThe();
                 baseSpiritRequirement += baseSpiritRequirement / 2;
                 spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-                atts().add(Attr.SOULD, 10);
+                baseAtts.add(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
                     breakThroughToLuyenKhi();
-                    atts().add(Attr.SOULD, 10);
+                    baseAtts.add(Attr.SOULD, 10);
                 } else {
                     applyStageGrowth();
                     baseSpiritRequirement += baseSpiritRequirement / 2;
@@ -580,7 +586,8 @@ public class Player extends GameActor implements DrawableEntity {
             }
         }
         // Cập nhật max Spirit cho HUD
-        atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+        baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
+        refreshStats();
         saveState();
     }
 
@@ -589,16 +596,16 @@ public class Player extends GameActor implements DrawableEntity {
      */
     private void initializeLuyenThe() {
         int hp = (int) (150 * physique.getStatFactor());
-        atts().setMax(Attr.HEALTH, hp);
-        atts().set(Attr.HEALTH, hp);
+        baseAtts.setMax(Attr.HEALTH, hp);
+        baseAtts.set(Attr.HEALTH, hp);
 
         int pep = (int) (150 * physique.getStatFactor());
-        atts().setMax(Attr.PEP, pep);
-        atts().set(Attr.PEP, pep);
+        baseAtts.setMax(Attr.PEP, pep);
+        baseAtts.set(Attr.PEP, pep);
 
-        atts().set(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
-        atts().set(Attr.DEF, (int) (5 * physique.getDefFactor()));
-        atts().set(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
+        baseAtts.set(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
+        baseAtts.set(Attr.DEF, (int) (5 * physique.getDefFactor()));
+        baseAtts.set(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
     }
 
     /**
@@ -610,29 +617,29 @@ public class Player extends GameActor implements DrawableEntity {
 
         // HEALTH & PEP: cộng 50 cho mỗi tiểu cảnh giới
         int hpInc = (int) (stage * 50 * physique.getStatFactor());
-        int newHp = atts().getMax(Attr.HEALTH) + hpInc;
-        atts().setMax(Attr.HEALTH, newHp);
-        atts().set(Attr.HEALTH, newHp);
+        int newHp = baseAtts.getMax(Attr.HEALTH) + hpInc;
+        baseAtts.setMax(Attr.HEALTH, newHp);
+        baseAtts.set(Attr.HEALTH, newHp);
 
         int pepInc = (int) (stage * 50 * physique.getStatFactor());
-        int newPep = atts().getMax(Attr.PEP) + pepInc;
-        atts().setMax(Attr.PEP, newPep);
-        atts().set(Attr.PEP, newPep);
+        int newPep = baseAtts.getMax(Attr.PEP) + pepInc;
+        baseAtts.setMax(Attr.PEP, newPep);
+        baseAtts.set(Attr.PEP, newPep);
 
         // ATTACK: +1, riêng bội số của 3 cộng thêm chính số đó
         int atkInc = (stage % 3 == 0) ? stage : 1;
-        atts().add(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
+        baseAtts.add(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
 
         // DEF: +1, bội số của 3 cộng thêm stage/2 (làm tròn lên)
         int defInc = 1;
         if (stage % 3 == 0) {
             defInc = (stage + 1) / 2;
         }
-        atts().add(Attr.DEF, (int) (defInc * physique.getDefFactor()));
+        baseAtts.add(Attr.DEF, (int) (defInc * physique.getDefFactor()));
 
         // STRENGTH: +1 ở bội số của 3
         if (stage % 3 == 0) {
-            atts().add(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
+            baseAtts.add(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
         }
     }
 
@@ -643,25 +650,25 @@ public class Player extends GameActor implements DrawableEntity {
         realm = Realm.LUYEN_KHI;
         realmStage = 1;
 
-        int hp = (int) (atts().getMax(Attr.HEALTH) * 2 * physique.getStatFactor());
-        atts().setMax(Attr.HEALTH, hp);
-        atts().set(Attr.HEALTH, hp);
+        int hp = (int) (baseAtts.getMax(Attr.HEALTH) * 2 * physique.getStatFactor());
+        baseAtts.setMax(Attr.HEALTH, hp);
+        baseAtts.set(Attr.HEALTH, hp);
 
-        int pep = (int) (atts().getMax(Attr.PEP) * 2 * physique.getStatFactor());
-        atts().setMax(Attr.PEP, pep);
-        atts().set(Attr.PEP, pep);
+        int pep = (int) (baseAtts.getMax(Attr.PEP) * 2 * physique.getStatFactor());
+        baseAtts.setMax(Attr.PEP, pep);
+        baseAtts.set(Attr.PEP, pep);
 
-        int atk = (int) (atts().get(Attr.ATTACK) * 2 * physique.getStatFactor());
-        atts().set(Attr.ATTACK, atk);
+        int atk = (int) (baseAtts.get(Attr.ATTACK) * 2 * physique.getStatFactor());
+        baseAtts.set(Attr.ATTACK, atk);
 
-        int def = (int) (atts().get(Attr.DEF) * 3 * physique.getDefFactor());
-        atts().set(Attr.DEF, def);
+        int def = (int) (baseAtts.get(Attr.DEF) * 3 * physique.getDefFactor());
+        baseAtts.set(Attr.DEF, def);
 
-        int str = (int) (atts().get(Attr.STRENGTH) * 2 * physique.getStatFactor());
-        atts().set(Attr.STRENGTH, str);
+        int str = (int) (baseAtts.get(Attr.STRENGTH) * 2 * physique.getStatFactor());
+        baseAtts.set(Attr.STRENGTH, str);
 
-        int soul = (int) (atts().get(Attr.SOULD) * 2 * physique.getStatFactor());
-        atts().set(Attr.SOULD, soul);
+        int soul = (int) (baseAtts.get(Attr.SOULD) * 2 * physique.getStatFactor());
+        baseAtts.set(Attr.SOULD, soul);
 
         baseSpiritRequirement *= 2;
         spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
@@ -672,16 +679,28 @@ public class Player extends GameActor implements DrawableEntity {
         StringBuilder sb = new StringBuilder();
         sb.append("=============================\n");
         sb.append("cảnh giới " + getRealmName().toLowerCase() + " - " + time + "\n");
-        // Ghi cả máu hiện tại và tối đa
+        sb.append("--------------------------\n");
+        sb.append("Thuộc tính gốc:\n");
+        sb.append("HEALTH: " + baseAtts.get(Attr.HEALTH) + "/" + baseAtts.getMax(Attr.HEALTH) + "\n");
+        sb.append("ATTACK: " + baseAtts.get(Attr.ATTACK) + "\n");
+        sb.append("PEP: " + baseAtts.get(Attr.PEP) + "/" + baseAtts.getMax(Attr.PEP) + "\n");
+        sb.append("DEF: " + baseAtts.get(Attr.DEF) + "\n");
+        sb.append("SOULD: " + baseAtts.get(Attr.SOULD) + "\n");
+        sb.append("SPIRIT: " + baseAtts.get(Attr.SPIRIT) + "/" + spiritToNextLevel + "\n");
+        sb.append("STRENGTH: " + baseAtts.get(Attr.STRENGTH) + "\n");
+        sb.append("Thuộc tính sau khi mặc đồ:\n");
         sb.append("HEALTH: " + atts().get(Attr.HEALTH) + "/" + atts().getMax(Attr.HEALTH) + "\n");
-        sb.append("ATTACK: " + atts().get(Attr.ATTACK) + "\n");
-        // Ghi cả PEP hiện tại và tối đa
+        int atkBonus = atts().get(Attr.ATTACK) - baseAtts.get(Attr.ATTACK);
+        sb.append("ATTACK: " + baseAtts.get(Attr.ATTACK) + (atkBonus > 0 ? " +" + atkBonus : "") + "\n");
         sb.append("PEP: " + atts().get(Attr.PEP) + "/" + atts().getMax(Attr.PEP) + "\n");
-        sb.append("DEF: " + atts().get(Attr.DEF) + "\n");
-        sb.append("SOULD: " + atts().get(Attr.SOULD) + "\n");
-        // SPIRIT hiện có và yêu cầu kế tiếp
+        int defBonus = atts().get(Attr.DEF) - baseAtts.get(Attr.DEF);
+        sb.append("DEF: " + baseAtts.get(Attr.DEF) + (defBonus > 0 ? " +" + defBonus : "") + "\n");
+        int soulBonus = atts().get(Attr.SOULD) - baseAtts.get(Attr.SOULD);
+        sb.append("SOULD: " + baseAtts.get(Attr.SOULD) + (soulBonus > 0 ? " +" + soulBonus : "") + "\n");
+        int strBonus = atts().get(Attr.STRENGTH) - baseAtts.get(Attr.STRENGTH);
+        sb.append("STRENGTH: " + baseAtts.get(Attr.STRENGTH) + (strBonus > 0 ? " +" + strBonus : "") + "\n");
+        sb.append("--------------------------\n");
         sb.append("SPIRIT: " + atts().get(Attr.SPIRIT) + "/" + spiritToNextLevel + "\n");
-        sb.append("STRENGTH: " + atts().get(Attr.STRENGTH) + "\n");
         sb.append("PHYSIQUE: " + physique.getDisplay() + "\n");
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
         sb.append("SKILL: " + getSkillSummary() + "\n");
@@ -810,11 +829,12 @@ public class Player extends GameActor implements DrawableEntity {
                         EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
                         if (eq != null) {
                             equipment.put(slot, eq);
-                            applyBonuses(eq);
+                            if (eq.getType() == EquipType.RING) bag.increaseCapacity(10);
                         }
                     }
                     idxLine++;
                 }
+                refreshStats();
             }
 
             // Realm log
@@ -863,11 +883,11 @@ public class Player extends GameActor implements DrawableEntity {
                     } else {
                         cur = max = Integer.parseInt(val);
                     }
-                    atts().setMax(Attr.HEALTH, max);
-                    atts().set(Attr.HEALTH, cur);
+                    baseAtts.setMax(Attr.HEALTH, max);
+                    baseAtts.set(Attr.HEALTH, cur);
                 } else if (line.startsWith("ATTACK: ")) {
                     int v = Integer.parseInt(line.substring(8).trim());
-                    atts().set(Attr.ATTACK, v);
+                    baseAtts.set(Attr.ATTACK, v);
                 } else if (line.startsWith("PEP: ")) {
                     String val = line.substring(5).trim();
                     int cur, max;
@@ -878,14 +898,14 @@ public class Player extends GameActor implements DrawableEntity {
                     } else {
                         cur = max = Integer.parseInt(val);
                     }
-                    atts().setMax(Attr.PEP, max);
-                    atts().set(Attr.PEP, cur);
+                    baseAtts.setMax(Attr.PEP, max);
+                    baseAtts.set(Attr.PEP, cur);
                 } else if (line.startsWith("DEF: ")) {
                     int v = Integer.parseInt(line.substring(5).trim());
-                    atts().set(Attr.DEF, v);
+                    baseAtts.set(Attr.DEF, v);
                 } else if (line.startsWith("SOULD: ")) {
                     int v = Integer.parseInt(line.substring(7).trim());
-                    atts().set(Attr.SOULD, v);
+                    baseAtts.set(Attr.SOULD, v);
                 } else if (line.startsWith("SPIRIT: ")) {
                     String val = line.substring(8).trim();
                     int cur, max;
@@ -898,16 +918,16 @@ public class Player extends GameActor implements DrawableEntity {
                         max = Integer.parseInt(val);
                     }
                     spiritToNextLevel = max;
-                    atts().setMax(Attr.SPIRIT, max);
-                    atts().set(Attr.SPIRIT, cur);
+                    baseAtts.setMax(Attr.SPIRIT, max);
+                    baseAtts.set(Attr.SPIRIT, cur);
                 } else if (line.startsWith("SPIRIT ")) {
                     // Hỗ trợ định dạng cũ không có dấu ':'
                     spiritToNextLevel = Integer.parseInt(line.substring(7).trim());
-                    atts().setMax(Attr.SPIRIT, spiritToNextLevel);
-                    atts().set(Attr.SPIRIT, 0);
+                    baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
+                    baseAtts.set(Attr.SPIRIT, 0);
                 } else if (line.startsWith("STRENGTH: ")) {
                     int v = Integer.parseInt(line.substring(10).trim());
-                    atts().set(Attr.STRENGTH, v);
+                    baseAtts.set(Attr.STRENGTH, v);
                 } else if (line.startsWith("PHYSIQUE: ")) {
                     physique = parsePhysique(line.substring(10).trim());
                 } else if (line.startsWith("AFFINITY: ")) {
@@ -942,11 +962,12 @@ public class Player extends GameActor implements DrawableEntity {
             if (spiritToNextLevel <= 0) {
                 baseSpiritRequirement = computeBaseSpiritRequirement(realm, realmStage);
                 spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-                atts().setMax(Attr.SPIRIT, spiritToNextLevel);
+                baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
             } else {
                 baseSpiritRequirement = (int) Math.round(spiritToNextLevel / physique.getSpiritReqFactor());
             }
 
+            refreshStats();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -1130,6 +1151,21 @@ public class Player extends GameActor implements DrawableEntity {
                 .orElse("None");
     }
 
+    private void refreshStats() {
+        atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
+        for (Attr a : Attr.values()) {
+            atts().setMax(a, baseAtts.getMax(a));
+        }
+        for (EquipmentItem eq : equipment.values()) {
+            switch (eq.getType()) {
+                case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
+                case WEAPON -> atts().add(Attr.ATTACK, 10);
+                case NECKLACE -> atts().add(Attr.SOULD, 10);
+                default -> {}
+            }
+        }
+    }
+
     // -------- Equipment handling ---------
 
     public EquipmentItem getEquipment(EquipSlot slot) {
@@ -1148,39 +1184,17 @@ public class Player extends GameActor implements DrawableEntity {
             case WEAPON -> equipment.get(EquipSlot.WEAPON1) == null ? EquipSlot.WEAPON1 : EquipSlot.WEAPON2;
         };
         EquipmentItem prev = equipment.put(slot, item);
-        applyBonuses(item);
-        if (prev != null) removeBonuses(prev);
+        if (item.getType() == EquipType.RING) bag.increaseCapacity(10);
+        if (prev != null && prev.getType() == EquipType.RING) bag.decreaseCapacity(10);
+        refreshStats();
         return prev;
     }
 
     public EquipmentItem unequip(EquipSlot slot) {
         EquipmentItem prev = equipment.remove(slot);
-        if (prev != null) removeBonuses(prev);
+        if (prev != null && prev.getType() == EquipType.RING) bag.decreaseCapacity(10);
+        refreshStats();
         return prev;
-    }
-
-    private void applyBonuses(EquipmentItem item) {
-        switch (item.getType()) {
-            case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
-            case WEAPON -> atts().add(Attr.ATTACK, 10);
-            case NECKLACE -> atts().add(Attr.SOULD, 10);
-            case RING -> bag.increaseCapacity(10);
-            case AMULET -> {
-                // tạm thời chưa có chức năng
-            }
-        }
-    }
-
-    private void removeBonuses(EquipmentItem item) {
-        switch (item.getType()) {
-            case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, -3);
-            case WEAPON -> atts().add(Attr.ATTACK, -10);
-            case NECKLACE -> atts().add(Attr.SOULD, -10);
-            case RING -> bag.decreaseCapacity(10);
-            case AMULET -> {
-                // tạm thời chưa có chức năng
-            }
-        }
     }
 
     public int getScreenX() { return screenX; }

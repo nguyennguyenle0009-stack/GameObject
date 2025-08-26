@@ -12,7 +12,7 @@ Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (10
 - RING2: none
 - AMULET: none
 =============================
-cảnh giới phàm nhân - 2025-08-26 16:09:16
+cảnh giới phàm nhân - 2025-08-26 16:24:15
 HEALTH: 100/100
 ATTACK: 5
 PEP: 100/100
@@ -21,11 +21,11 @@ SOULD: 5
 SPIRIT: 0/1000
 STRENGTH: 1
 PHYSIQUE: Bình thường
-AFFINITY: Mộc
+AFFINITY: Kim
 SKILL: None
 
 =============================
-cảnh giới phàm nhân - 2025-08-26 16:09:19
+cảnh giới phàm nhân - 2025-08-26 16:24:17
 HEALTH: 100/100
 ATTACK: 5
 PEP: 100/100
@@ -34,6 +34,6 @@ SOULD: 5
 SPIRIT: 0/1000
 STRENGTH: 1
 PHYSIQUE: Bình thường
-AFFINITY: Mộc
+AFFINITY: Kim
 SKILL: None
 
