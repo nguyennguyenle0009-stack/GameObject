@@ -26,7 +26,24 @@ public class MouseHandler implements MouseListener, MouseWheelListener {
         if (gp.keyH.isiPressed()) {
             return;
         }
-            // Right mouse pressed
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
+            int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
+            for (int i = 0; i < gp.getDroppedItems().size(); i++) {
+                var di = gp.getDroppedItems().get(i);
+                if (di.contains(worldX, worldY)) {
+                    if (gp.getPlayer().addItem(di.getItem())) {
+                        gp.getDroppedItems().remove(i);
+                    } else {
+                        gp.getUi().showMessage("Khung vật phẩm đầy", 180);
+                    }
+                    return;
+                }
+            }
+        }
+        // Right mouse pressed
         if (e.getButton() == MouseEvent.BUTTON3) {
             //Tọa độ x,y trên màn hình
             int mouseX = e.getX();

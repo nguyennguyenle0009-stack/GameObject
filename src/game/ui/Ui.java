@@ -39,9 +39,10 @@ public class Ui {
         this.skillUi = new SkillUi(gp);
     }
 
-    public void showMessage(String text) {
+    public void showMessage(String text, int duration) {
         message = text;
         messageOn = true;
+        messageCouter = duration;
     }
 
     public void draw(Graphics2D g2) {
@@ -63,6 +64,9 @@ public class Ui {
             }
         }
         hud.draw(g2);
+        if (messageOn) {
+            drawMessage(g2);
+        }
         if (damageCounter > 0) {
             g2.setColor(new Color(255, 0, 0, 100));
             g2.fillRect(0, 0, gp.getScreenWidth(), gp.getScreenHeight());
@@ -120,6 +124,20 @@ public class Ui {
             g2.setFont(oldFont);
             g2.setStroke(oldStroke);
         }
+    }
+
+    private void drawMessage(Graphics2D g2) {
+        int padding = 10;
+        int width = g2.getFontMetrics().stringWidth(message) + padding * 2;
+        int height = 40;
+        int x = gp.getScreenWidth() - width - 20;
+        int y = gp.getScreenHeight() / 4;
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRoundRect(x, y, width, height, 15, 15);
+        g2.setColor(Color.WHITE);
+        g2.drawString(message, x + padding, y + height - 15);
+        messageCouter--;
+        if (messageCouter <= 0) messageOn = false;
     }
 
     private void drawPauseScreen() {

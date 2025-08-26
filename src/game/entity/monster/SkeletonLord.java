@@ -70,6 +70,13 @@ public class SkeletonLord extends Monster {
         attackRight2 = setup("/data/monster/skeleton/skeletonlord_attack_right_2", gp.getTileSize() * 2, gp.getTileSize());
     }
 
+    @Override
+    protected java.util.List<game.entity.item.Item> createDropItems() {
+        java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
+        list.add(new game.entity.item.MaterialItem("Xương Skeleton", "Bone", "/data/item/skeleton/SKELETON_Bone.png", 1, 20));
+        return list;
+    }
+
     /**
      * Vẽ Skeleton Lord cùng thanh máu.
      */

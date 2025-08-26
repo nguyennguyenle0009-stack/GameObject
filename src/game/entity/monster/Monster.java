@@ -312,18 +312,24 @@ public abstract class Monster extends GameActor {
     }
 
     /**
-     * Rơi vật phẩm khi chết.
+     * Rơi vật phẩm khi chết (100%).
      */
     public void dropItem() {
-        if (random.nextInt(100) < getDropChance()) {
-        	 gp.getPlayer().addItem(new game.entity.item.elixir.HealthPotion(30, 1));
+        for (var item : createDropItems()) {
+            int dx = getWorldX() + random.nextInt(41) - 20;
+            int dy = getWorldY() + random.nextInt(41) - 20;
+            gp.getDroppedItems().add(new game.object.DroppedItem(item, dx, dy, gp));
         }
     }
 
     /**
-     * @return tỉ lệ rơi vật phẩm
+     * Tạo danh sách vật phẩm rơi ra.
      */
-    protected int getDropChance() { return 30; }
+    protected java.util.List<game.entity.item.Item> createDropItems() {
+        java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
+        list.add(new game.entity.item.elixir.HealthPotion(30, 1));
+        return list;
+    }
 
     /**
      * @return thời gian hồi chiêu tấn công
