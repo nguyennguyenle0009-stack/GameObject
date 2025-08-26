@@ -1157,7 +1157,10 @@ public class Player extends GameActor implements DrawableEntity {
     private void refreshStats() {
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
-            atts().setMax(a, baseAtts.getMax(a));
+            int max = baseAtts.getMax(a);
+            if (max > 0) {
+                atts().setMax(a, max);
+            }
         }
         for (EquipmentItem eq : equipment.values()) {
             switch (eq.getType()) {
