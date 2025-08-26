@@ -15,6 +15,8 @@ import game.entity.Entity;
 import game.entity.Player;
 import game.entity.item.elixir.HealthPotion;
 import game.entity.item.elixir.SpiritPotion;
+import game.entity.item.GroundItem;
+import game.entity.item.Item;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
@@ -49,9 +51,10 @@ public class GamePanel extends JPanel implements Runnable {
 	private final Player player = new Player(this);
 	private final TileManager tileManager = new TileManager(this);
 	private final CollisionChecker checkCollision = new CollisionChecker(this);
-        private final List<SuperObject> objects = new ArrayList<>();
-        private final List<Entity> npcs = new ArrayList<>();
+    private final List<SuperObject> objects = new ArrayList<>();
+    private final List<Entity> npcs = new ArrayList<>();
     private final List<Entity> monsters = new ArrayList<>();
+    private final List<GroundItem> groundItems = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
     private final Ui ui = new Ui(this);
     private final List<MonsterZone> monsterZones = new ArrayList<>();
@@ -116,8 +119,8 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 	
-	public void update() {
-		if(gameState == playState) {
+        public void update() {
+                if(gameState == playState) {
                     player.update();
                     for (MonsterZone zone : monsterZones) {
                         zone.update();
@@ -129,6 +132,12 @@ public class GamePanel extends JPanel implements Runnable {
                     for (Entity m : monsterSnapshot) {
                         if (monsters.contains(m)) {
                             m.update();
+                        }
+                    }
+                    List<GroundItem> itemSnapshot = new ArrayList<>(groundItems);
+                    for (GroundItem gi : itemSnapshot) {
+                        if (groundItems.contains(gi)) {
+                            gi.update();
                         }
                     }
                 }
@@ -146,7 +155,8 @@ public class GamePanel extends JPanel implements Runnable {
 		//Check object
 		List<DrawableEntity> drawList = new ArrayList<>();
 
-		drawList.addAll(objects);
+                drawList.addAll(objects);
+                drawList.addAll(groundItems);
                 drawList.addAll(npcs);
                 drawList.addAll(monsters);
                 drawList.add(player);
@@ -184,6 +194,11 @@ public class GamePanel extends JPanel implements Runnable {
     public List<Entity> getNpcs() { return npcs; }
     public List<Entity> getMonsters() { return monsters; }
     public List<MonsterZone> getMonsterZones() { return monsterZones; }
+    public List<GroundItem> getGroundItems() { return groundItems; }
+
+    public void spawnGroundItem(Item item, int x, int y) {
+        groundItems.add(new GroundItem(this, item, x, y));
+    }
 
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }

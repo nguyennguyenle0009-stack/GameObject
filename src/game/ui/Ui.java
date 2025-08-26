@@ -42,6 +42,7 @@ public class Ui {
     public void showMessage(String text) {
         message = text;
         messageOn = true;
+        messageCouter = 180; // 3 giây với 60 FPS
     }
 
     public void draw(Graphics2D g2) {
@@ -63,6 +64,17 @@ public class Ui {
             }
         }
         hud.draw(g2);
+        if (messageOn) {
+            int width = g2.getFontMetrics().stringWidth(message);
+            int x = gp.getScreenWidth() - width - 20;
+            int y = gp.getTileSize();
+            g2.setColor(Color.WHITE);
+            g2.drawString(message, x, y);
+            messageCouter--;
+            if (messageCouter <= 0) {
+                messageOn = false;
+            }
+        }
         if (damageCounter > 0) {
             g2.setColor(new Color(255, 0, 0, 100));
             g2.fillRect(0, 0, gp.getScreenWidth(), gp.getScreenHeight());

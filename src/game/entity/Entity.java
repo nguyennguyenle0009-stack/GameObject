@@ -13,7 +13,7 @@ import game.main.GamePanel;
 import game.util.UtilityTool;
 
 public abstract class Entity implements DrawableEntity {
-	GamePanel gp;
+        protected GamePanel gp;
 	
 	// Vị trí nhân vật trong bản đồ
 	private int worldX, worldY;

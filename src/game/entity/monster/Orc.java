@@ -5,9 +5,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.CameraHelper;
+import game.entity.item.Item;
 
 /**
  * Quái vật Orc, đuổi theo và tấn công cận chiến người chơi.
@@ -109,5 +113,12 @@ public class Orc extends Monster {
                 default -> (getSpriteNum() == 1) ? getRight1() : getRight2();
             };
         }
+    }
+
+    @Override
+    protected List<Item> createDropItems() {
+        List<Item> list = new ArrayList<>();
+        list.add(new game.entity.item.elixir.HealthPotion(50, 1));
+        return list;
     }
 }

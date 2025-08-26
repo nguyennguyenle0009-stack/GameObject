@@ -6,6 +6,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import game.main.GamePanel;
+import game.entity.item.GroundItem;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 
 /**
  * Xử lý các sự kiện chuột cho trò chơi.
@@ -26,7 +29,29 @@ public class MouseHandler implements MouseListener, MouseWheelListener {
         if (gp.keyH.isiPressed()) {
             return;
         }
-            // Right mouse pressed
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            int worldX = gp.getPlayer().getWorldX() - gp.getPlayer().getScreenX() + mouseX;
+            int worldY = gp.getPlayer().getWorldY() - gp.getPlayer().getScreenY() + mouseY;
+            ArrayList<GroundItem> items = new ArrayList<>(gp.getGroundItems());
+            for (GroundItem gi : items) {
+                Rectangle rect = new Rectangle(gi.getWorldX(), gi.getWorldY(), gp.getTileSize(), gp.getTileSize());
+                if (rect.contains(worldX, worldY)) {
+                    int dx = gp.getPlayer().getWorldX() - gi.getWorldX();
+                    int dy = gp.getPlayer().getWorldY() - gi.getWorldY();
+                    if (Math.hypot(dx, dy) < gp.getTileSize() * 2) {
+                        if (gp.getPlayer().addItem(gi.getItem())) {
+                            gp.getGroundItems().remove(gi);
+                        } else {
+                            gp.getUi().showMessage("Khung vật phẩm đầy");
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        // Right mouse pressed
         if (e.getButton() == MouseEvent.BUTTON3) {
             //Tọa độ x,y trên màn hình
             int mouseX = e.getX();

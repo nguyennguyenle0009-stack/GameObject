@@ -6,6 +6,13 @@
 
 ## Cập nhật
 
+## [1.0.18]
+
+### Thêm
+- Quái vật rớt vật phẩm 100% và vật phẩm xuất hiện trên mặt đất.
+- Người chơi phải nhấp vào vật phẩm trong phạm vi để lượm, kho đầy sẽ báo "Khung vật phẩm đầy" trong 3 giây.
+- Vật phẩm rơi tồn tại 2 phút rồi biến mất.
+
 ## [1.0.17]
 
 ### Sửa lỗi
