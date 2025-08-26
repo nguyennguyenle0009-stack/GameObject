@@ -167,6 +167,17 @@ public class Player extends GameActor implements DrawableEntity {
             addItem(new game.entity.item.elixir.CultivationPill("Đan trung phẩm", 2, 1));
             addItem(new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, 1));
             addItem(new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, 1));
+            
+            addItem(new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR));
+            addItem(new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET));
+            addItem(new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS));
+            addItem(new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES));
+            addItem(new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON));
+            addItem(new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON));
+            addItem(new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE));
+            addItem(new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING));
+            addItem(new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING));
+            addItem(new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET));      
 
             saveState();
         }
@@ -948,7 +959,19 @@ public class Player extends GameActor implements DrawableEntity {
             case "Sách Công pháp hạ phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1));
             case "Sách Công pháp trung phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2));
             case "Sách Công pháp thượng phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3));
+            
             case "Sách Công pháp cực phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5));
+            case "Áo giáp" -> new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR);
+            case "Mũ sắt" -> new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET);
+            case "Quần vải" -> new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS);
+            case "Giày da" -> new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES);
+            case "Kiếm gỗ" -> new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
+            case "Kiếm sắt" -> new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
+            case "Dây chuyền" -> new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE);
+            case "Nhẫn đá" -> new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
+            case "Nhẫn bạc" -> new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
+            case "Bùa hộ mệnh" -> new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET);
+            
             default -> null;
         };
     }

@@ -58,3 +58,8 @@ Sửa lỗi và cải tiến:
 - Khung thuộc tính được chuyển xuống dưới kho đồ, bề rộng bằng với kho đồ.
 - Hệ thống trang bị cơ bản: mũ/áo/quần/giày +3 DEF, vũ khí +10 ATTACK, dây chuyền +10 SOULD, nhẫn +10 ô kho.
 - Kho mặc định 30 ô, màu trắng cho ô trống và hỗ trợ cuộn theo tổng số ô kể cả khi chưa có item.
+
+## 1.0.15
+- Thêm trang bị vào game
+- test sử dụng trang bị
+- bug lỗi chưa lưu trang bị đang sử dụng

@@ -1,0 +1,41 @@
+============player.Nguyeen_pro.20250826.txt==============
+Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (3), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Bùa hộ mệnh (1), Mũ sắt (1), Giày da (1), Quần vải (1), Dây chuyền (1), Kiếm gỗ (1), Kiếm sắt (1), Nhẫn đá (1), Nhẫn bạc (1)
+=============================
+cảnh giới phàm nhân - 2025-08-26 14:47:54
+HEALTH: 100/100
+ATTACK: 5
+PEP: 100/100
+DEF: 4
+SOULD: 5
+SPIRIT: 0/1000
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Kim
+SKILL: None
+
+=============================
+cảnh giới phàm nhân - 2025-08-26 14:54:44
+HEALTH: 71/100
+ATTACK: 5
+PEP: 100/100
+DEF: 7
+SOULD: 5
+SPIRIT: 0/1000
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Kim
+SKILL: None
+
+=============================
+cảnh giới phàm nhân - 2025-08-26 14:55:50
+HEALTH: 71/100
+ATTACK: 5
+PEP: 100/100
+DEF: 7
+SOULD: 5
+SPIRIT: 0/1000
+STRENGTH: 1
+PHYSIQUE: Bình thường
+AFFINITY: Kim
+SKILL: None
+
