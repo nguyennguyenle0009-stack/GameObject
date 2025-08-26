@@ -12,7 +12,7 @@
 - Hệ thống **Kỹ năng** cơ bản với class `Skill` dễ mở rộng.
 - 4 công pháp tu luyện (hạ, trung, thượng, cực phẩm) học qua sách.
 - 4 loại đan dược tăng tốc tu luyện, cộng thêm SPIRIT mỗi giây trong 10 phút.
-- Tu luyện đứng im, có nút **Huỷ** ở HUD và hồi chiêu 1 giờ.
+- Tu luyện đứng im, có nút **Huỷ** ở HUD và hồi chiêu 2 giờ.
 - HUD hiển thị tên đan dược đang dùng và thời gian đếm ngược.
 - Bảng thuộc tính có nút mở danh sách công pháp.
 - Tệp lưu người chơi thêm mục `SKILL` ghi lại công pháp đã học.
@@ -54,6 +54,11 @@
 
 ### Sửa lỗi
 - Ghi lại chính xác lượng HEALTH/PEP/SPIRIT còn lại trong tệp lưu.
+
+## [1.0.13]
+
+### Sửa lỗi
+- Tu luyện không còn được kích hoạt liên tiếp để kéo dài thời gian. Hồi chiêu bắt đầu từ lúc tu luyện và kéo dài 2 giờ.
 
 ## [1.0.11]
 

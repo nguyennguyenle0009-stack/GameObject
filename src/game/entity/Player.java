@@ -93,6 +93,8 @@ public class Player extends GameActor implements DrawableEntity {
     // Danh sách công pháp đã học
     private final List<CultivationTechnique> techniques = new ArrayList<>();
     // Trạng thái tu luyện
+    private static final long CULTIVATION_DURATION = 3600_000L;
+    private static final long CULTIVATION_COOLDOWN = 7200_000L;
     private boolean cultivating = false;
     private CultivationTechnique activeTechnique;
     private long cultivationEndTime = 0;
@@ -474,16 +476,16 @@ public class Player extends GameActor implements DrawableEntity {
 
     public void startCultivating(CultivationTechnique tech) {
         long now = System.currentTimeMillis();
-        if (now < cultivationCooldownEnd) return;
+        if (cultivating || now < cultivationCooldownEnd) return;
         cultivating = true;
         activeTechnique = tech;
         lastSpiritTick = now;
-        cultivationEndTime = now + 3600_000L;
+        cultivationEndTime = now + CULTIVATION_DURATION;
+        cultivationCooldownEnd = now + CULTIVATION_COOLDOWN;
     }
 
     public void cancelCultivation() {
         cultivating = false;
-        cultivationCooldownEnd = System.currentTimeMillis() + 3600_000L; // 1h
     }
 
     private void updateCultivation() {
@@ -495,7 +497,6 @@ public class Player extends GameActor implements DrawableEntity {
         if (!cultivating) return;
         if (now >= cultivationEndTime) {
             cultivating = false;
-            cultivationCooldownEnd = now + 3600_000L;
             return;
         }
         if (now - lastSpiritTick >= 1000) {

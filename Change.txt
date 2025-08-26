@@ -2,7 +2,7 @@ Cập nhật:
 - Thêm hệ thống kỹ năng cơ bản và lớp Skill.
 - Tạo công pháp tu luyện 4 phẩm cấp cùng sách học tương ứng.
 - Thêm đan dược tăng tốc tu luyện 4 phẩm cấp, hiệu lực 10 phút.
-- Nhân vật có thể tu luyện, kèm nút Huỷ và thời gian hồi chiêu 1 giờ.
+- Nhân vật có thể tu luyện, kèm nút Huỷ và thời gian hồi chiêu 2 giờ.
 - HUD hiển thị buff đan dược và nút hủy khi đang tu luyện.
 - Bảng thuộc tính có nút mở danh sách công pháp.
 - Định dạng file lưu tiến trình bổ sung dòng SKILL.
@@ -47,3 +47,8 @@ Sửa lỗi và cải tiến:
 - Tự động lưu hồ sơ mỗi 10 phút và khi thoát game.
 - Sửa lỗi không ghi lại chỉ số HEALTH/PEP/SPIRIT còn lại vào tệp lưu.
 - Cập nhật README mô tả cơ chế tự lưu.
+
+## 1.0.13
+- Sửa lỗi có thể nhấn tu luyện nhiều lần để kéo dài thời gian.
+- Hồi chiêu tu luyện bắt đầu từ lúc tu luyện và kéo dài 2 giờ.
+
