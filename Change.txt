@@ -42,3 +42,8 @@ Sửa lỗi và cải tiến:
 - Đảm bảo `Physique` luôn có giá trị hợp lệ và bảng thuộc tính không bị lỗi khi mở.
 - Tải hồ sơ sẽ tự tính lại yêu cầu SPIRIT nếu tệp lưu chứa giá trị không hợp lệ.
 - bug: sử dụng đan dược tăng SPIRIT x nhân 3 yêu cầu tăng như bình thường
+
+## 1.0.12
+- Thêm cơ chế tự lưu mỗi 10 phút và khi thoát game.
+- Đảm bảo HEALTH, PEP và SPIRIT còn lại được ghi vào tệp lưu.
+- Cập nhật README mô tả thay đổi.
