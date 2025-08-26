@@ -63,3 +63,8 @@ Sửa lỗi và cải tiến:
 - Thêm trang bị vào game
 - test sử dụng trang bị
 - bug lỗi chưa lưu trang bị đang sử dụng
+
+## 1.0.16
+- Lưu các trang bị đang mặc vào tệp `.txt` và đọc lại khi khởi động game.
+- Mỗi trang bị có mã định danh riêng để phân biệt thuộc tính.
+- Cập nhật README mô tả tính năng mới.

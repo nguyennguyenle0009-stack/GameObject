@@ -2,6 +2,8 @@ package game.entity.item;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.imageio.ImageIO;
 
 import game.entity.Player;
@@ -9,14 +11,22 @@ import game.enums.EquipType;
 
 /** Basic equipment item that can be equipped in a slot. */
 public class EquipmentItem extends Item {
+    private static final AtomicInteger ID_GEN = new AtomicInteger();
+
     private final EquipType type;
     private final String iconPath;
     private final BufferedImage icon;
+    private final String id;
 
     public EquipmentItem(String name, String desc, String iconPath, EquipType type) {
+        this(null, name, desc, iconPath, type);
+    }
+
+    public EquipmentItem(String id, String name, String desc, String iconPath, EquipType type) {
         super(name, desc, 1, 1);
         this.type = type;
         this.iconPath = iconPath;
+        this.id = (id != null) ? id : generateId(type);
         BufferedImage img = null;
         if (iconPath != null) {
             try {
@@ -28,8 +38,20 @@ public class EquipmentItem extends Item {
         this.icon = img;
     }
 
+    private static String generateId(EquipType type) {
+        return type.name() + String.format("#%07d", ID_GEN.incrementAndGet());
+    }
+
     public EquipType getType() {
         return type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getIconPath() {
+        return iconPath;
     }
 
     @Override
