@@ -11,9 +11,13 @@ public class MainGame {
 		GamePanel game = new GamePanel();
 		window.add(game);
 		window.pack(); // Use the JPanel component to determine window configuration
-		window.setLocationRelativeTo(null);
-		window.setVisible(true);
-	    game.setUpGame();
-		game.startGame();
-	}
+                window.setLocationRelativeTo(null);
+                window.setVisible(true);
+            game.setUpGame();
+                game.startGame();
+
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    game.getPlayer().stopAutoSave();
+                }));
+        }
 }
