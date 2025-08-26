@@ -6,6 +6,16 @@
 
 ## Cập nhật
 
+## [1.0.14]
+
+### Thêm
+- Khung trang bị nhân vật với 10 ô và hình nhân vật minh họa.
+- Kho đồ mặc định 30 ô, ô trống hiển thị nền trắng và cuộn theo tổng số ô hiện có.
+
+### Thay đổi
+- Bảng thuộc tính chuyển xuống dưới kho đồ và rộng ngang với kho.
+- Trang bị cộng chỉ số: mũ/áo/quần/giày +3 DEF, vũ khí +10 ATTACK, dây chuyền +10 SOULD, nhẫn +10 ô kho.
+
 ## [1.0.13]
 
 ### Sửa lỗi

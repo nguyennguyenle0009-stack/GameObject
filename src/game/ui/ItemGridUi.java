@@ -35,13 +35,15 @@ public class ItemGridUi {
 
     /**
      * Vẽ lưới item.
-     * @param items   danh sách toàn bộ item
-     * @param selected chỉ số item đang chọn (theo danh sách toàn bộ)
-     * @param hover    chỉ số item đang hover (theo danh sách toàn bộ)
-     * @param offset   vị trí bắt đầu hiển thị trong danh sách
+     *
+     * @param items    danh sách item hiện có
+     * @param selected chỉ số item đang chọn (toàn cục)
+     * @param hover    chỉ số item đang trỏ vào (toàn cục)
+     * @param offset   vị trí bắt đầu của trang hiện tại
+     * @param capacity tổng số ô tối đa của kho
      */
     public void draw(Graphics2D g2, int x, int y, List<Item> items,
-                     int selected, int hover, int offset) {
+                     int selected, int hover, int offset, int capacity) {
         int total = (items == null) ? 0 : items.size();
         Dimension d = getPreferredSize();
 
@@ -57,15 +59,22 @@ public class ItemGridUi {
             for (int c = 0; c < cols; c++) {
                 int xx = startX + c * (slotSize + gap);
 
-                // vẽ nền ô
-                g2.setColor(new Color(90,90,90,220));
+                int idx = offset + r * cols + c;
+                if (idx >= capacity) {
+                    g2.setColor(new Color(60,60,60,150));
+                    g2.fillRoundRect(xx, yy, slotSize, slotSize, 10, 10);
+                    g2.setColor(new Color(0,0,0,160));
+                    g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
+                    continue;
+                }
+
+                boolean hasItem = idx < total;
+                g2.setColor(hasItem ? new Color(90,90,90,220) : Color.WHITE);
                 g2.fillRoundRect(xx, yy, slotSize, slotSize, 10, 10);
-                // vẽ khung ô
                 g2.setColor(new Color(0,0,0,160));
                 g2.drawRoundRect(xx, yy, slotSize, slotSize, 10, 10);
 
-                int idx = offset + r * cols + c;
-                Item it = (idx < total) ? items.get(idx) : null;
+                Item it = hasItem ? items.get(idx) : null;
 
                 if (it != null) {
                     BufferedImage icon = it.getIcon();
@@ -101,12 +110,13 @@ public class ItemGridUi {
             }
         }
 
-        // Vẽ thanh cuộn nếu có nhiều item
+        // Vẽ thanh cuộn nếu có nhiều ô
         int visible = cols * rows;
-        if (total > visible) {
+        int totalSlots = Math.max(capacity, total);
+        if (totalSlots > visible) {
             int trackH = d.height - padding * 2;
-            int barH = Math.max(20, trackH * visible / total);
-            int maxOff = total - visible;
+            int barH = Math.max(20, trackH * visible / totalSlots);
+            int maxOff = totalSlots - visible;
             int barY = y + padding;
             if (maxOff > 0) {
                 barY += (trackH - barH) * offset / maxOff;

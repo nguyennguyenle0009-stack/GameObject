@@ -6,11 +6,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
 import game.entity.item.Item;
+import game.entity.item.EquipmentItem;
 import game.enums.Attr;
+import game.enums.EquipSlot;
 import game.main.GamePanel;
 
 /**
@@ -32,6 +35,9 @@ public class InventoryUi {
     private int contextSelection = 0;
     private int contextX, contextY;
     private java.awt.Rectangle skillBtn = new java.awt.Rectangle();
+    private Rectangle[] equipSlotRects = new Rectangle[EquipSlot.values().length];
+    private EquipSlot hoverEquip = null;
+    private EquipSlot contextEquipSlot = null;
 
     public InventoryUi(GamePanel gp) {
         this.gp = gp;
@@ -41,50 +47,130 @@ public class InventoryUi {
     public void draw(Graphics2D g2) {
         Font oldFont = g2.getFont();
         try {
-            int charH = gp.getTileSize() * 8;
-        Dimension d = itemGrid.getPreferredSize();
-        int gridX = gp.getTileSize() * 8; // default position with one tile gap after character panel
-        int gridY = gp.getTileSize() * 2;
-        // ensure grid within screen
-        if (gridX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
-            gridX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
-        }
+            Dimension gridDim = itemGrid.getPreferredSize();
+            Dimension equipDim = getEquipmentDim();
 
-        int outerX = gp.getTileSize() / 2;
-        int outerY = gridY - gp.getTileSize() / 2; // keep margin similar to original
-        int outerW = gridX + d.width + gp.getTileSize() / 2 - outerX;
-        int outerH = Math.max(charH, d.height) + gp.getTileSize();
-        lastGridX = gridX;
-        lastGridY = gridY;
-        lastDim.setSize(d);
-        HUDUtils.drawSubWindow(g2, outerX, outerY, outerW, outerH,
-                new Color(40,40,40,180), Color.YELLOW);
+            int equipX = gp.getTileSize();
+            int equipY = gp.getTileSize() * 2;
+            int gridX = equipX + equipDim.width + gp.getTileSize() / 2;
+            int gridY = equipY;
+            int attrY = gridY + gridDim.height + 10;
+            int attrH = gp.getTileSize() * 6;
 
-        // Draw character panel on the left
-        characterScreen(g2, gridY);
+            int outerX = gp.getTileSize() / 2;
+            int outerY = equipY - gp.getTileSize() / 2;
+            int totalRight = gridX + gridDim.width + gp.getTileSize() / 2;
+            int totalBottom = Math.max(equipY + equipDim.height, attrY + attrH) + gp.getTileSize() / 2;
+            int outerW = totalRight - outerX;
+            int outerH = totalBottom - outerY;
 
-        var items = gp.getPlayer().getBag().all();
-        handleInventoryInput(items, gridX, gridY);
-        int hoverLocal = computeSlotIndex(gridX, gridY, gp.getMousePosition());
-        hoverSlot = (hoverLocal >= 0) ? scrollOffset + hoverLocal : -1;
+            lastGridX = gridX;
+            lastGridY = gridY;
+            lastDim.setSize(gridDim);
 
-        itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot, scrollOffset);
+            HUDUtils.drawSubWindow(g2, outerX, outerY, outerW, outerH,
+                    new Color(40,40,40,180), Color.YELLOW);
 
-        int infoIdx = hoverSlot;
-        if (infoIdx >= 0 && infoIdx < items.size()) {
-            Point m = gp.getMousePosition();
-            int tipX = (m != null ? m.x + 15 : gridX + d.width + 10);
-            int tipY = (m != null ? m.y + 15 : gridY);
-            drawItemTooltip(g2, tipX, tipY, items.get(infoIdx));
-        }
+            drawEquipmentPanel(g2, equipX, equipY);
 
-        drawContextMenu(g2);
+            var items = gp.getPlayer().getBag().all();
+            handleInventoryInput(items, gridX, gridY);
+            int hoverLocal = computeSlotIndex(gridX, gridY, gp.getMousePosition(), scrollOffset, gp.getPlayer().getBag().capacity());
+            hoverSlot = (hoverLocal >= 0) ? scrollOffset + hoverLocal : -1;
+
+            itemGrid.draw(g2, gridX, gridY, items, selectedSlot, hoverSlot, scrollOffset, gp.getPlayer().getBag().capacity());
+            characterScreen(g2, gridX, attrY, gridDim.width);
+
+            int infoIdx = hoverSlot;
+            if (infoIdx >= 0 && infoIdx < items.size()) {
+                Point m = gp.getMousePosition();
+                int tipX = (m != null ? m.x + 15 : gridX + gridDim.width + 10);
+                int tipY = (m != null ? m.y + 15 : gridY);
+                drawItemTooltip(g2, tipX, tipY, items.get(infoIdx));
+            }
+
+            if (hoverEquip != null) {
+                EquipmentItem eq = gp.getPlayer().getEquipment(hoverEquip);
+                if (eq != null) {
+                    Point m = gp.getMousePosition();
+                    int tipX = (m != null ? m.x + 15 : equipX + equipDim.width + 10);
+                    int tipY = (m != null ? m.y + 15 : equipY);
+                    drawItemTooltip(g2, tipX, tipY, eq);
+                }
+            }
+
+            drawContextMenu(g2);
         } finally {
             g2.setFont(oldFont);
         }
     }
 
-    private int computeSlotIndex(int originX, int originY, Point mouse) {
+    private Dimension getEquipmentDim() {
+        int slot = itemGrid.getSlotSize();
+        int gap = itemGrid.getGap();
+        int padding = itemGrid.getPadding();
+        int charW = slot * 3;
+        int cols = 2;
+        int rows = 5;
+        int width = charW + gap + cols * slot + (cols - 1) * gap + padding * 2;
+        int height = Math.max(charW, rows * slot + (rows - 1) * gap) + padding * 2;
+        return new Dimension(width, height);
+    }
+
+    private void drawEquipmentPanel(Graphics2D g2, int x, int y) {
+        Dimension d = getEquipmentDim();
+        int slot = itemGrid.getSlotSize();
+        int gap = itemGrid.getGap();
+        int padding = itemGrid.getPadding();
+
+        HUDUtils.drawSubWindow(g2, x, y, d.width, d.height,
+                new Color(20, 80, 160, 180), new Color(0, 70, 120));
+
+        int charSize = slot * 3;
+        int charX = x + padding;
+        int charY = y + padding;
+        g2.setColor(new Color(150, 0, 150, 200));
+        g2.fillRect(charX, charY, charSize, charSize);
+
+        int startX = charX + charSize + gap;
+        int startY = y + padding;
+        EquipSlot[] order = {
+                EquipSlot.HELMET, EquipSlot.ARMOR, EquipSlot.SHOES, EquipSlot.PANTS, EquipSlot.NECKLACE,
+                EquipSlot.AMULET, EquipSlot.RING1, EquipSlot.RING2, EquipSlot.WEAPON1, EquipSlot.WEAPON2 };
+        Point m = gp.getMousePosition();
+        hoverEquip = null;
+        for (int i = 0; i < order.length; i++) {
+            int col = i / 5;
+            int row = i % 5;
+            int xx = startX + col * (slot + gap);
+            int yy = startY + row * (slot + gap);
+            Rectangle rect = new Rectangle(xx, yy, slot, slot);
+            equipSlotRects[i] = rect;
+            g2.setColor(new Color(90,90,90,220));
+            g2.fillRoundRect(xx, yy, slot, slot, 10, 10);
+            g2.setColor(new Color(0,0,0,160));
+            g2.drawRoundRect(xx, yy, slot, slot, 10, 10);
+
+            EquipmentItem eq = gp.getPlayer().getEquipment(order[i]);
+            if (eq != null) {
+                var icon = eq.getIcon();
+                if (icon != null) {
+                    int pad = 4, iw = slot - pad*2, ih = slot - pad*2;
+                    g2.drawImage(icon, xx + pad, yy + pad, iw, ih, null);
+                }
+            }
+
+            if (m != null && rect.contains(m)) {
+                g2.setColor(new Color(255,255,255,120));
+                g2.setStroke(new BasicStroke(3f));
+                g2.drawRoundRect(xx, yy, slot, slot, 10, 10);
+                g2.setStroke(new BasicStroke(1f));
+                hoverEquip = order[i];
+            }
+        }
+    }
+
+    private int computeSlotIndex(int originX, int originY, Point mouse, int offset, int capacity) {
         if (mouse == null) return -1;
         int cols = itemGrid.getCols();
         int rows = itemGrid.getRows();
@@ -95,10 +181,13 @@ public class InventoryUi {
         int startY = originY + padding;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
+                int idx = r * cols + c;
+                int global = offset + idx;
+                if (global >= capacity) continue;
                 int xx = startX + c * (slotSize + gap);
                 int yy = startY + r * (slotSize + gap);
                 if (mouse.x >= xx && mouse.x < xx + slotSize && mouse.y >= yy && mouse.y < yy + slotSize) {
-                    return r * cols + c;
+                    return idx;
                 }
             }
         }
@@ -110,6 +199,7 @@ public class InventoryUi {
         int cols = itemGrid.getCols();
         int rows = itemGrid.getRows();
         int visible = cols * rows;
+        int capacity = gp.getPlayer().getBag().capacity();
         if (contextVisible) {
             if (kh.isUpPressed()) {
                 contextSelection = (contextSelection - 1 + contextOptions.length) % contextOptions.length;
@@ -120,11 +210,17 @@ public class InventoryUi {
                 kh.setDownPressed(false);
             }
             if (kh.isEnterPressed()) {
-                if (selectedSlot >= 0 && selectedSlot < items.size()) {
+                if (contextEquipSlot != null) {
+                    if ("Unequip".equalsIgnoreCase(contextOptions[contextSelection])) {
+                        EquipmentItem eq = gp.getPlayer().unequip(contextEquipSlot);
+                        if (eq != null) gp.getPlayer().getBag().add(eq);
+                    }
+                } else if (selectedSlot >= 0 && selectedSlot < items.size()) {
                     Item it = items.get(selectedSlot);
                     it.performAction(gp.getPlayer(), contextOptions[contextSelection]);
                 }
                 contextVisible = false;
+                contextEquipSlot = null;
                 kh.setEnterPressed(false);
             }
             return;
@@ -135,7 +231,7 @@ public class InventoryUi {
         if (kh.isLeftPressed()) { selectedSlot--; kh.setLeftPressed(false); }
         if (kh.isRightPressed()) { selectedSlot++; kh.setRightPressed(false); }
 
-        int maxIndex = Math.max(0, items.size() - 1);
+        int maxIndex = Math.max(0, capacity - 1);
         if (selectedSlot < 0) selectedSlot = 0;
         if (selectedSlot > maxIndex) selectedSlot = maxIndex;
 
@@ -145,7 +241,7 @@ public class InventoryUi {
         } else if (selectedSlot >= scrollOffset + visible) {
             scrollOffset = (selectedSlot / cols - rows + 1) * cols;
         }
-        int maxOffset = Math.max(0, items.size() - visible);
+        int maxOffset = Math.max(0, capacity - visible);
         if (scrollOffset > maxOffset) scrollOffset = maxOffset;
         if (scrollOffset < 0) scrollOffset = 0;
 
@@ -169,6 +265,7 @@ public class InventoryUi {
         contextOptions = it.getActions();
         contextSelection = 0;
         contextVisible = true;
+        contextEquipSlot = null;
     }
 
     private void drawContextMenu(Graphics2D g2) {
@@ -212,7 +309,7 @@ public class InventoryUi {
         int cols = itemGrid.getCols();
         int rows = itemGrid.getRows();
         int visible = cols * rows;
-        int total = gp.getPlayer().getBag().all().size();
+        int total = gp.getPlayer().getBag().capacity();
         int maxOffset = Math.max(0, total - visible);
         scrollOffset += Integer.signum(rotation) * cols;
         if (scrollOffset < 0) scrollOffset = 0;
@@ -224,10 +321,7 @@ public class InventoryUi {
      *
      * @param topY starting Y position of the box
      */
-    private void characterScreen(Graphics2D g2, int topY) {
-        int x = gp.getTileSize();
-        int y = topY;
-        int width = x * 5;
+    private void characterScreen(Graphics2D g2, int x, int y, int width) {
         int height = gp.getTileSize() * 6;
         drawSubWindow(x, y, width, height, g2);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 12f));
@@ -273,19 +367,20 @@ public class InventoryUi {
     }
 
     public boolean handleMousePress(int mx, int my, int button) {
-        int baseX = gp.getTileSize() * 8;
-        Dimension d = itemGrid.getPreferredSize();
-        if (baseX + d.width > gp.getScreenWidth() - gp.getTileSize() / 2) {
-            baseX = gp.getScreenWidth() - d.width - gp.getTileSize() / 2;
-        }
-        int baseY = gp.getTileSize() * 2; // match grid position in draw()
+        Dimension gridDim = itemGrid.getPreferredSize();
+        Dimension equipDim = getEquipmentDim();
+        int equipX = gp.getTileSize();
+        int equipY = gp.getTileSize() * 2;
+        int baseX = equipX + equipDim.width + gp.getTileSize() / 2;
+        int baseY = equipY; // match grid position in draw()
+
         if (skillBtn.contains(mx, my)) {
             gp.getUi().getSkillUi().toggle();
             return true;
         }
 
-        int local = computeSlotIndex(baseX, baseY, new Point(mx, my));
         var items = gp.getPlayer().getBag().all();
+        int local = computeSlotIndex(baseX, baseY, new Point(mx, my), scrollOffset, gp.getPlayer().getBag().capacity());
         if (local >= 0 && local < itemGrid.getCols() * itemGrid.getRows()) {
             int global = scrollOffset + local;
             selectedSlot = global;
@@ -296,6 +391,27 @@ public class InventoryUi {
             }
             return true;
         }
+
+        // Check equipment slots
+        for (int i = 0; i < equipSlotRects.length; i++) {
+            Rectangle r = equipSlotRects[i];
+            if (r != null && r.contains(mx, my)) {
+                EquipSlot slot = EquipSlot.values()[i];
+                EquipmentItem eq = gp.getPlayer().getEquipment(slot);
+                if (button == MouseEvent.BUTTON3 && eq != null) {
+                    contextX = mx;
+                    contextY = my;
+                    contextOptions = new String[] { "Unequip" };
+                    contextSelection = 0;
+                    contextVisible = true;
+                    contextEquipSlot = slot;
+                } else {
+                    contextVisible = false;
+                }
+                return true;
+            }
+        }
+
         contextVisible = false;
         return false;
     }
