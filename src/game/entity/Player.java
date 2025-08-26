@@ -851,10 +851,16 @@ public class Player extends GameActor implements DrawableEntity {
                     last = i;
                 }
             }
-            if (last == -1 || last + 1 >= lines.size()) return true;
+            if (last == -1 || last + 1 >= lines.size()) {
+                refreshStats();
+                return true;
+            }
 
             List<String> block = lines.subList(last, lines.size());
-            if (block.size() < 2) return true;
+            if (block.size() < 2) {
+                refreshStats();
+                return true;
+            }
 
             String realmLine = block.get(1);
             String realmPart = realmLine.substring("cảnh giới ".length(), realmLine.indexOf(" - ")).trim();
@@ -1155,7 +1161,12 @@ public class Player extends GameActor implements DrawableEntity {
     private void refreshStats() {
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
-            atts().setMax(a, baseAtts.getMax(a));
+            int max = baseAtts.getMax(a);
+            if (max > 0) {
+                atts().setMax(a, max);
+            } else {
+                atts().setMax(a, Integer.MAX_VALUE);
+            }
         }
         for (EquipmentItem eq : equipment.values()) {
             switch (eq.getType()) {

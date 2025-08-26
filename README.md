@@ -6,6 +6,11 @@
 
 ## Cập nhật
 
+## [1.0.19]
+
+### Sửa lỗi
+- Khắc phục lỗi đọc thuộc tính khiến ATTACK và DEF hiển thị 0 và quái không nhận sát thương.
+
 ## [1.0.18]
 
 ### Thêm
