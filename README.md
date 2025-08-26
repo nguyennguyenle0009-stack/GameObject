@@ -47,6 +47,12 @@
 - Khi rê chuột vào item, HUD và khung công pháp không còn bị phóng to chữ.
 - HUD chỉ hiển thị tên và thời gian hiệu lực của đan dược hoặc tu luyện, bỏ dòng hồi chiêu.
 
+## [1.0.13]
+
+### Sửa lỗi
+- Không còn có thể nhấp tu luyện nhiều lần để kéo dài thời gian.
+- Hồi chiêu tu luyện bắt đầu ngay khi tu luyện và kéo dài 2 giờ.
+
 ## [1.0.12]
 
 ### Thêm

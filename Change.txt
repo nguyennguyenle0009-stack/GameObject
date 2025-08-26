@@ -47,3 +47,7 @@ Sửa lỗi và cải tiến:
 - Tự động lưu hồ sơ mỗi 10 phút và khi thoát game.
 - Sửa lỗi không ghi lại chỉ số HEALTH/PEP/SPIRIT còn lại vào tệp lưu.
 - Cập nhật README mô tả cơ chế tự lưu.
+
+## 1.0.13
+- Sửa lỗi có thể nhấp tu luyện nhiều lần để kéo dài thời gian.
+- Hồi chiêu tu luyện bắt đầu khi bắt đầu tu luyện và kéo dài 2 giờ.
