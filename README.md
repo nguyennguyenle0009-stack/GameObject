@@ -6,6 +6,21 @@
 
 ## Cập nhật
 
+## [1.0.18]
+
+### Thêm
+- Quái vật rơi vật phẩm 100% theo danh sách định nghĩa và xuất hiện ngẫu nhiên quanh vị trí chết.
+- Vật phẩm rơi tồn tại trên đất, người chơi phải click chuột để nhặt.
+- Item tự động biến mất sau 2 phút nếu không được nhặt.
+
+### Sửa lỗi
+- Khi kho đồ đầy và cố nhặt vật phẩm, trò chơi hiển thị thông báo "Khung vật phẩm đầy".
+
+## [1.0.19]
+
+### Sửa lỗi
+- Thuộc tính ATTACK và DEF hiển thị 0 khiến nhân vật không gây sát thương khi tấn công.
+
 ## [1.0.17]
 
 ### Sửa lỗi

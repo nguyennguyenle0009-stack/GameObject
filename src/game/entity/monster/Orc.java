@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.CameraHelper;
+import game.entity.item.Item;
 
 /**
  * Quái vật Orc, đuổi theo và tấn công cận chiến người chơi.
@@ -48,6 +49,13 @@ public class Orc extends Monster {
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
         detectionRange = 8 * gp.getTileSize();
         loadImages();
+    }
+
+    @Override
+    protected java.util.List<Item> getDropItems() {
+        java.util.List<Item> drops = new java.util.ArrayList<>();
+        drops.add(new game.entity.item.elixir.HealthPotion(50, 1));
+        return drops;
     }
 
     /** Tải hình ảnh di chuyển và tấn công */

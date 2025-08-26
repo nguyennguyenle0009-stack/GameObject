@@ -38,6 +38,32 @@ public class Inventory {
 
         // Nếu vẫn còn dư thì kho đã đầy -> bỏ phần dư
     }
+
+    /**
+     * Kiểm tra xem item có thể thêm hoàn toàn vào kho hay không.
+     *
+     * @param incoming item cần kiểm tra
+     * @return true nếu toàn bộ item có thể thêm, ngược lại false
+     */
+    public boolean canAdd(Item incoming) {
+        if (incoming == null || incoming.getQuantity() <= 0) return true;
+
+        int remain = incoming.getQuantity();
+
+        // 1) Tính phần có thể gộp vào các stack hiện có
+        for (Item it : items) {
+            if (!it.isSameStack(incoming)) continue;
+            int space = it.getMaxStack() - it.getQuantity();
+            if (space <= 0) continue;
+            remain -= Math.min(space, remain);
+            if (remain == 0) return true;
+        }
+
+        // 2) Kiểm tra số ô trống còn lại đủ chứa phần dư hay không
+        int freeSlots = capacity - items.size();
+        int neededSlots = (int) Math.ceil(remain / (double) incoming.getMaxStack());
+        return freeSlots >= neededSlots;
+    }
     
         public boolean remove(Item i) {
                 return items.remove(i);

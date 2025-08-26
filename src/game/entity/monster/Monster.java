@@ -312,18 +312,26 @@ public abstract class Monster extends GameActor {
     }
 
     /**
-     * Rơi vật phẩm khi chết.
+     * Rơi vật phẩm khi chết (100% cho danh sách trả về từ {@link #getDropItems()}).
+     * Vật phẩm xuất hiện ngẫu nhiên quanh vị trí quái vật trong bán kính 20 pixel.
      */
     public void dropItem() {
-        if (random.nextInt(100) < getDropChance()) {
-        	 gp.getPlayer().addItem(new game.entity.item.elixir.HealthPotion(30, 1));
+        java.util.List<game.entity.item.Item> drops = getDropItems();
+        for (game.entity.item.Item item : drops) {
+            int dx = random.nextInt(41) - 20; // [-20,20]
+            int dy = random.nextInt(41) - 20;
+            int x = getWorldX() + dx;
+            int y = getWorldY() + dy;
+            gp.addDroppedItem(new game.object.OBJ_DroppedItem(item, x, y, gp));
         }
     }
 
     /**
-     * @return tỉ lệ rơi vật phẩm
+     * Danh sách vật phẩm sẽ rơi khi quái chết.
      */
-    protected int getDropChance() { return 30; }
+    protected java.util.List<game.entity.item.Item> getDropItems() {
+        return java.util.Collections.emptyList();
+    }
 
     /**
      * @return thời gian hồi chiêu tấn công

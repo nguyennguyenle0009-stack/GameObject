@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import game.enums.Attr;
 import game.main.GamePanel;
 import game.util.CameraHelper;
+import game.entity.item.Item;
 
 /**
  * Quái vật Skeleton Lord.
@@ -48,6 +49,14 @@ public class SkeletonLord extends Monster {
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
         detectionRange = 10 * gp.getTileSize();
         loadImages();
+    }
+
+    @Override
+    protected java.util.List<Item> getDropItems() {
+        java.util.List<Item> drops = new java.util.ArrayList<>();
+        drops.add(new game.entity.item.elixir.SpiritPotion(200, 1));
+        drops.add(new game.entity.item.elixir.HealthPotion(50, 2));
+        return drops;
     }
 
     /** Tải ảnh di chuyển và tấn công */

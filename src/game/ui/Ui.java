@@ -42,6 +42,7 @@ public class Ui {
     public void showMessage(String text) {
         message = text;
         messageOn = true;
+        messageCouter = 0;
     }
 
     public void draw(Graphics2D g2) {
@@ -67,6 +68,18 @@ public class Ui {
             g2.setColor(new Color(255, 0, 0, 100));
             g2.fillRect(0, 0, gp.getScreenWidth(), gp.getScreenHeight());
             damageCounter--;
+        }
+        if (messageOn) {
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20F));
+            int x = gp.getScreenWidth() - g2.getFontMetrics().stringWidth(message) - 20;
+            int y = gp.getScreenHeight() / 3;
+            g2.setColor(Color.WHITE);
+            g2.drawString(message, x, y);
+            messageCouter++;
+            if (messageCouter > 180) {
+                messageOn = false;
+                messageCouter = 0;
+            }
         }
     }
 

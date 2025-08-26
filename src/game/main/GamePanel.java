@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,6 +21,7 @@ import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;
 import game.object.ObjectManager;
 import game.object.SuperObject;
+import game.object.OBJ_DroppedItem;
 import game.tile.TileManager;
 import game.ui.Ui;
 import game.entity.monster.MonsterZone;
@@ -52,6 +54,7 @@ public class GamePanel extends JPanel implements Runnable {
         private final List<SuperObject> objects = new ArrayList<>();
         private final List<Entity> npcs = new ArrayList<>();
     private final List<Entity> monsters = new ArrayList<>();
+    private final List<OBJ_DroppedItem> droppedItems = new ArrayList<>();
     private final ObjectManager objectManager = new ObjectManager(this);
     private final Ui ui = new Ui(this);
     private final List<MonsterZone> monsterZones = new ArrayList<>();
@@ -131,6 +134,7 @@ public class GamePanel extends JPanel implements Runnable {
                             m.update();
                         }
                     }
+                    droppedItems.removeIf(OBJ_DroppedItem::isExpired);
                 }
                 if(gameState == pauseState) {}
         }
@@ -144,9 +148,10 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 		tileManager.draw(g2);
 		//Check object
-		List<DrawableEntity> drawList = new ArrayList<>();
+                List<DrawableEntity> drawList = new ArrayList<>();
 
-		drawList.addAll(objects);
+                drawList.addAll(objects);
+                drawList.addAll(droppedItems);
                 drawList.addAll(npcs);
                 drawList.addAll(monsters);
                 drawList.add(player);
@@ -184,6 +189,24 @@ public class GamePanel extends JPanel implements Runnable {
     public List<Entity> getNpcs() { return npcs; }
     public List<Entity> getMonsters() { return monsters; }
     public List<MonsterZone> getMonsterZones() { return monsterZones; }
+
+    public List<OBJ_DroppedItem> getDroppedItems() { return droppedItems; }
+    public void addDroppedItem(OBJ_DroppedItem item) { droppedItems.add(item); }
+
+    /** Tìm item rơi tại vị trí thế giới đã cho. */
+    public OBJ_DroppedItem getDroppedItemAt(int worldX, int worldY) {
+        for (OBJ_DroppedItem di : droppedItems) {
+            Rectangle r = new Rectangle(
+                    di.getWorldX() + di.getCollisionArea().x,
+                    di.getWorldY() + di.getCollisionArea().y,
+                    di.getCollisionArea().width,
+                    di.getCollisionArea().height);
+            if (r.contains(worldX, worldY)) {
+                return di;
+            }
+        }
+        return null;
+    }
 
 	public int getGameState() { return gameState; }
 	public GamePanel setGameState(int gameState) { this.gameState = gameState; return this; }
