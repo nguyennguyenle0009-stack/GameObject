@@ -92,6 +92,10 @@ public class Player extends GameActor implements DrawableEntity {
     private int pillSpiritBonus = 0;
     private long pillBuffEnd = 0;
 
+    // Thời gian lưu tự động
+    private static final long AUTO_SAVE_INTERVAL_MS = 10 * 60 * 1000; // 10 phút
+    private long lastAutoSaveTime = System.currentTimeMillis();
+
 	public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
@@ -151,8 +155,7 @@ public class Player extends GameActor implements DrawableEntity {
             addItem(new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, 1));
             addItem(new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, 1));
 
-            logRealmState();
-            saveProfile();
+            saveProgress();
         }
 
         setScaleEntityX(gp.getTileSize());
@@ -188,9 +191,10 @@ public class Player extends GameActor implements DrawableEntity {
 		}
 	}
 	
-	@Override
+        @Override
         public void update() {
             updateCultivation();
+            autoSaveCheck();
             if (gp.keyH.isiPressed()) return;
             if (invincible) {
                 invincibleCounter++;
@@ -439,8 +443,7 @@ public class Player extends GameActor implements DrawableEntity {
         techniques.add(tech);
         // Lưu lại tiến trình ngay sau khi học để đảm bảo
         // công pháp tồn tại khi thoát game.
-        logRealmState();
-        saveProfile();
+        saveProgress();
     }
 
     // Công pháp được gán vào phím nhanh (tạm thời lưu 1 kỹ năng).
@@ -552,8 +555,7 @@ public class Player extends GameActor implements DrawableEntity {
         }
         // Cập nhật max Spirit cho HUD
         atts().setMax(Attr.SPIRIT, spiritToNextLevel);
-        logRealmState();
-        saveProfile();
+        saveProgress();
     }
 
     /**
@@ -658,6 +660,21 @@ public class Player extends GameActor implements DrawableEntity {
         sb.append("AFFINITY: " + getAffinityNames() + "\n");
         sb.append("SKILL: " + getSkillSummary() + "\n");
         realmLog.add(sb.toString());
+    }
+
+    /** Lưu trạng thái hiện tại của người chơi vào tệp hồ sơ. */
+    public void saveProgress() {
+        logRealmState();
+        saveProfile();
+        lastAutoSaveTime = System.currentTimeMillis();
+    }
+
+    /** Kiểm tra và thực hiện lưu tự động định kỳ. */
+    private void autoSaveCheck() {
+        long now = System.currentTimeMillis();
+        if (now - lastAutoSaveTime >= AUTO_SAVE_INTERVAL_MS) {
+            saveProgress();
+        }
     }
 
     private void saveProfile() {
