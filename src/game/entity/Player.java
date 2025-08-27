@@ -1159,6 +1159,12 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     private void refreshStats() {
+        // Lưu lại các giá trị động trước khi làm mới
+        int curHealth = atts().get(Attr.HEALTH);
+        int curPep = atts().get(Attr.PEP);
+        int curSpirit = atts().get(Attr.SPIRIT);
+
+        // Sao chép chỉ số gốc làm nền tảng
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
             int max = baseAtts.getMax(a);
@@ -1168,6 +1174,8 @@ public class Player extends GameActor implements DrawableEntity {
                 atts().setMax(a, Integer.MAX_VALUE);
             }
         }
+
+        // Cộng thêm chỉ số từ trang bị
         for (EquipmentItem eq : equipment.values()) {
             switch (eq.getType()) {
                 case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
@@ -1176,6 +1184,15 @@ public class Player extends GameActor implements DrawableEntity {
                 default -> {}
             }
         }
+
+        // Phục hồi lại HEALTH/PEP/SPIRIT và đồng bộ với baseAtts
+        atts().set(Attr.HEALTH, Math.min(curHealth, atts().getMax(Attr.HEALTH)));
+        atts().set(Attr.PEP, Math.min(curPep, atts().getMax(Attr.PEP)));
+        atts().set(Attr.SPIRIT, Math.min(curSpirit, atts().getMax(Attr.SPIRIT)));
+
+        baseAtts.set(Attr.HEALTH, atts().get(Attr.HEALTH));
+        baseAtts.set(Attr.PEP, atts().get(Attr.PEP));
+        baseAtts.set(Attr.SPIRIT, atts().get(Attr.SPIRIT));
     }
 
     // -------- Equipment handling ---------
@@ -1213,5 +1230,6 @@ public class Player extends GameActor implements DrawableEntity {
     public int getScreenY() { return screenY; }
 
     public static int getInteractionRange() { return INTERACTION_RANGE; }
+    public Attributes baseAtts() { return baseAtts; }
     public Inventory getBag() { return bag; }
 }

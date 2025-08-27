@@ -36,6 +36,8 @@ public class HealthPotion extends Item {
         int max = p.atts().getMax(Attr.HEALTH);
         int newHealth = Math.min(current + healthAmount, max);
         p.atts().set(Attr.HEALTH, newHealth);
+        // Đồng bộ máu gốc để tránh trang bị làm thay đổi máu
+        p.baseAtts().set(Attr.HEALTH, newHealth);
         decreaseQuantity(1);
 }
 	
