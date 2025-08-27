@@ -40,6 +40,12 @@
 - `PlayerDAO.saveInventory` tự thêm bản ghi thiếu hoặc bỏ qua loại không hỗ trợ.
 - `Player` và `Monster` đăng ký vật phẩm mới vào DB khi tạo ngoài template.
 
+## [1.0.26]
+
+### Thay đổi
+- Chuyển cơ chế lưu trực tiếp sang lưu tạm trong bộ nhớ và chỉ ghi xuống cơ sở dữ liệu
+  mỗi 10 phút hoặc khi thoát game.
+
 ## [1.0.20]
 
 ### Thêm

@@ -1,3 +1,5 @@
-1. Tạo nhân vật mới, kiểm tra các bình HP/SP mặc định được thêm vào bảng `Items` và `ItemStatMods`.
-2. Hạ gục quái vật để rơi bình máu, xác minh item xuất hiện trong `Items` nếu chưa có.
-3. Lưu game và kiểm tra `PlayerInventory` chỉ chứa các item đã có bản ghi hợp lệ.
+1. Khởi động game, thêm hoặc sử dụng một vài vật phẩm rồi thoát ngay lập tức;
+   kiểm tra trong database rằng thay đổi đã được lưu nhờ cơ chế flush khi thoát.
+2. Chạy game lại và xác nhận dữ liệu người chơi được tải đúng từ database.
+3. Để game chạy hơn 10 phút mà không thoát; sau đó kiểm tra database để
+   xác nhận auto-save định kỳ hoạt động.
