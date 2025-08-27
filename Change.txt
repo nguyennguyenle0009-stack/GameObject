@@ -100,3 +100,6 @@ Sửa lỗi và cải tiến:
 - Loại bỏ bảng `PlayerProfile`, thêm `PlayerDAO` và `ItemDAO` để đọc/ghi các bảng chuẩn hóa.
 - `EquipmentItem` chứa `EnumMap<Attr,Integer>` lưu cộng chỉ số.
 - `Attributes` hỗ trợ giá trị gốc, cộng thêm và hàm `addBonus`/`getFinal`.
+
+## 1.0.24
+- Lưu trạng thái người chơi vào bộ nhớ tạm bằng `TempPlayerStore` và ghi xuống cơ sở dữ liệu định kỳ 10 phút hoặc khi thoát game.

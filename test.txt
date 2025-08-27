@@ -1,0 +1,4 @@
+Các trường hợp cần bạn kiểm thử thêm:
+1. Khởi động game nhiều lần để xác nhận dữ liệu được tải từ cơ sở dữ liệu.
+2. Chơi game và để chạy hơn 10 phút, sau đó kiểm tra cơ sở dữ liệu đã nhận cập nhật tự động.
+3. Thoát game ngay sau khi thay đổi trạng thái (nhặt item, thay trang bị) và xác nhận dữ liệu được ghi xuống cơ sở dữ liệu.

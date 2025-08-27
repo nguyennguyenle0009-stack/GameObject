@@ -1,0 +1,3 @@
+Các trường hợp đã kiểm thử:
+1. Biên dịch toàn bộ mã nguồn bằng lệnh `javac` để đảm bảo không lỗi cú pháp.
+2. Chạy `demo.StoreFlushTest` tạo người chơi, lưu tạm và gọi `stopAutoSave()` để kiểm tra việc flush xuống cơ sở dữ liệu khi thoát game.

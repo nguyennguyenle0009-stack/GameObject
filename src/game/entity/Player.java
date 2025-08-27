@@ -29,6 +29,7 @@ import game.entity.item.EquipmentItem;
 import game.entity.attributes.Attributes;
 import game.db.ItemDAO;
 import game.db.PlayerDAO;
+import game.db.TempPlayerStore;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Affinity;
@@ -56,6 +57,7 @@ public class Player extends GameActor implements DrawableEntity {
     private final Attributes baseAtts = new Attributes();
     private final PlayerDAO playerDAO = new PlayerDAO();
     private final ItemDAO itemDAO = new ItemDAO();
+    private final TempPlayerStore tempStore = new TempPlayerStore();
     private boolean invincible = false;
     private int invincibleCounter = 0;
     private final Rectangle attackArea;
@@ -709,16 +711,16 @@ public class Player extends GameActor implements DrawableEntity {
 
     public synchronized void saveState() {
         logRealmState();
-        playerDAO.save(this);
+        tempStore.update(this);
     }
 
     private void startAutoSave() {
-        autoSaveExecutor.scheduleAtFixedRate(this::saveState, 10, 10, TimeUnit.MINUTES);
+        autoSaveExecutor.scheduleAtFixedRate(tempStore::flush, 10, 10, TimeUnit.MINUTES);
     }
 
     public void stopAutoSave() {
         autoSaveExecutor.shutdownNow();
-        saveState();
+        tempStore.flush();
     }
 
     private Physique parsePhysique(String display) {
