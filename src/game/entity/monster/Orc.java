@@ -73,8 +73,8 @@ public class Orc extends Monster {
     @Override
     protected java.util.List<game.entity.item.Item> createDropItems() {
         java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
-        list.add(new game.entity.item.MaterialItem("ORC_BONE", "Xương Orc", "Bone", "/data/item/orc/ORC_Bone.png", 1, 20));
-        list.add(new game.entity.item.MaterialItem("ORC_FLESH", "Thịt Orc", "Flesh", "/data/item/orc/ORC_Flesh.png", 1, 20));
+        list.add(new game.entity.item.MaterialItem("Xương Orc", "Bone", "/data/item/orc/ORC_Bone.png", 1, 20));
+        list.add(new game.entity.item.MaterialItem("Thịt Orc", "Flesh", "/data/item/orc/ORC_Flesh.png", 1, 20));
         return list;
     }
 

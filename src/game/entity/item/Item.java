@@ -4,19 +4,13 @@ import java.awt.image.BufferedImage;
 
 import game.entity.Player;
 
-/**
- * Base class for all items persisted in the database.
- */
 public abstract class Item {
-    /** Identifier in the {@code Items} table. */
-    private final String id;
     private final String name;
     private final String decription;
     private int quantity;
     private final int maxStack;
 
-    public Item(String id, String name, String decription, int quantity, int maxStack) {
-            this.id = id;
+    public Item(String name, String decription, int quantity, int maxStack) {
             this.name = name;
             this.decription = decription;
             this.quantity = quantity;
@@ -70,5 +64,4 @@ public abstract class Item {
     public int getQuantity() { return quantity; }
     public Item setQuantity(int quantity) { this.quantity = quantity; return this; }
     public int getMaxStack() { return maxStack; }
-    public String getId() { return id; }
 }

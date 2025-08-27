@@ -23,8 +23,8 @@ public class CultivationBook extends Item {
         }
     }
 
-    public CultivationBook(String id, CultivationTechnique tech) {
-        super(id, "Sách " + tech.getName(), "Học " + tech.getName(), 1, 1);
+    public CultivationBook(CultivationTechnique tech) {
+        super("Sách " + tech.getName(), "Học " + tech.getName(), 1, 1);
         this.technique = tech;
     }
 
@@ -36,7 +36,7 @@ public class CultivationBook extends Item {
 
     @Override
     public Item copyWithQuantity(int qty) {
-        CultivationBook b = new CultivationBook(getId(), technique);
+        CultivationBook b = new CultivationBook(technique);
         b.setQuantity(qty);
         return b;
     }

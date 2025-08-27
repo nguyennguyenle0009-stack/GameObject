@@ -1,175 +1,86 @@
 package game.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.EnumMap;
-import java.util.Map;
 
 import game.entity.item.EquipmentItem;
 import game.entity.item.Item;
-import game.entity.item.MaterialItem;
+import game.entity.item.book.CultivationBook;
+import game.entity.item.elixir.CultivationPill;
 import game.entity.item.elixir.HealthPotion;
 import game.entity.item.elixir.SpiritPotion;
+import game.entity.skill.CultivationTechnique;
 import game.enums.Attr;
+import game.enums.EquipSlot;
 import game.enums.EquipType;
+import game.enums.SkillGrade;
 
 /**
- * Data access helper for items and their stat modifiers.
+ * DAO responsible for constructing items based on SQL definitions.
+ * Currently uses in-memory fallbacks until proper queries are implemented.
  */
 public class ItemDAO {
 
-    private static final String ITEMS = "Items";
-    private static final String ITEM_MODS = "ItemStatMods";
-
-    private ItemDAO() {}
-
-    /**
-     * Check if an item already exists in the {@code Items} table.
-     */
-    public static boolean exists(String itemId) throws SQLException, ClassNotFoundException {
-        try (Connection conn = DBAccount.getConnectDB()) {
-            return exists(conn, itemId);
-        }
+    /** Create an item instance by name. */
+    public Item createItemByName(String name, int qty) {
+        // TODO: Replace switch with SQL-backed lookup.
+        return switch (name) {
+            case "Đan dược hồi máu" -> new HealthPotion(50, qty);
+            case "Đan dược tinh thần" -> new SpiritPotion(200, qty);
+            case "Đan hạ phẩm" -> new CultivationPill("Đan hạ phẩm", 1, qty);
+            case "Đan trung phẩm" -> new CultivationPill("Đan trung phẩm", 2, qty);
+            case "Đan thượng phẩm" -> new CultivationPill("Đan thượng phẩm", 3, qty);
+            case "Đan cực phẩm" -> new CultivationPill("Đan cực phẩm", 4, qty);
+            case "Sách Công pháp hạ phẩm" -> new CultivationBook(new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1));
+            case "Sách Công pháp trung phẩm" -> new CultivationBook(new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2));
+            case "Sách Công pháp thượng phẩm" -> new CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3));
+            case "Sách Công pháp cực phẩm" -> new CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5));
+            case "Áo giáp" -> equipmentWithBonus(name, "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR, Attr.DEF, 3);
+            case "Mũ sắt" -> equipmentWithBonus(name, "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET, Attr.DEF, 3);
+            case "Quần vải" -> equipmentWithBonus(name, "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS, Attr.DEF, 3);
+            case "Giày da" -> equipmentWithBonus(name, "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES, Attr.DEF, 3);
+            case "Kiếm gỗ" -> equipmentWithBonus(name, "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON, Attr.ATTACK, 10);
+            case "Kiếm sắt" -> equipmentWithBonus(name, "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON, Attr.ATTACK, 10);
+            case "Dây chuyền" -> equipmentWithBonus(name, "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE, Attr.SOULD, 10);
+            case "Nhẫn đá" -> equipmentWithBonus(name, "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING, Attr.DEF, 0);
+            case "Nhẫn bạc" -> equipmentWithBonus(name, "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING, Attr.DEF, 0);
+            case "Bùa hộ mệnh" -> equipmentWithBonus(name, "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET, Attr.DEF, 0);
+            default -> null;
+        };
     }
 
-    public static boolean exists(Connection conn, String itemId) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM " + ITEMS + " WHERE ItemId=?");
-        ps.setString(1, itemId);
-        try (ResultSet rs = ps.executeQuery()) {
-            return rs.next();
-        }
+    /** Create equipment from slot metadata (used during loading). */
+    public EquipmentItem createEquipmentFromSlot(String id, String name, String desc, EquipSlot slot) {
+        EquipType type = switch (slot) {
+            case ARMOR -> EquipType.ARMOR;
+            case HELMET -> EquipType.HELMET;
+            case PANTS -> EquipType.PANTS;
+            case SHOES -> EquipType.SHOES;
+            case NECKLACE -> EquipType.NECKLACE;
+            case AMULET -> EquipType.AMULET;
+            case RING1, RING2 -> EquipType.RING;
+            case WEAPON1, WEAPON2 -> EquipType.WEAPON;
+        };
+        String path = iconPathFromSlot(slot);
+        return new EquipmentItem(id, name, desc, path, type);
     }
 
-    /**
-     * Insert a new consumable or material item into {@code Items} and
-     * {@code ItemStatMods}. Unsupported item types return {@code false}.
-     */
-    public static boolean insert(Item item) throws SQLException, ClassNotFoundException {
-        try (Connection conn = DBAccount.getConnectDB()) {
-            return insert(conn, item);
-        }
-    }
-
-    /** Insert using an existing connection. */
-    public static boolean insert(Connection conn, Item item) throws SQLException {
-        if (item == null) return false;
-        if (exists(conn, item.getId())) return true; // already persisted
-
-        String type;
-        EnumMap<Attr, Integer> mods = new EnumMap<>(Attr.class);
-        if (item instanceof HealthPotion hp) {
-            type = "HEALTH_POTION";
-            mods.put(Attr.HEALTH, hp.getHealthAmount());
-        } else if (item instanceof SpiritPotion sp) {
-            type = "SPIRIT_POTION";
-            mods.put(Attr.SPIRIT, sp.getSpiritAmount());
-        } else if (item instanceof MaterialItem) {
-            type = "MATERIAL";
-        } else {
-            return false; // unsupported type
-        }
-
-        PreparedStatement ins = conn.prepareStatement(
-            "INSERT INTO " + ITEMS + " (ItemId, Name, Type) VALUES (?,?,?)");
-        ins.setString(1, item.getId());
-        ins.setString(2, item.getName());
-        ins.setString(3, type);
-        ins.executeUpdate();
-
-        for (Map.Entry<Attr, Integer> e : mods.entrySet()) {
-            PreparedStatement mod = conn.prepareStatement(
-                "INSERT INTO " + ITEM_MODS + " (ItemId, Stat, Flat, PercentBonus) VALUES (?,?,?,0)");
-            mod.setString(1, item.getId());
-            mod.setString(2, e.getKey().name());
-            mod.setInt(3, e.getValue());
-            mod.executeUpdate();
-        }
-        return true;
-    }
-
-    /**
-     * Load an item by id. Supports equipment types; other item types are
-     * returned as null.
-     *
-     * @param itemId identifier in the {@code Items} table
-     * @return constructed {@link Item} or {@code null} if not found/unsupported
-     */
-    public static Item load(String itemId) throws SQLException, ClassNotFoundException {
-        try (Connection conn = DBAccount.getConnectDB()) {
-            PreparedStatement ps = conn.prepareStatement(
-                "SELECT Name, Type FROM " + ITEMS + " WHERE ItemId = ?");
-            ps.setString(1, itemId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
-                String name = rs.getString("Name");
-                String type = rs.getString("Type");
-                  EnumMap<Attr, Integer> bonuses = loadBonuses(conn, itemId);
-                  EquipType eType = parseEquipType(type);
-                  if (eType != null) {
-                      String icon = defaultIcon(eType);
-                      return new EquipmentItem(itemId, name, "", icon, eType, bonuses);
-                  }
-                  String t = type == null ? "" : type.trim().toUpperCase();
-                  switch (t) {
-                      case "HEALTH_POTION" -> {
-                          int heal = bonuses.getOrDefault(Attr.HEALTH, 0);
-                          return new HealthPotion(itemId, heal, 1);
-                      }
-                      case "SPIRIT_POTION" -> {
-                          int amount = bonuses.getOrDefault(Attr.SPIRIT, 0);
-                          return new SpiritPotion(itemId, amount, 1);
-                      }
-                      case "MATERIAL" -> {
-                          return new MaterialItem(itemId, name, "", null, 1, 99);
-                      }
-                      default -> {
-                          return null; // unsupported type
-                      }
-                  }
-              }
-          }
-      }
-
-    private static EnumMap<Attr, Integer> loadBonuses(Connection conn, String itemId) throws SQLException {
+    private EquipmentItem equipmentWithBonus(String name, String desc, String icon, EquipType type, Attr attr, int val) {
         EnumMap<Attr, Integer> map = new EnumMap<>(Attr.class);
-        PreparedStatement ps = conn.prepareStatement(
-            "SELECT Stat, Flat FROM " + ITEM_MODS + " WHERE ItemId = ?");
-        ps.setString(1, itemId);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String stat = rs.getString("Stat");
-                try {
-                    Attr attr = Attr.valueOf(stat);
-                    int val = rs.getInt("Flat");
-                    map.put(attr, val);
-                } catch (IllegalArgumentException ex) {
-                    // unknown stat, ignore
-                }
-            }
+        if (val != 0) {
+            map.put(attr, val);
         }
-        return map;
+        return new EquipmentItem(name, desc, icon, type, map);
     }
 
-    private static EquipType parseEquipType(String type) {
-        if (type == null) return null;
-        try {
-            return EquipType.valueOf(type.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    private static String defaultIcon(EquipType type) {
-        return switch (type) {
+    private String iconPathFromSlot(EquipSlot slot) {
+        return switch (slot) {
             case ARMOR -> "/data/item/equipment/armor.png";
             case HELMET -> "/data/item/equipment/helmet.png";
             case PANTS -> "/data/item/equipment/pants.png";
             case SHOES -> "/data/item/equipment/shoes.png";
-            case NECKLACE, RING -> "/data/item/equipment/ring.png";
-            case WEAPON -> "/data/item/equipment/sword.png";
+            case NECKLACE, RING1, RING2 -> "/data/item/equipment/ring.png";
             case AMULET -> "/data/item/equipment/d_1.png";
+            case WEAPON1, WEAPON2 -> "/data/item/equipment/sword.png";
         };
     }
 }

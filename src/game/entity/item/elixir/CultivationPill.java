@@ -23,8 +23,8 @@ public class CultivationPill extends Item {
         }
     }
 
-    public CultivationPill(String id, String name, int spiritBonus, int quantity) {
-        super(id, name, "Tăng tốc độ tu luyện", quantity, 100);
+    public CultivationPill(String name, int spiritBonus, int quantity) {
+        super(name, "Tăng tốc độ tu luyện", quantity, 100);
         this.spiritBonus = spiritBonus;
     }
 
@@ -35,9 +35,9 @@ public class CultivationPill extends Item {
     }
 
     @Override
-      public Item copyWithQuantity(int qty) {
-          return new CultivationPill(getId(), getName(), spiritBonus, qty);
-      }
+    public Item copyWithQuantity(int qty) {
+        return new CultivationPill(getName(), spiritBonus, qty);
+    }
 
     @Override
     public boolean isSameStack(Item other) {

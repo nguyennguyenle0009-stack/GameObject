@@ -21,14 +21,14 @@ public class HealthPotion extends Item {
 		}
 	}
 	
-    public HealthPotion(String id, int healthAmount, int quantity) {
-            super(id,
-                            "Đan dược hồi máu",
-                            "Dùng để hồi máu",
-                            quantity,
-                            100);
-            this.healthAmount = healthAmount;
-    }
+	public HealthPotion(int healthAmount, int quantity) {
+		super(
+				"Đan dược hồi máu", 
+				"Dùng để hồi máu", 
+				quantity,
+				100);
+		this.healthAmount = healthAmount;
+	}
 
 	@Override
     public void use(Player p) {
@@ -40,9 +40,9 @@ public class HealthPotion extends Item {
 }
 	
    @Override
-      public Item copyWithQuantity(int qty) {
-          return new HealthPotion(getId(), healthAmount, qty);
-      }
+    public Item copyWithQuantity(int qty) {
+        return new HealthPotion(healthAmount, qty);
+    }
 	
    @Override
     public boolean isSameStack(Item other) {
@@ -50,15 +50,9 @@ public class HealthPotion extends Item {
         return this.getName().equals(other.getName()) && this.healthAmount == hp.healthAmount;
     }
 
-    @Override
-    public BufferedImage getIcon() {
-        return icon;
-    }
+	@Override
+	public BufferedImage getIcon() {
+		return icon;
+	}
 
-    /**
-     * @return amount of health restored when the potion is used.
-     */
-    public int getHealthAmount() {
-        return healthAmount;
-    }
 }

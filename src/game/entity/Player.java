@@ -27,6 +27,8 @@ import game.entity.inventory.Inventory;
 import game.entity.item.Item;
 import game.entity.item.EquipmentItem;
 import game.entity.attributes.Attributes;
+import game.db.ItemDAO;
+import game.db.PlayerDAO;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
 import game.enums.Affinity;
@@ -41,8 +43,6 @@ import game.entity.skill.CultivationTechnique;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
-import game.db.PlayerDAO;
-import game.db.ItemDAO;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -54,6 +54,8 @@ public class Player extends GameActor implements DrawableEntity {
     private final Inventory bag = new Inventory();
     private final EnumMap<EquipSlot, EquipmentItem> equipment = new EnumMap<>(EquipSlot.class);
     private final Attributes baseAtts = new Attributes();
+    private final PlayerDAO playerDAO = new PlayerDAO();
+    private final ItemDAO itemDAO = new ItemDAO();
     private boolean invincible = false;
     private int invincibleCounter = 0;
     private final Rectangle attackArea;
@@ -127,22 +129,16 @@ public class Player extends GameActor implements DrawableEntity {
         setSpriteNum(1);
         setName("Nguyeen pro2o");
 
-        if (!PlayerDAO.load(this)) {
+        if (!playerDAO.load(this)) {
             // Thuộc tính cơ bản
-            baseAtts.setBase(Attr.HEALTH, 100);
             baseAtts.setMax(Attr.HEALTH, 100);
             baseAtts.set(Attr.HEALTH, 100);
-            baseAtts.setBase(Attr.PEP, 100);
             baseAtts.setMax(Attr.PEP, 100);
             baseAtts.set(Attr.PEP, 100);
             // Attack/Def không còn giới hạn max mặc định để có thể tăng khi lên cấp
-            baseAtts.setBase(Attr.ATTACK, 5);
             baseAtts.set(Attr.ATTACK, 5);
-            baseAtts.setBase(Attr.DEF, 4);
             baseAtts.set(Attr.DEF, 4);
-            baseAtts.setBase(Attr.STRENGTH, 1);
             baseAtts.set(Attr.STRENGTH, 1);
-            baseAtts.setBase(Attr.SOULD, 5);
             baseAtts.set(Attr.SOULD, 5);
 
             // Thiết lập thể chất và linh căn ngẫu nhiên
@@ -152,59 +148,39 @@ public class Player extends GameActor implements DrawableEntity {
             // Tính lại yêu cầu SPIRIT dựa trên hệ số thể chất
             baseSpiritRequirement = 1000;
             spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-            baseAtts.setBase(Attr.SPIRIT, 0);
             baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
             baseAtts.set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
-            addItemAndStore(new game.entity.item.elixir.HealthPotion("HP_TEST", 50, 3));
-            addItemAndStore(new game.entity.item.elixir.SpiritPotion("SP_TEST1", 200, 100));
-            addItemAndStore(new game.entity.item.elixir.SpiritPotion("SP_TEST2", 2000, 100));
-            addItemAndStore(new game.entity.item.elixir.SpiritPotion("SP_TEST3", 20000, 100));
+            addItem(new game.entity.item.elixir.HealthPotion(50, 3));
+            addItem(new game.entity.item.elixir.SpiritPotion(200, 100));
+            addItem(new game.entity.item.elixir.SpiritPotion(2000, 100));
+            addItem(new game.entity.item.elixir.SpiritPotion(20000, 100));
 
             // Các sách công pháp và đan dược tu luyện để thử nghiệm
             var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1);
             var mid = new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2);
             var high = new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3);
             var top = new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5);
-            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_LOW", low));
-            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_MID", mid));
-            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_HIGH", high));
-            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_TOP", top));
-            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_LOW", "Đan hạ phẩm", 1, 1));
-            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_MID", "Đan trung phẩm", 2, 1));
-            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_HIGH", "Đan thượng phẩm", 3, 1));
-            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_TOP", "Đan cực phẩm", 4, 1));
+            addItem(new game.entity.item.book.CultivationBook(low));
+            addItem(new game.entity.item.book.CultivationBook(mid));
+            addItem(new game.entity.item.book.CultivationBook(high));
+            addItem(new game.entity.item.book.CultivationBook(top));
+            addItem(new game.entity.item.elixir.CultivationPill("Đan hạ phẩm", 1, 1));
+            addItem(new game.entity.item.elixir.CultivationPill("Đan trung phẩm", 2, 1));
+            addItem(new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, 1));
+            addItem(new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, 1));
             
-            EquipmentItem armor = new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR);
-            armor.setBonus(Attr.DEF, 3);
-            addItemAndStore(armor);
-            EquipmentItem helmet = new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET);
-            helmet.setBonus(Attr.DEF, 3);
-            addItemAndStore(helmet);
-            EquipmentItem pants = new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS);
-            pants.setBonus(Attr.DEF, 3);
-            addItemAndStore(pants);
-            EquipmentItem shoes = new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES);
-            shoes.setBonus(Attr.DEF, 3);
-            addItemAndStore(shoes);
-            EquipmentItem sword1 = new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
-            sword1.setBonus(Attr.ATTACK, 10);
-            addItemAndStore(sword1);
-            EquipmentItem sword2 = new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
-            sword2.setBonus(Attr.ATTACK, 10);
-            addItemAndStore(sword2);
-            EquipmentItem necklace = new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE);
-            necklace.setBonus(Attr.SOULD, 10);
-            addItemAndStore(necklace);
-            EquipmentItem ring1 = new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
-            ring1.setBonus(Attr.SOULD, 0);
-            addItemAndStore(ring1);
-            EquipmentItem ring2 = new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
-            ring2.setBonus(Attr.SOULD, 0);
-            addItemAndStore(ring2);
-            EquipmentItem amulet = new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET);
-            addItemAndStore(amulet);
+            addItem(new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR));
+            addItem(new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET));
+            addItem(new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS));
+            addItem(new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES));
+            addItem(new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON));
+            addItem(new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON));
+            addItem(new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE));
+            addItem(new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING));
+            addItem(new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING));
+            addItem(new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET));
 
             saveState();
         }
@@ -466,19 +442,8 @@ public class Player extends GameActor implements DrawableEntity {
     // Thêm item vào túi và lưu, trả về true nếu thành công
     public boolean addItem(Item item) {
         boolean added = bag.add(item);
-        PlayerDAO.save(this);
+        if (added) saveState();
         return added;
-    }
-
-    // Tạo item mới, ghi vào DB nếu cần rồi thêm vào túi
-    private void addItemAndStore(Item item) {
-        try {
-            ItemDAO.insert(item);
-        } catch (Exception e) {
-            // Nếu không lưu được vẫn tiếp tục thêm vào túi để tránh gián đoạn
-            e.printStackTrace();
-        }
-        addItem(item);
     }
 
     // Sử dụng item
@@ -744,7 +709,7 @@ public class Player extends GameActor implements DrawableEntity {
 
     public synchronized void saveState() {
         logRealmState();
-        PlayerDAO.save(this);
+        playerDAO.save(this);
     }
 
     private void startAutoSave() {
@@ -798,6 +763,13 @@ public class Player extends GameActor implements DrawableEntity {
         return set;
     }
 
+    private Item createItemByName(String name, int qty) {
+        return itemDAO.createItemByName(name, qty);
+    }
+
+    private EquipmentItem createEquipmentFromSlot(String id, String name, String desc, EquipSlot slot) {
+        return itemDAO.createEquipmentFromSlot(id, name, desc, slot);
+    }
 
     // -------- Random Physique/Affinity ---------
 
@@ -862,16 +834,17 @@ public class Player extends GameActor implements DrawableEntity {
                 .orElse("None");
     }
 
-    public void refreshStats() {
-        atts().copyFrom(baseAtts);
-        atts().resetBonuses();
-        for (EquipmentItem eq : equipment.values()) {
-            for (var e : eq.getBonuses().entrySet()) {
-                atts().addBonus(e.getKey(), e.getValue());
-            }
-        }
+    private void refreshStats() {
+        atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
-            atts().set(a, Math.min(atts().get(a), atts().getFinal(a)));
+            int max = baseAtts.getMax(a);
+            atts().setMax(a, max > 0 ? max : Integer.MAX_VALUE);
+        }
+        atts().clearBonuses();
+        for (EquipmentItem eq : equipment.values()) {
+            if (eq != null) {
+                eq.getBonuses().forEach((attr, val) -> atts().addBonus(attr, val));
+            }
         }
     }
 
@@ -911,10 +884,4 @@ public class Player extends GameActor implements DrawableEntity {
 
     public static int getInteractionRange() { return INTERACTION_RANGE; }
     public Inventory getBag() { return bag; }
-
-    /** Direct access for DAO classes to base attributes. */
-    public Attributes getBaseAttributes() { return baseAtts; }
-
-    /** Direct access for DAO classes to equipment map. */
-    public EnumMap<EquipSlot, EquipmentItem> getEquipmentMap() { return equipment; }
 }

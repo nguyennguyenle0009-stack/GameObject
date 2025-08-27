@@ -1,3 +1,0 @@
-Compiled all Java source files with `javac $(find src -name "*.java")` to ensure build succeeds.
-Verified new DAO methods compile by building the project.
-Runtime database tests were skipped because a SQL Server instance is not available in the environment.

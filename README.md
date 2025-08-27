@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.23]
+
+### Thay đổi
+- Thay thế lưu hồ sơ chuỗi bằng các lớp DAO `PlayerDAO`/`ItemDAO` ghi vào các bảng chuẩn hóa (`Players`, `PlayerBaseStats`, `PlayerInventory`...).
+- `EquipmentItem` chứa bản đồ cộng chỉ số và `Attributes` hỗ trợ giá trị gốc + thưởng.
+
 ## [1.0.21]
 
 ### Thêm
@@ -16,29 +22,6 @@
 ### Sửa đổi
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
-
-## [1.0.23]
-
-### Thay đổi
-- Hồ sơ người chơi được lưu vào các bảng chuẩn hóa (`Players`, `PlayerBaseStats`,
-  `PlayerRuntime`, `PlayerInventory`, `PlayerEquipment`).
-- Thêm `PlayerDAO` và `ItemDAO` để đọc/ghi dữ liệu từ SQL Server.
-- `EquipmentItem` mang `EnumMap<Attr,Integer>` mô tả bonus; `Attributes` tách giá trị gốc
-  và cộng thêm bằng lớp `Stat`.
-
-## [1.0.24]
-
-### Thêm
-- `ItemTemplateDAO` và `ItemGenerator` tạo trang bị ngẫu nhiên từ mẫu trong SQL.
-- Mọi `Item` đều có `id` riêng, kho đồ lưu được cả tiêu hao và vật liệu.
-- Xem thêm `ItemAndStatGuide.md` để mở rộng trang bị và chỉ số.
-
-## [1.0.25]
-
-### Thêm
-- `ItemDAO.insert` lưu vật phẩm tiêu hao và nguyên liệu mới vào `Items`/`ItemStatMods`.
-- `PlayerDAO.saveInventory` tự thêm bản ghi thiếu hoặc bỏ qua loại không hỗ trợ.
-- `Player` và `Monster` đăng ký vật phẩm mới vào DB khi tạo ngoài template.
 
 ## [1.0.20]
 
@@ -184,7 +167,7 @@
 	
 ## Cách chạy
 
-1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo database và dữ liệu mẫu.
+1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo các bảng như `Players`, `Items`.
 2. Mở project trong Eclipse.
 3. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
 

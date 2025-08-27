@@ -25,8 +25,8 @@ public class SpiritPotion extends Item {
         }
     }
 
-    public SpiritPotion(String id, int spiritAmount, int quantity) {
-        super(id, "Đan dược tinh thần", "Tăng " + spiritAmount + " Spirit", quantity, 100);
+    public SpiritPotion(int spiritAmount, int quantity) {
+        super("Đan dược tinh thần", "Tăng " + spiritAmount + " Spirit", quantity, 100);
         this.spiritAmount = spiritAmount;
     }
 
@@ -38,9 +38,9 @@ public class SpiritPotion extends Item {
     }
 
     @Override
-      public Item copyWithQuantity(int qty) {
-          return new SpiritPotion(getId(), spiritAmount, qty);
-      }
+    public Item copyWithQuantity(int qty) {
+        return new SpiritPotion(spiritAmount, qty);
+    }
 
     @Override
     public boolean isSameStack(Item other) {
@@ -51,12 +51,5 @@ public class SpiritPotion extends Item {
     @Override
     public BufferedImage getIcon() {
         return icon;
-    }
-
-    /**
-     * @return amount of spirit granted when used.
-     */
-    public int getSpiritAmount() {
-        return spiritAmount;
     }
 }

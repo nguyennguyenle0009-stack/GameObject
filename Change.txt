@@ -97,17 +97,6 @@ Sửa lỗi và cải tiến:
 - Cập nhật README hướng dẫn chạy script trước khi khởi động game.
 
 ## 1.0.23
-- Thay thế lưu hồ sơ dạng chuỗi bằng các bảng chuẩn hóa `Players`, `PlayerBaseStats`,
-  `PlayerRuntime`, `PlayerInventory` và `PlayerEquipment` thông qua `PlayerDAO`.
-- Thêm `ItemDAO` tải định nghĩa vật phẩm và các `ItemStatMods` để tạo `EquipmentItem` có
-  `EnumMap<Attr,Integer>` mô tả chỉ số cộng thêm.
-- Refactor `Attributes` sử dụng lớp `Stat` hỗ trợ giá trị gốc và cộng thêm;
-  `Player.refreshStats()` cộng dồn bonus từ trang bị.
-## 1.0.24
-- Mỗi `Item` mang mã `id`, kho đồ lưu được cả tiêu hao và vật liệu.
-- Thêm `ItemTemplateDAO` và `ItemGenerator` tạo trang bị ngẫu nhiên từ mẫu.
-
-## 1.0.25
-- Thêm `ItemDAO.insert` lưu vật phẩm tiêu hao và nguyên liệu mới vào bảng `Items`/`ItemStatMods`.
-- `PlayerDAO.saveInventory` tự tạo bản ghi còn thiếu hoặc bỏ qua item không hỗ trợ.
-- `Player` và `Monster` đăng ký vật phẩm mới vào cơ sở dữ liệu khi tạo bên ngoài template.
+- Loại bỏ bảng `PlayerProfile`, thêm `PlayerDAO` và `ItemDAO` để đọc/ghi các bảng chuẩn hóa.
+- `EquipmentItem` chứa `EnumMap<Attr,Integer>` lưu cộng chỉ số.
+- `Attributes` hỗ trợ giá trị gốc, cộng thêm và hàm `addBonus`/`getFinal`.
