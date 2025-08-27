@@ -1,3 +1,3 @@
-1. Chạy `ItemGenerator.createFromTemplate("TEMPLATE_ID")` và kiểm tra hàng mới trong bảng `Items` và `ItemStatMods`.
-2. Tạo nhân vật, nhặt vật phẩm tiêu hao và lưu game để kiểm tra `PlayerInventory` lưu mọi item.
-3. Đọc `ItemAndStatGuide.md` để thêm trang bị mới, sau đó dùng ItemDAO.load xác nhận xuất hiện.
+1. Tạo nhân vật mới và kiểm tra các bình thuốc khởi tạo có bản ghi trong `Items` và `ItemStatMods`.
+2. Hạ gục quái để rơi bình máu, lưu game và xác nhận `PlayerInventory` ghi nhận bình đã rơi.
+3. Thêm một item không hỗ trợ (ví dụ sách) vào túi và lưu game để chắc chắn rằng `PlayerInventory` không bị lỗi khi bỏ qua item này.
