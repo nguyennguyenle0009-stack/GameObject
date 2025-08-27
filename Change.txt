@@ -82,3 +82,12 @@ Sửa lỗi và cải tiến:
 ## 1.0.19
 - Sửa lỗi tải thuộc tính khiến ATTACK/DEF bằng 0 và không gây sát thương lên quái vật.
 - Bug sử dụng trang bị hồi đầy máu
+
+## 1.0.20
+- Chuyển lưu hồ sơ người chơi sang bảng `PlayerProfile` trên SQL Server.
+- Thêm lớp `DBAccount` cung cấp kết nối cơ sở dữ liệu.
+- `Player.saveProfile` và `Player.loadProfile` sử dụng JDBC thay cho tệp văn bản.
+
+## 1.0.21
+- Thêm script `sql/game_db_core_schema.sql` tạo schema GameDB và seed dữ liệu mẫu.
+- Cập nhật README hướng dẫn chạy script trước khi khởi động game.
