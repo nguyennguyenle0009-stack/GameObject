@@ -26,6 +26,70 @@ public class ItemDAO {
     private ItemDAO() {}
 
     /**
+     * Check if an item already exists in the {@code Items} table.
+     */
+    public static boolean exists(String itemId) throws SQLException, ClassNotFoundException {
+        try (Connection conn = DBAccount.getConnectDB()) {
+            return exists(conn, itemId);
+        }
+    }
+
+    public static boolean exists(Connection conn, String itemId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM " + ITEMS + " WHERE ItemId=?");
+        ps.setString(1, itemId);
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next();
+        }
+    }
+
+    /**
+     * Insert a new consumable or material item into {@code Items} and
+     * {@code ItemStatMods}. Unsupported item types return {@code false}.
+     */
+    public static boolean insert(Item item) throws SQLException, ClassNotFoundException {
+        try (Connection conn = DBAccount.getConnectDB()) {
+            return insert(conn, item);
+        }
+    }
+
+    /** Insert using an existing connection. */
+    public static boolean insert(Connection conn, Item item) throws SQLException {
+        if (item == null) return false;
+        if (exists(conn, item.getId())) return true; // already persisted
+
+        String type;
+        EnumMap<Attr, Integer> mods = new EnumMap<>(Attr.class);
+        if (item instanceof HealthPotion hp) {
+            type = "HEALTH_POTION";
+            mods.put(Attr.HEALTH, hp.getHealthAmount());
+        } else if (item instanceof SpiritPotion sp) {
+            type = "SPIRIT_POTION";
+            mods.put(Attr.SPIRIT, sp.getSpiritAmount());
+        } else if (item instanceof MaterialItem) {
+            type = "MATERIAL";
+        } else {
+            return false; // unsupported type
+        }
+
+        PreparedStatement ins = conn.prepareStatement(
+            "INSERT INTO " + ITEMS + " (ItemId, Name, Type) VALUES (?,?,?)");
+        ins.setString(1, item.getId());
+        ins.setString(2, item.getName());
+        ins.setString(3, type);
+        ins.executeUpdate();
+
+        for (Map.Entry<Attr, Integer> e : mods.entrySet()) {
+            PreparedStatement mod = conn.prepareStatement(
+                "INSERT INTO " + ITEM_MODS + " (ItemId, Stat, Flat, PercentBonus) VALUES (?,?,?,0)");
+            mod.setString(1, item.getId());
+            mod.setString(2, e.getKey().name());
+            mod.setInt(3, e.getValue());
+            mod.executeUpdate();
+        }
+        return true;
+    }
+
+    /**
      * Load an item by id. Supports equipment types; other item types are
      * returned as null.
      *

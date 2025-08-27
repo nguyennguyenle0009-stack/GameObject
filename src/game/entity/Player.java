@@ -42,6 +42,7 @@ import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 import game.db.PlayerDAO;
+import game.db.ItemDAO;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -156,54 +157,54 @@ public class Player extends GameActor implements DrawableEntity {
             baseAtts.set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
-            addItem(new game.entity.item.elixir.HealthPotion("HP_TEST", 50, 3));
-            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST1", 200, 100));
-            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST2", 2000, 100));
-            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST3", 20000, 100));
+            addItemAndStore(new game.entity.item.elixir.HealthPotion("HP_TEST", 50, 3));
+            addItemAndStore(new game.entity.item.elixir.SpiritPotion("SP_TEST1", 200, 100));
+            addItemAndStore(new game.entity.item.elixir.SpiritPotion("SP_TEST2", 2000, 100));
+            addItemAndStore(new game.entity.item.elixir.SpiritPotion("SP_TEST3", 20000, 100));
 
             // Các sách công pháp và đan dược tu luyện để thử nghiệm
             var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1);
             var mid = new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2);
             var high = new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3);
             var top = new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5);
-            addItem(new game.entity.item.book.CultivationBook("BOOK_LOW", low));
-            addItem(new game.entity.item.book.CultivationBook("BOOK_MID", mid));
-            addItem(new game.entity.item.book.CultivationBook("BOOK_HIGH", high));
-            addItem(new game.entity.item.book.CultivationBook("BOOK_TOP", top));
-            addItem(new game.entity.item.elixir.CultivationPill("PILL_LOW", "Đan hạ phẩm", 1, 1));
-            addItem(new game.entity.item.elixir.CultivationPill("PILL_MID", "Đan trung phẩm", 2, 1));
-            addItem(new game.entity.item.elixir.CultivationPill("PILL_HIGH", "Đan thượng phẩm", 3, 1));
-            addItem(new game.entity.item.elixir.CultivationPill("PILL_TOP", "Đan cực phẩm", 4, 1));
+            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_LOW", low));
+            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_MID", mid));
+            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_HIGH", high));
+            addItemAndStore(new game.entity.item.book.CultivationBook("BOOK_TOP", top));
+            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_LOW", "Đan hạ phẩm", 1, 1));
+            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_MID", "Đan trung phẩm", 2, 1));
+            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_HIGH", "Đan thượng phẩm", 3, 1));
+            addItemAndStore(new game.entity.item.elixir.CultivationPill("PILL_TOP", "Đan cực phẩm", 4, 1));
             
             EquipmentItem armor = new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR);
             armor.setBonus(Attr.DEF, 3);
-            addItem(armor);
+            addItemAndStore(armor);
             EquipmentItem helmet = new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET);
             helmet.setBonus(Attr.DEF, 3);
-            addItem(helmet);
+            addItemAndStore(helmet);
             EquipmentItem pants = new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS);
             pants.setBonus(Attr.DEF, 3);
-            addItem(pants);
+            addItemAndStore(pants);
             EquipmentItem shoes = new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES);
             shoes.setBonus(Attr.DEF, 3);
-            addItem(shoes);
+            addItemAndStore(shoes);
             EquipmentItem sword1 = new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
             sword1.setBonus(Attr.ATTACK, 10);
-            addItem(sword1);
+            addItemAndStore(sword1);
             EquipmentItem sword2 = new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
             sword2.setBonus(Attr.ATTACK, 10);
-            addItem(sword2);
+            addItemAndStore(sword2);
             EquipmentItem necklace = new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE);
             necklace.setBonus(Attr.SOULD, 10);
-            addItem(necklace);
+            addItemAndStore(necklace);
             EquipmentItem ring1 = new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
             ring1.setBonus(Attr.SOULD, 0);
-            addItem(ring1);
+            addItemAndStore(ring1);
             EquipmentItem ring2 = new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
             ring2.setBonus(Attr.SOULD, 0);
-            addItem(ring2);
+            addItemAndStore(ring2);
             EquipmentItem amulet = new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET);
-            addItem(amulet);
+            addItemAndStore(amulet);
 
             saveState();
         }
@@ -467,6 +468,17 @@ public class Player extends GameActor implements DrawableEntity {
         boolean added = bag.add(item);
         PlayerDAO.save(this);
         return added;
+    }
+
+    // Tạo item mới, ghi vào DB nếu cần rồi thêm vào túi
+    private void addItemAndStore(Item item) {
+        try {
+            ItemDAO.insert(item);
+        } catch (Exception e) {
+            // Nếu không lưu được vẫn tiếp tục thêm vào túi để tránh gián đoạn
+            e.printStackTrace();
+        }
+        addItem(item);
     }
 
     // Sử dụng item
