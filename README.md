@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.23]
+
+### Thay đổi
+- Thay thế lưu hồ sơ chuỗi bằng các lớp DAO `PlayerDAO`/`ItemDAO` ghi vào các bảng chuẩn hóa (`Players`, `PlayerBaseStats`, `PlayerInventory`...).
+- `EquipmentItem` chứa bản đồ cộng chỉ số và `Attributes` hỗ trợ giá trị gốc + thưởng.
+
 ## [1.0.21]
 
 ### Thêm
@@ -161,10 +167,9 @@
 	
 ## Cách chạy
 
-1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo database và dữ liệu mẫu.
-2. Chạy script `sql/create_player_profile.sql` để đảm bảo bảng `PlayerProfile` tồn tại.
-3. Mở project trong Eclipse.
-4. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
+1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo các bảng như `Players`, `Items`.
+2. Mở project trong Eclipse.
+3. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
 
 ## Yêu cầu hệ thống
 
