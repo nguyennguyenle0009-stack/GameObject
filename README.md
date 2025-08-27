@@ -17,6 +17,12 @@
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
 
+## [1.0.23]
+
+### Sửa đổi
+- `Player` lưu trạng thái tạm và ghi xuống database định kỳ 10 phút và khi thoát.
+- Bảng `PlayerInventory` và `PlayerEquipment` bỏ ràng buộc khoá ngoại tới `Items` để không lỗi khi xuất hiện item mới.
+
 ## [1.0.20]
 
 ### Thêm

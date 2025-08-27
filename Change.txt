@@ -95,3 +95,7 @@ Sửa lỗi và cải tiến:
 - Đổi tên cột `Percent` thành `PercentBonus` trong `sql/game_db_core_schema.sql` để tránh từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa có.
 - Cập nhật README hướng dẫn chạy script trước khi khởi động game.
+
+## 1.0.23
+- Player lưu trạng thái tạm trong bộ nhớ và ghi xuống database mỗi 10 phút hoặc khi thoát.
+- Bảng `PlayerInventory` và `PlayerEquipment` bỏ ràng buộc khoá ngoại tới `Items` để thêm item mới không lỗi.
