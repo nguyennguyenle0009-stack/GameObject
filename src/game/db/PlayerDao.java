@@ -1,0 +1,66 @@
+package game.db;
+
+import java.sql.*;
+import java.time.LocalDateTime;
+
+/**
+ * DAO for the {@code Players} table.
+ */
+public class PlayerDao {
+
+    /** Simple DTO representing a row in {@code Players}. */
+    public static class PlayerRecord {
+        public String playerId;
+        public String realm;
+        public LocalDateTime createdAt;
+    }
+
+    /**
+     * Load a player by name.
+     *
+     * @param name player name
+     * @return record or {@code null} if not found
+     */
+    public PlayerRecord load(String name) throws ClassNotFoundException, SQLException {
+        try (Connection conn = DBAccount.getConnectDB();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT PlayerId, Realm, CreatedAt FROM dbo.Players WHERE Name = ?")) {
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    PlayerRecord rec = new PlayerRecord();
+                    rec.playerId = rs.getString("PlayerId");
+                    rec.realm = rs.getString("Realm");
+                    Timestamp ts = rs.getTimestamp("CreatedAt");
+                    rec.createdAt = ts != null ? ts.toLocalDateTime() : null;
+                    return rec;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Insert or update a player and return the {@code PlayerId}.
+     */
+    public String upsert(String name, String realm) throws ClassNotFoundException, SQLException {
+        try (Connection conn = DBAccount.getConnectDB();
+             PreparedStatement ps = conn.prepareStatement(
+                     "MERGE dbo.Players AS target " +
+                     "USING (SELECT ? AS Name, ? AS Realm) AS src " +
+                     "ON target.Name = src.Name " +
+                     "WHEN MATCHED THEN UPDATE SET Realm = src.Realm " +
+                     "WHEN NOT MATCHED THEN INSERT (Name, Realm) VALUES (src.Name, src.Realm) " +
+                     "OUTPUT inserted.PlayerId;")) {
+            ps.setString(1, name);
+            ps.setString(2, realm);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            }
+        }
+        return null;
+    }
+}
+

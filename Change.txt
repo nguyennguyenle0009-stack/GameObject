@@ -95,3 +95,7 @@ Sửa lỗi và cải tiến:
 - Đổi tên cột `Percent` thành `PercentBonus` trong `sql/game_db_core_schema.sql` để tránh từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa có.
 - Cập nhật README hướng dẫn chạy script trước khi khởi động game.
+
+## 1.0.23
+- Thêm các lớp DAO tương tác với bảng `Players`, `PlayerBaseStats` và `PlayerRuntime` để lưu chỉ số nhân vật.
+- `Player.saveState` và `Player.loadProfile` sử dụng các DAO này thay cho chuỗi `PlayerProfile`.

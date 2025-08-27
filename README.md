@@ -4,6 +4,8 @@
 	
 ## Tính năng
 
+- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players`, `PlayerBaseStats` và `PlayerRuntime`.
+
 ## Cập nhật
 
 ## [1.0.21]
@@ -16,6 +18,12 @@
 ### Sửa đổi
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
+
+## [1.0.23]
+
+### Thêm
+- Các lớp DAO (`PlayerDao`, `PlayerBaseStatsDao`, `PlayerRuntimeDao`) lưu trữ và đọc thuộc tính nhân vật từ database.
+- `Player.saveState` và `Player.loadProfile` sử dụng các bảng `Players`, `PlayerBaseStats`, `PlayerRuntime` thay cho chuỗi profile.
 
 ## [1.0.20]
 
