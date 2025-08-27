@@ -97,6 +97,66 @@ public class ItemDAO {
         }
     }
 
+    /**
+     * Insert a new item definition into {@code Items} (and {@code ItemStatMods} if needed).
+     * Supports consumables ({@link HealthPotion}, {@link SpiritPotion}) and {@link MaterialItem}.
+     * For other types, this method simply checks if the item already exists.
+     *
+     * @param item item to persist
+     * @return {@code true} if the item exists or was inserted; {@code false} if unsupported
+     */
+    public static boolean insert(Item item) throws SQLException, ClassNotFoundException {
+        try (Connection conn = DBAccount.getConnectDB()) {
+            PreparedStatement sel = conn.prepareStatement(
+                "SELECT 1 FROM " + ITEMS + " WHERE ItemId = ?");
+            sel.setString(1, item.getId());
+            try (ResultSet rs = sel.executeQuery()) {
+                if (rs.next()) return true; // already exists
+            }
+
+            if (item instanceof HealthPotion hp) {
+                PreparedStatement ins = conn.prepareStatement(
+                    "INSERT INTO " + ITEMS + " (ItemId, Name, Type) VALUES (?,?,?)");
+                ins.setString(1, item.getId());
+                ins.setString(2, item.getName());
+                ins.setString(3, "HEALTH_POTION");
+                ins.executeUpdate();
+
+                PreparedStatement mod = conn.prepareStatement(
+                    "INSERT INTO " + ITEM_MODS + " (ItemId, Stat, Flat, PercentBonus) VALUES (?,?,?,0)");
+                mod.setString(1, item.getId());
+                mod.setString(2, Attr.HEALTH.name());
+                mod.setInt(3, hp.getHealthAmount());
+                mod.executeUpdate();
+                return true;
+            } else if (item instanceof SpiritPotion sp) {
+                PreparedStatement ins = conn.prepareStatement(
+                    "INSERT INTO " + ITEMS + " (ItemId, Name, Type) VALUES (?,?,?)");
+                ins.setString(1, item.getId());
+                ins.setString(2, item.getName());
+                ins.setString(3, "SPIRIT_POTION");
+                ins.executeUpdate();
+
+                PreparedStatement mod = conn.prepareStatement(
+                    "INSERT INTO " + ITEM_MODS + " (ItemId, Stat, Flat, PercentBonus) VALUES (?,?,?,0)");
+                mod.setString(1, item.getId());
+                mod.setString(2, Attr.SPIRIT.name());
+                mod.setInt(3, sp.getSpiritAmount());
+                mod.executeUpdate();
+                return true;
+            } else if (item instanceof MaterialItem) {
+                PreparedStatement ins = conn.prepareStatement(
+                    "INSERT INTO " + ITEMS + " (ItemId, Name, Type) VALUES (?,?,?)");
+                ins.setString(1, item.getId());
+                ins.setString(2, item.getName());
+                ins.setString(3, "MATERIAL");
+                ins.executeUpdate();
+                return true;
+            }
+            return false; // unsupported type without existing record
+        }
+    }
+
     private static String defaultIcon(EquipType type) {
         return switch (type) {
             case ARMOR -> "/data/item/equipment/armor.png";

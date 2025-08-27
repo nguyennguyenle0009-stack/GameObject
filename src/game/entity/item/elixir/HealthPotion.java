@@ -51,8 +51,14 @@ public class HealthPotion extends Item {
     }
 
 	@Override
-	public BufferedImage getIcon() {
-		return icon;
-	}
+        public BufferedImage getIcon() {
+                return icon;
+        }
 
+    /**
+     * @return lượng máu hồi khi dùng bình này
+     */
+    public int getHealthAmount() {
+        return healthAmount;
+    }
 }

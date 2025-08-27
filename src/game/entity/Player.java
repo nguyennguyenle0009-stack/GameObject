@@ -42,6 +42,7 @@ import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 import game.db.PlayerDAO;
+import game.db.ItemDAO;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -156,10 +157,18 @@ public class Player extends GameActor implements DrawableEntity {
             baseAtts.set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
-            addItem(new game.entity.item.elixir.HealthPotion("HP_TEST", 50, 3));
-            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST1", 200, 100));
-            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST2", 2000, 100));
-            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST3", 20000, 100));
+            var hp = new game.entity.item.elixir.HealthPotion("HP_TEST", 50, 3);
+            try { ItemDAO.insert(hp); } catch (Exception e) { e.printStackTrace(); }
+            addItem(hp);
+            var sp1 = new game.entity.item.elixir.SpiritPotion("SP_TEST1", 200, 100);
+            try { ItemDAO.insert(sp1); } catch (Exception e) { e.printStackTrace(); }
+            addItem(sp1);
+            var sp2 = new game.entity.item.elixir.SpiritPotion("SP_TEST2", 2000, 100);
+            try { ItemDAO.insert(sp2); } catch (Exception e) { e.printStackTrace(); }
+            addItem(sp2);
+            var sp3 = new game.entity.item.elixir.SpiritPotion("SP_TEST3", 20000, 100);
+            try { ItemDAO.insert(sp3); } catch (Exception e) { e.printStackTrace(); }
+            addItem(sp3);
 
             // Các sách công pháp và đan dược tu luyện để thử nghiệm
             var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1);

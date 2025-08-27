@@ -33,6 +33,13 @@
 - Mọi `Item` đều có `id` riêng, kho đồ lưu được cả tiêu hao và vật liệu.
 - Xem thêm `ItemAndStatGuide.md` để mở rộng trang bị và chỉ số.
 
+## [1.0.25]
+
+### Thêm
+- `ItemDAO.insert` lưu vật phẩm tiêu hao và vật liệu mới vào bảng `Items` và `ItemStatMods`.
+- `PlayerDAO.saveInventory` bỏ qua hoặc tự chèn những item chưa có bản ghi trong cơ sở dữ liệu.
+- `Player` và `Monster` đăng ký vật phẩm tạo trực tiếp (không qua template) vào cơ sở dữ liệu.
+
 ## [1.0.20]
 
 ### Thêm
