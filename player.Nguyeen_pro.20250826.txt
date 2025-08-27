@@ -1,0 +1,61 @@
+============player.Nguyeen_pro.20250826.txt==============
+Itemcủa nhân vật: Đan dược hồi máu (3), Đan dược tinh thần (100), Đan dược tinh thần (100), Đan dược tinh thần (100), Sách Công pháp hạ phẩm (1), Sách Công pháp trung phẩm (1), Sách Công pháp thượng phẩm (1), Sách Công pháp cực phẩm (1), Đan hạ phẩm (1), Đan trung phẩm (1), Đan thượng phẩm (1), Đan cực phẩm (1), Nhẫn đá (1), Nhẫn bạc (1), Bùa hộ mệnh (1), Xương Orc (7), Thịt Orc (7), Xương Skeleton (1)
+===EQUIPMENT===
+- ARMOR: ARMOR#cd53628b-b917-44a8-93c9-1abed952e1b9|Áo giáp|+3 DEF
+- HELMET: HELMET#ab533300-16a6-44b6-bb6e-09e6679e5ad2|Mũ sắt|+3 DEF
+- PANTS: PANTS#cfcce4cb-013f-4b38-865a-890b6d9dc0f8|Quần vải|+3 DEF
+- SHOES: SHOES#e9da8a2b-a0b2-4553-9f09-c3120e646653|Giày da|+3 DEF
+- WEAPON1: WEAPON#aa03489a-fe49-4696-8756-d686ae9efb58|Kiếm gỗ|+10 ATTACK
+- WEAPON2: WEAPON#c3dbdf75-d11a-4f0e-a002-81855b3f6dc9|Kiếm sắt|+10 ATTACK
+- NECKLACE: NECKLACE#0f7b6d3d-ca3a-45f8-b370-14adaca5d7de|Dây chuyền|+10 SOULD
+- RING1: none
+- RING2: none
+- AMULET: none
+=============================
+cảnh giới phàm nhân - 2025-08-26 19:33:35
+--------------------------
+Thuộc tính gốc:
+HEALTH: 100/100
+ATTACK: 5
+PEP: 100/100
+DEF: 4
+SOULD: 5
+SPIRIT: 0/1000
+STRENGTH: 1
+Thuộc tính sau khi mặc đồ:
+HEALTH: 0/0
+ATTACK: 5
+PEP: 0/0
+DEF: 4
+SOULD: 5
+STRENGTH: 1
+--------------------------
+SPIRIT: 0/1000
+PHYSIQUE: Bình thường
+AFFINITY: Mộc
+SKILL: None
+
+=============================
+cảnh giới phàm nhân - 2025-08-26 19:38:04
+--------------------------
+Thuộc tính gốc:
+HEALTH: 99/100
+ATTACK: 5
+PEP: 100/100
+DEF: 4
+SOULD: 5
+SPIRIT: 0/1000
+STRENGTH: 1
+Thuộc tính sau khi mặc đồ:
+HEALTH: 94/100
+ATTACK: 5 +20
+PEP: 100/100
+DEF: 4 +12
+SOULD: 5 +10
+STRENGTH: 1
+--------------------------
+SPIRIT: 0/1000
+PHYSIQUE: Bình thường
+AFFINITY: Mộc
+SKILL: None
+

@@ -6,72 +6,56 @@ import java.util.Map;
 import game.enums.Attr;
 
 /**
- * Container for all combat related attributes of an entity.
+ * Lưu trữ các thuộc tính chiến đấu của nhân vật.
  * <p>
- * Each attribute consists of a base value (permanent), a bonus value coming
- * from equipment or other temporary sources and an optional maximum cap.
+ * Mỗi thuộc tính có giá trị hiện tại và giá trị tối đa (để hiển thị thanh máu, năng lượng...).
+ * Một số thuộc tính như Attack/Def có thể dùng chung giá trị max hiện tại.
  */
 public class Attributes {
 
-    /** Stats keyed by attribute type. */
-    private final EnumMap<Attr, Stat> stats = new EnumMap<>(Attr.class);
+    /** Giá trị hiện tại của các thuộc tính */
+    private EnumMap<Attr, Integer> stats = new EnumMap<>(Attr.class);
 
-    /** Retrieve the final value of an attribute (base + bonus). */
-    public int get(Attr k) { return stats.getOrDefault(k, new Stat()).getFinal(); }
-
-    /** Retrieve the base value of an attribute. */
-    public int getBase(Attr k) { return stats.getOrDefault(k, new Stat()).getBase(); }
-
-    /** Retrieve the accumulated bonus of an attribute. */
-    public int getBonus(Attr k) { return stats.getOrDefault(k, new Stat()).getBonus(); }
-
-    /** Set the base value of an attribute. */
-    public void set(Attr k, int v) { stats.computeIfAbsent(k, kk -> new Stat()).setBase(v); }
-
-    /** Increase/decrease the base value of an attribute. */
-    public void add(Attr k, int d) { stats.computeIfAbsent(k, kk -> new Stat()).addBase(d); }
-
-    /** Add a bonus modifier to an attribute. */
-    public void addBonus(Attr k, int d) { stats.computeIfAbsent(k, kk -> new Stat()).addBonus(d); }
-
-    /** Clear all bonus modifiers. */
-    public void clearBonuses() { stats.values().forEach(Stat::clearBonus); }
-
-    /** Get the maximum cap for an attribute. */
-    public int getMax(Attr k) { return stats.getOrDefault(k, new Stat()).getMax(); }
-
-    /** Set the maximum cap for an attribute. */
-    public void setMax(Attr k, int v) { stats.computeIfAbsent(k, kk -> new Stat()).setMax(v); }
+    /** Giá trị tối đa của các thuộc tính (máu tối đa, pep tối đa, exp cần để lên cấp...) */
+    private EnumMap<Attr, Integer> maxStats = new EnumMap<>(Attr.class);
 
     /**
-     * Return an immutable view of final attribute values.
+     * Lấy giá trị hiện tại của thuộc tính.
      */
-    public Map<Attr, Integer> view() {
-        EnumMap<Attr, Integer> out = new EnumMap<>(Attr.class);
-        stats.forEach((k, s) -> out.put(k, s.getFinal()));
-        return Map.copyOf(out);
+    public int get(Attr k) { return stats.getOrDefault(k, 0); }
+
+    /**
+     * Gán giá trị hiện tại của thuộc tính (đã clamp ≥0 và ≤ max nếu có).
+     */
+    public void set(Attr k, int v) {
+        int max = maxStats.getOrDefault(k, Integer.MAX_VALUE);
+        stats.put(k, Math.max(0, Math.min(v, max)));
     }
 
     /**
-     * Export base values for persistence.
+     * Tăng/giảm giá trị thuộc tính, tự động kẹp trong khoảng [0, max].
      */
-    public EnumMap<Attr, Integer> getStarts() {
-        EnumMap<Attr, Integer> out = new EnumMap<>(Attr.class);
-        stats.forEach((k, s) -> out.put(k, s.getBase()));
-        return out;
+    public void add(Attr k, int d) { set(k, get(k) + d); }
+
+    /**
+     * Lấy giá trị tối đa của thuộc tính.
+     */
+    public int getMax(Attr k) { return maxStats.getOrDefault(k, 0); }
+
+    /**
+     * Gán giá trị tối đa của thuộc tính.
+     */
+    public void setMax(Attr k, int v) {
+        maxStats.put(k, Math.max(0, v));
+        // đảm bảo giá trị hiện tại không vượt quá max mới
+        set(k, get(k));
     }
 
     /**
-     * Replace all base values with the provided map (bonuses are cleared).
+     * Trả về bản sao không thể chỉnh sửa của map thuộc tính hiện tại.
      */
-    public Attributes setStarts(EnumMap<Attr, Integer> starts) {
-        stats.clear();
-        starts.forEach((k, v) -> {
-            Stat s = new Stat();
-            s.setBase(v);
-            stats.put(k, s);
-        });
-        return this;
-    }
+    public Map<Attr, Integer> view() { return Map.copyOf(stats); }
+
+    public EnumMap<Attr, Integer> getStarts() { return stats; }
+    public Attributes setStarts(EnumMap<Attr, Integer> starts) { this.stats = starts; return this; }
 }
-
