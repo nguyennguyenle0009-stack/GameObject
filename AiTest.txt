@@ -1,0 +1,3 @@
+Các trường hợp đã được AI kiểm thử:
+1. Mặc và tháo trang bị sau khi bị trừ máu/pep/spirit: máu (70), pep (80) và spirit (100) giữ nguyên trước và sau khi mặc.
+2. Uống đan dược hồi máu 50 điểm khi còn 50 máu: máu hồi đầy 100 như mong đợi.

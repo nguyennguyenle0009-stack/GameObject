@@ -6,6 +6,11 @@
 
 ## Cập nhật
 
+## [1.0.20]
+
+### Sửa lỗi
+- Mặc hoặc tháo trang bị không còn hồi đầy máu, pep hay spirit của nhân vật.
+
 ## [1.0.19]
 
 ### Sửa lỗi
