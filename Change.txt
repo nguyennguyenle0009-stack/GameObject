@@ -95,3 +95,8 @@ Sửa lỗi và cải tiến:
 - Đổi tên cột `Percent` thành `PercentBonus` trong `sql/game_db_core_schema.sql` để tránh từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa có.
 - Cập nhật README hướng dẫn chạy script trước khi khởi động game.
+## 1.0.23
+- Thay thế lưu hồ sơ chuỗi bằng DAO ghi/đọc các bảng `Players`, `PlayerBaseStats`, `PlayerRuntime`, `PlayerInventory`, `PlayerEquipment`.
+- Thêm `ItemDAO` tải định nghĩa item và cộng chỉ số từ SQL.
+- `EquipmentItem` lưu trữ `EnumMap<Attr,Integer>` cho bonus.
+- `Attributes` refactor với lớp `Stat` tách giá trị gốc và cộng thêm.

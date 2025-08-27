@@ -1,0 +1,3 @@
+1. Run the game, create a new player and verify stats update when equipping items loaded from the database.
+2. Verify saving/loading works: exit and restart the game, ensure inventory and equipment persist.
+3. Equip an item with stat bonuses and check attributes reflect base plus bonus values.
