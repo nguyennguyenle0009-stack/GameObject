@@ -17,6 +17,15 @@
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
 
+## [1.0.23]
+
+### Thay đổi
+- Hồ sơ người chơi được lưu vào các bảng chuẩn hóa (`Players`, `PlayerBaseStats`,
+  `PlayerRuntime`, `PlayerInventory`, `PlayerEquipment`).
+- Thêm `PlayerDAO` và `ItemDAO` để đọc/ghi dữ liệu từ SQL Server.
+- `EquipmentItem` mang `EnumMap<Attr,Integer>` mô tả bonus; `Attributes` tách giá trị gốc
+  và cộng thêm bằng lớp `Stat`.
+
 ## [1.0.20]
 
 ### Thêm
@@ -162,9 +171,8 @@
 ## Cách chạy
 
 1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo database và dữ liệu mẫu.
-2. Chạy script `sql/create_player_profile.sql` để đảm bảo bảng `PlayerProfile` tồn tại.
-3. Mở project trong Eclipse.
-4. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
+2. Mở project trong Eclipse.
+3. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
 
 ## Yêu cầu hệ thống
 
