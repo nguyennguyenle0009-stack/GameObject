@@ -82,3 +82,9 @@ Sửa lỗi và cải tiến:
 ## 1.0.19
 - Sửa lỗi tải thuộc tính khiến ATTACK/DEF bằng 0 và không gây sát thương lên quái vật.
 - Bug sử dụng trang bị hồi đầy máu
+
+## 1.0.20
+- Sửa lỗi mặc trang bị làm hồi đầy máu.
+- Thêm hàm `takeDamage` và `heal` để đồng bộ máu gốc và hiện tại.
+- Quái vật tấn công và đan dược hồi máu sử dụng các hàm mới.
+- Bổ sung test tự động kiểm tra việc mặc trang bị không ảnh hưởng lượng máu hiện tại.

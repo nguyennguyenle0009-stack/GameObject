@@ -1,0 +1,8 @@
+Chạy các bước sau để kiểm tra:
+1. Biên dịch toàn bộ mã nguồn:
+   javac -d bin $(find src -name "*.java")
+2. Chạy chương trình kiểm tra:
+   java -cp bin demo.EquipmentHealthTest
+Kỳ vọng:
+- Sau khi bị trừ 40 máu rồi mặc/cởi trang bị, lượng máu vẫn giữ nguyên.
+- Uống đan dược hồi máu đưa máu về tối đa.

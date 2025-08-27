@@ -1,0 +1,8 @@
+Max HP: 100
+HP after damage: 60
+HP after equip: 60
+HP after unequip: 60
+HP after potion: 100
+Equip keeps HP: true
+Unequip keeps HP: true
+Potion restores to max: true
