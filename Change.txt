@@ -111,3 +111,15 @@ Sửa lỗi và cải tiến:
 - Thêm `ItemDAO.insert` lưu vật phẩm tiêu hao và nguyên liệu mới vào bảng `Items`/`ItemStatMods`.
 - `PlayerDAO.saveInventory` tự tạo bản ghi còn thiếu hoặc bỏ qua item không hỗ trợ.
 - `Player` và `Monster` đăng ký vật phẩm mới vào cơ sở dữ liệu khi tạo bên ngoài template.
+
+## 1.0.26
+ - Tình trạng HEALTH/PEP được lưu định kỳ (5 giây/lần) bằng `PlayerDAO.saveRuntime`
+  chạy nền thay vì ghi mỗi lần nhận sát thương để giảm độ trễ.
+
+## 1.0.27
+- Tách dự án thành hai phần `client` và `server`.
+- Các lớp DAO chuyển sang gói `server.db` và client gọi qua `client.net.ServerApi`.
+
+## 1.0.28
+- Thêm lớp `PlayerCache` giữ thuộc tính và kho đồ trong bộ nhớ, tải khi khởi động.
+- `Player` dùng `PlayerCache` để ghi toàn bộ trạng thái xuống cơ sở dữ liệu mỗi 10 phút và khi thoát game.

@@ -14,7 +14,7 @@ import game.entity.GameActor;
 import game.entity.Entity;
 import game.enums.Attr;
 import game.main.GamePanel;
-import game.db.ItemDAO;
+import client.net.ServerApi;
 
 /**
  * Lớp cơ sở cho tất cả quái vật trong game.
@@ -330,7 +330,8 @@ public abstract class Monster extends GameActor {
         java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
         var potion = new game.entity.item.elixir.HealthPotion("HP_DROP", 30, 1);
         try {
-            ItemDAO.insert(potion);
+            // Đăng ký vật phẩm mới qua server để client không truy cập DB trực tiếp
+            ServerApi.getInstance().insertItem(potion);
         } catch (Exception e) {
             e.printStackTrace();
         }
