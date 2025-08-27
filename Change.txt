@@ -82,3 +82,6 @@ Sửa lỗi và cải tiến:
 ## 1.0.19
 - Sửa lỗi tải thuộc tính khiến ATTACK/DEF bằng 0 và không gây sát thương lên quái vật.
 - Bug sử dụng trang bị hồi đầy máu
+## 1.0.20
+- Sửa lỗi mặc hoặc tháo trang bị làm hồi đầy máu, pep hoặc spirit bằng cách giữ nguyên chỉ số hiện tại khi cập nhật thuộc tính.
+- Ghi lại các trường hợp kiểm thử trong AiTest.txt và hướng dẫn kiểm thử trong test.txt.

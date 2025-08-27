@@ -1,0 +1,4 @@
+Các trường hợp đề nghị bạn tự kiểm thử:
+1. Trang bị và tháo nhiều loại item khác nhau sau khi nhân vật mất máu để đảm bảo chỉ số không thay đổi.
+2. Sử dụng đan dược hồi máu khi đang mặc trang bị để xác nhận vẫn hồi đúng lượng máu.
+3. Kiểm tra pep và spirit khi sử dụng kỹ năng hoặc tu luyện, bảo đảm việc mặc trang bị không làm thay đổi các chỉ số này.

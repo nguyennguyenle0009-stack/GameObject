@@ -1159,6 +1159,12 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     private void refreshStats() {
+        // Preserve current dynamic stats so equipping items doesn't heal or grant pep/spirit
+        int curHealth = atts().getMax(Attr.HEALTH) > 0 ? atts().get(Attr.HEALTH) : baseAtts.get(Attr.HEALTH);
+        int curPep = atts().getMax(Attr.PEP) > 0 ? atts().get(Attr.PEP) : baseAtts.get(Attr.PEP);
+        int curSpirit = atts().getMax(Attr.SPIRIT) > 0 ? atts().get(Attr.SPIRIT) : baseAtts.get(Attr.SPIRIT);
+
+        // Reset stats to base values
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
             int max = baseAtts.getMax(a);
@@ -1168,6 +1174,8 @@ public class Player extends GameActor implements DrawableEntity {
                 atts().setMax(a, Integer.MAX_VALUE);
             }
         }
+
+        // Apply equipment bonuses
         for (EquipmentItem eq : equipment.values()) {
             switch (eq.getType()) {
                 case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
@@ -1176,6 +1184,11 @@ public class Player extends GameActor implements DrawableEntity {
                 default -> {}
             }
         }
+
+        // Restore preserved dynamic stats, clamped to new maximums
+        atts().set(Attr.HEALTH, Math.min(curHealth, atts().getMax(Attr.HEALTH)));
+        atts().set(Attr.PEP, Math.min(curPep, atts().getMax(Attr.PEP)));
+        atts().set(Attr.SPIRIT, Math.min(curSpirit, atts().getMax(Attr.SPIRIT)));
     }
 
     // -------- Equipment handling ---------
