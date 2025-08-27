@@ -95,3 +95,9 @@ Sửa lỗi và cải tiến:
 - Đổi tên cột `Percent` thành `PercentBonus` trong `sql/game_db_core_schema.sql` để tránh từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa có.
 - Cập nhật README hướng dẫn chạy script trước khi khởi động game.
+
+## 1.0.23
+- Thêm lớp `Stat` và tái cấu trúc `Attributes` để tách **giá trị gốc** và **bonus**.
+- `EquipmentItem` chứa `EnumMap<Attr,Integer>` mô tả chỉ số cộng thêm.
+- `Player.refreshStats()` cộng dồn bonus từ trang bị vào thuộc tính cuối cùng.
+- Cập nhật tạo trang bị mẫu với bonus tương ứng.

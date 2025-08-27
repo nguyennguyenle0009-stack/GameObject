@@ -35,7 +35,7 @@ public class HealthPotion extends Item {
         int current = p.atts().get(Attr.HEALTH);
         int max = p.atts().getMax(Attr.HEALTH);
         int newHealth = Math.min(current + healthAmount, max);
-        p.atts().set(Attr.HEALTH, newHealth);
+        p.atts().setBase(Attr.HEALTH, newHealth);
         decreaseQuantity(1);
 }
 	

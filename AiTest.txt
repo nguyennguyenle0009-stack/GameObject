@@ -1,0 +1,1 @@
+Compile toàn bộ mã nguồn với javac để đảm bảo không lỗi biên dịch.

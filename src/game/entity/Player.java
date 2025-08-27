@@ -11,9 +11,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -134,14 +135,14 @@ public class Player extends GameActor implements DrawableEntity {
         if (!loadProfile()) {
             // Thuộc tính cơ bản
             baseAtts.setMax(Attr.HEALTH, 100);
-            baseAtts.set(Attr.HEALTH, 100);
+            baseAtts.setBase(Attr.HEALTH, 100);
             baseAtts.setMax(Attr.PEP, 100);
-            baseAtts.set(Attr.PEP, 100);
+            baseAtts.setBase(Attr.PEP, 100);
             // Attack/Def không còn giới hạn max mặc định để có thể tăng khi lên cấp
-            baseAtts.set(Attr.ATTACK, 5);
-            baseAtts.set(Attr.DEF, 4);
-            baseAtts.set(Attr.STRENGTH, 1);
-            baseAtts.set(Attr.SOULD, 5);
+            baseAtts.setBase(Attr.ATTACK, 5);
+            baseAtts.setBase(Attr.DEF, 4);
+            baseAtts.setBase(Attr.STRENGTH, 1);
+            baseAtts.setBase(Attr.SOULD, 5);
 
             // Thiết lập thể chất và linh căn ngẫu nhiên
             physique = randomPhysique();
@@ -151,7 +152,7 @@ public class Player extends GameActor implements DrawableEntity {
             baseSpiritRequirement = 1000;
             spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
             baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
-            baseAtts.set(Attr.SPIRIT, 0);
+            baseAtts.setBase(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
             addItem(new game.entity.item.elixir.HealthPotion(50, 3));
@@ -333,7 +334,7 @@ public class Player extends GameActor implements DrawableEntity {
                         }
                     } else if (monster instanceof GameActor m) {
                         // Quái vật cũ chỉ trừ máu đơn giản
-                        m.atts().add(Attr.HEALTH, -damage);
+                        m.atts().addBase(Attr.HEALTH, -damage);
                         if (m.atts().get(Attr.HEALTH) <= 0) {
                             gp.getMonsters().remove(i);
                             i--;
@@ -354,8 +355,8 @@ public class Player extends GameActor implements DrawableEntity {
 
         int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
         if (monsterIndex != 999 && !invincible) {
-            atts().add(Attr.HEALTH, -1);
-            baseAtts.add(Attr.HEALTH, -1);
+            atts().addBase(Attr.HEALTH, -1);
+            baseAtts.addBase(Attr.HEALTH, -1);
             gp.getUi().triggerDamageEffect();
             invincible = true;
         }
@@ -461,9 +462,9 @@ public class Player extends GameActor implements DrawableEntity {
     public void gainSpirit(int amount) {
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
-        baseAtts.add(Attr.SPIRIT, modified);
+        baseAtts.addBase(Attr.SPIRIT, modified);
         while (baseAtts.get(Attr.SPIRIT) >= spiritToNextLevel) {
-            baseAtts.add(Attr.SPIRIT, -spiritToNextLevel);
+            baseAtts.addBase(Attr.SPIRIT, -spiritToNextLevel);
             levelUp();
         }
         refreshStats();
@@ -563,13 +564,13 @@ public class Player extends GameActor implements DrawableEntity {
                 initializeLuyenThe();
                 baseSpiritRequirement += baseSpiritRequirement / 2;
                 spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-                baseAtts.add(Attr.SOULD, 10);
+                baseAtts.addBase(Attr.SOULD, 10);
             }
             case LUYEN_THE -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
                     breakThroughToLuyenKhi();
-                    baseAtts.add(Attr.SOULD, 10);
+                    baseAtts.addBase(Attr.SOULD, 10);
                 } else {
                     applyStageGrowth();
                     baseSpiritRequirement += baseSpiritRequirement / 2;
@@ -599,15 +600,15 @@ public class Player extends GameActor implements DrawableEntity {
     private void initializeLuyenThe() {
         int hp = (int) (150 * physique.getStatFactor());
         baseAtts.setMax(Attr.HEALTH, hp);
-        baseAtts.set(Attr.HEALTH, hp);
+        baseAtts.setBase(Attr.HEALTH, hp);
 
         int pep = (int) (150 * physique.getStatFactor());
         baseAtts.setMax(Attr.PEP, pep);
-        baseAtts.set(Attr.PEP, pep);
+        baseAtts.setBase(Attr.PEP, pep);
 
-        baseAtts.set(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
-        baseAtts.set(Attr.DEF, (int) (5 * physique.getDefFactor()));
-        baseAtts.set(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
+        baseAtts.setBase(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
+        baseAtts.setBase(Attr.DEF, (int) (5 * physique.getDefFactor()));
+        baseAtts.setBase(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
     }
 
     /**
@@ -621,27 +622,27 @@ public class Player extends GameActor implements DrawableEntity {
         int hpInc = (int) (stage * 50 * physique.getStatFactor());
         int newHp = baseAtts.getMax(Attr.HEALTH) + hpInc;
         baseAtts.setMax(Attr.HEALTH, newHp);
-        baseAtts.set(Attr.HEALTH, newHp);
+        baseAtts.setBase(Attr.HEALTH, newHp);
 
         int pepInc = (int) (stage * 50 * physique.getStatFactor());
         int newPep = baseAtts.getMax(Attr.PEP) + pepInc;
         baseAtts.setMax(Attr.PEP, newPep);
-        baseAtts.set(Attr.PEP, newPep);
+        baseAtts.setBase(Attr.PEP, newPep);
 
         // ATTACK: +1, riêng bội số của 3 cộng thêm chính số đó
         int atkInc = (stage % 3 == 0) ? stage : 1;
-        baseAtts.add(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
+        baseAtts.addBase(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
 
         // DEF: +1, bội số của 3 cộng thêm stage/2 (làm tròn lên)
         int defInc = 1;
         if (stage % 3 == 0) {
             defInc = (stage + 1) / 2;
         }
-        baseAtts.add(Attr.DEF, (int) (defInc * physique.getDefFactor()));
+        baseAtts.addBase(Attr.DEF, (int) (defInc * physique.getDefFactor()));
 
         // STRENGTH: +1 ở bội số của 3
         if (stage % 3 == 0) {
-            baseAtts.add(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
+            baseAtts.addBase(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
         }
     }
 
@@ -654,23 +655,23 @@ public class Player extends GameActor implements DrawableEntity {
 
         int hp = (int) (baseAtts.getMax(Attr.HEALTH) * 2 * physique.getStatFactor());
         baseAtts.setMax(Attr.HEALTH, hp);
-        baseAtts.set(Attr.HEALTH, hp);
+        baseAtts.setBase(Attr.HEALTH, hp);
 
         int pep = (int) (baseAtts.getMax(Attr.PEP) * 2 * physique.getStatFactor());
         baseAtts.setMax(Attr.PEP, pep);
-        baseAtts.set(Attr.PEP, pep);
+        baseAtts.setBase(Attr.PEP, pep);
 
         int atk = (int) (baseAtts.get(Attr.ATTACK) * 2 * physique.getStatFactor());
-        baseAtts.set(Attr.ATTACK, atk);
+        baseAtts.setBase(Attr.ATTACK, atk);
 
         int def = (int) (baseAtts.get(Attr.DEF) * 3 * physique.getDefFactor());
-        baseAtts.set(Attr.DEF, def);
+        baseAtts.setBase(Attr.DEF, def);
 
         int str = (int) (baseAtts.get(Attr.STRENGTH) * 2 * physique.getStatFactor());
-        baseAtts.set(Attr.STRENGTH, str);
+        baseAtts.setBase(Attr.STRENGTH, str);
 
         int soul = (int) (baseAtts.get(Attr.SOULD) * 2 * physique.getStatFactor());
-        baseAtts.set(Attr.SOULD, soul);
+        baseAtts.setBase(Attr.SOULD, soul);
 
         baseSpiritRequirement *= 2;
         spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
@@ -925,13 +926,13 @@ public class Player extends GameActor implements DrawableEntity {
             case "Sách Công pháp thượng phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3));
             
             case "Sách Công pháp cực phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5));
-            case "Áo giáp" -> new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR);
-            case "Mũ sắt" -> new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET);
-            case "Quần vải" -> new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS);
-            case "Giày da" -> new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES);
-            case "Kiếm gỗ" -> new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
-            case "Kiếm sắt" -> new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
-            case "Dây chuyền" -> new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE);
+            case "Áo giáp" -> new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR, Map.of(Attr.DEF,3));
+            case "Mũ sắt" -> new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET, Map.of(Attr.DEF,3));
+            case "Quần vải" -> new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS, Map.of(Attr.DEF,3));
+            case "Giày da" -> new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES, Map.of(Attr.DEF,3));
+            case "Kiếm gỗ" -> new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON, Map.of(Attr.ATTACK,10));
+            case "Kiếm sắt" -> new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON, Map.of(Attr.ATTACK,10));
+            case "Dây chuyền" -> new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE, Map.of(Attr.SOULD,10));
             case "Nhẫn đá" -> new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
             case "Nhẫn bạc" -> new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
             case "Bùa hộ mệnh" -> new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET);
@@ -970,7 +971,13 @@ public class Player extends GameActor implements DrawableEntity {
                 case AMULET -> "Chưa có tác dụng";
             };
         }
-        return new EquipmentItem(id, name, desc, icon, type);
+        Map<Attr,Integer> bonus = switch (type) {
+            case ARMOR, HELMET, PANTS, SHOES -> Map.of(Attr.DEF,3);
+            case WEAPON -> Map.of(Attr.ATTACK,10);
+            case NECKLACE -> Map.of(Attr.SOULD,10);
+            default -> Map.of();
+        };
+        return new EquipmentItem(id, name, desc, icon, type, bonus);
     }
 
     // -------- Random Physique/Affinity ---------
@@ -1037,21 +1044,13 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     private void refreshStats() {
-        atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
+        atts().copyBaseFrom(baseAtts);
         for (Attr a : Attr.values()) {
-            int max = baseAtts.getMax(a);
-            if (max > 0) {
-                atts().setMax(a, max);
-            } else {
-                atts().setMax(a, Integer.MAX_VALUE);
-            }
+            atts().setBonus(a, 0);
         }
         for (EquipmentItem eq : equipment.values()) {
-            switch (eq.getType()) {
-                case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
-                case WEAPON -> atts().add(Attr.ATTACK, 10);
-                case NECKLACE -> atts().add(Attr.SOULD, 10);
-                default -> {}
+            for (var e : eq.getBonuses().entrySet()) {
+                atts().addBonus(e.getKey(), e.getValue());
             }
         }
     }
