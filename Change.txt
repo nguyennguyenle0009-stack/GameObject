@@ -111,3 +111,9 @@ Sửa lỗi và cải tiến:
 - Thêm `ItemDAO.insert` lưu vật phẩm tiêu hao và nguyên liệu mới vào bảng `Items`/`ItemStatMods`.
 - `PlayerDAO.saveInventory` tự tạo bản ghi còn thiếu hoặc bỏ qua item không hỗ trợ.
 - `Player` và `Monster` đăng ký vật phẩm mới vào cơ sở dữ liệu khi tạo bên ngoài template.
+
+## 1.0.26
+- Chuyển cơ chế lưu trực tiếp sang lưu tạm trong bộ nhớ rồi flush xuống database
+  mỗi 10 phút hoặc khi thoát game.
+- Loại bỏ các lời gọi lưu DB ngay lập tức trong `Player` và `Monster`.
+- Cập nhật README, AiTest.txt và test.txt mô tả cơ chế mới và cách kiểm tra.

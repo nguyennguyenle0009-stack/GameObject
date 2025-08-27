@@ -93,6 +93,8 @@ public class Player extends GameActor implements DrawableEntity {
         t.setDaemon(true);
         return t;
     });
+    /** Cho biết hồ sơ đã thay đổi kể từ lần lưu gần nhất hay chưa. */
+    private volatile boolean dirty = false;
 
     // Danh sách công pháp đã học
     private final List<CultivationTechnique> techniques = new ArrayList<>();
@@ -205,8 +207,6 @@ public class Player extends GameActor implements DrawableEntity {
             addItemAndStore(ring2);
             EquipmentItem amulet = new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET);
             addItemAndStore(amulet);
-
-            saveState();
         }
 
         refreshStats();
@@ -458,26 +458,20 @@ public class Player extends GameActor implements DrawableEntity {
         BufferedImage image = null;
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
-        } 
+        }
         catch (IOException e) { e.printStackTrace(); }
         return UtilityTool.scaleImage(image, gp.getTileSize(), gp.getTileSize());
     }
     
-    // Thêm item vào túi và lưu, trả về true nếu thành công
+    // Thêm item vào túi và đánh dấu cần lưu, trả về true nếu thành công
     public boolean addItem(Item item) {
         boolean added = bag.add(item);
-        PlayerDAO.save(this);
+        if (added) markDirty();
         return added;
     }
 
-    // Tạo item mới, ghi vào DB nếu cần rồi thêm vào túi
+    // Tạo item mới rồi thêm vào túi (ghi DB sẽ thực hiện khi flush)
     private void addItemAndStore(Item item) {
-        try {
-            ItemDAO.insert(item);
-        } catch (Exception e) {
-            // Nếu không lưu được vẫn tiếp tục thêm vào túi để tránh gián đoạn
-            e.printStackTrace();
-        }
         addItem(item);
     }
 
@@ -485,7 +479,7 @@ public class Player extends GameActor implements DrawableEntity {
     public void useItem(Item i) {
         i.use(this);
         if(i.getQuantity() == 0) bag.remove(i);
-        saveState();
+        markDirty();
     }
 
     /**
@@ -507,9 +501,8 @@ public class Player extends GameActor implements DrawableEntity {
     /** Người chơi học một công pháp mới. */
     public void learnSkill(CultivationTechnique tech) {
         techniques.add(tech);
-        // Lưu lại tiến trình ngay sau khi học để đảm bảo
-        // công pháp tồn tại khi thoát game.
-        saveState();
+        // Đánh dấu để flush ra DB ở lần lưu định kỳ/thoát game.
+        markDirty();
     }
 
     // Công pháp được gán vào phím nhanh (tạm thời lưu 1 kỹ năng).
@@ -623,7 +616,7 @@ public class Player extends GameActor implements DrawableEntity {
         // Cập nhật max Spirit cho HUD
         baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
         refreshStats();
-        saveState();
+        markDirty();
     }
 
     /**
@@ -742,18 +735,24 @@ public class Player extends GameActor implements DrawableEntity {
         realmLog.add(sb.toString());
     }
 
-    public synchronized void saveState() {
+    /** Đánh dấu hồ sơ cần lưu ra DB. */
+    private void markDirty() { dirty = true; }
+
+    /** Ghi trạng thái hiện tại xuống DB nếu có thay đổi. */
+    public synchronized void flushIfDirty() {
+        if (!dirty) return;
         logRealmState();
         PlayerDAO.save(this);
+        dirty = false;
     }
 
     private void startAutoSave() {
-        autoSaveExecutor.scheduleAtFixedRate(this::saveState, 10, 10, TimeUnit.MINUTES);
+        autoSaveExecutor.scheduleAtFixedRate(this::flushIfDirty, 10, 10, TimeUnit.MINUTES);
     }
 
     public void stopAutoSave() {
         autoSaveExecutor.shutdownNow();
-        saveState();
+        flushIfDirty();
     }
 
     private Physique parsePhysique(String display) {
