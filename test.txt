@@ -1,0 +1,5 @@
+Vui long tu kiem tra cac truong hop:
+1. Gay sat thuong cho nhan vat, mac va go bo trang bi de dam bao mau khong bi thay doi.
+2. Uong dan duoc hoi mau sau khi bi thuong, mac trang bi xem mau co giu nguyen.
+3. Su dung ky nang de tieu hao Pep, sau do mac trang bi va kiem tra Pep khong duoc hoi.
+4. Dam bao kinh nghiem (Spirit) chi tang khi tu luyen, mac trang bi khong anh huong.

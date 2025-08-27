@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.20]
+
+### Sửa lỗi
+- Trang bị không còn hồi đầy máu hay pep; chỉ đan dược mới có thể hồi các chỉ số này.
+- Đan dược hồi máu đồng bộ với máu gốc để tránh bị đặt lại khi mặc trang bị.
+
 ## [1.0.19]
 
 ### Sửa lỗi

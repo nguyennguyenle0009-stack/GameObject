@@ -1,0 +1,3 @@
+Da kiem thu cac truong hop sau:
+1. Giam mau va pep roi mac trang bi, cac chi so khong doi.
+2. Su dung dan duoc hoi mau, mac trang bi khong lam mat mau da hoi.
