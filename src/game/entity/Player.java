@@ -444,7 +444,7 @@ public class Player extends GameActor implements DrawableEntity {
     // Thêm item vào túi và lưu, trả về true nếu thành công
     public boolean addItem(Item item) {
         boolean added = bag.add(item);
-        saveProfile();
+        saveState();
         return added;
     }
 
@@ -709,22 +709,62 @@ public class Player extends GameActor implements DrawableEntity {
         realmLog.add(sb.toString());
     }
 
+    private String pendingProfile;
+
     public synchronized void saveState() {
         logRealmState();
-        saveProfile();
+        pendingProfile = buildProfileData();
     }
 
     private void startAutoSave() {
-        autoSaveExecutor.scheduleAtFixedRate(this::saveState, 10, 10, TimeUnit.MINUTES);
+        saveState();
+        autoSaveExecutor.scheduleAtFixedRate(this::persistProfile, 10, 10, TimeUnit.MINUTES);
     }
 
     public void stopAutoSave() {
         autoSaveExecutor.shutdownNow();
-        saveState();
+        persistProfile();
     }
 
-    /** Persist current player profile to SQL Server. */
-    private void saveProfile() {
+    private String buildProfileData() {
+        List<String> lines = new ArrayList<>();
+        lines.add("CREATION_DATE: " + creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        String items = bag.all().stream()
+                .map(it -> it.getName() + " (" + it.getQuantity() + ")")
+                .collect(Collectors.joining(", "));
+        lines.add("Itemcủa nhân vật: " + items);
+
+        lines.add("===EQUIPMENT===");
+        EquipSlot[] order = {
+            EquipSlot.ARMOR,
+            EquipSlot.HELMET,
+            EquipSlot.PANTS,
+            EquipSlot.SHOES,
+            EquipSlot.WEAPON1,
+            EquipSlot.WEAPON2,
+            EquipSlot.NECKLACE,
+            EquipSlot.RING1,
+            EquipSlot.RING2,
+            EquipSlot.AMULET
+        };
+        for (EquipSlot slot : order) {
+            EquipmentItem eq = equipment.get(slot);
+            if (eq != null) {
+                lines.add("- " + slot.name() + ": " + eq.getId() + "|" + eq.getName() + "|" + eq.getDecription());
+            } else {
+                lines.add("- " + slot.name() + ": none");
+            }
+        }
+
+        lines.addAll(realmLog);
+        return String.join("\n", lines);
+    }
+
+    /** Persist cached profile to SQL Server. */
+    private void persistProfile() {
+        if (pendingProfile == null) {
+            pendingProfile = buildProfileData();
+        }
         try (Connection conn = DBAccount.getConnectDB()) {
             try (Statement st = conn.createStatement()) {
                 st.execute(
@@ -735,38 +775,6 @@ public class Player extends GameActor implements DrawableEntity {
                 );
             }
 
-            List<String> lines = new ArrayList<>();
-            lines.add("CREATION_DATE: " + creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-            String items = bag.all().stream()
-                    .map(it -> it.getName() + " (" + it.getQuantity() + ")")
-                    .collect(Collectors.joining(", "));
-            lines.add("Itemcủa nhân vật: " + items);
-
-            lines.add("===EQUIPMENT===");
-            EquipSlot[] order = {
-                EquipSlot.ARMOR,
-                EquipSlot.HELMET,
-                EquipSlot.PANTS,
-                EquipSlot.SHOES,
-                EquipSlot.WEAPON1,
-                EquipSlot.WEAPON2,
-                EquipSlot.NECKLACE,
-                EquipSlot.RING1,
-                EquipSlot.RING2,
-                EquipSlot.AMULET
-            };
-            for (EquipSlot slot : order) {
-                EquipmentItem eq = equipment.get(slot);
-                if (eq != null) {
-                    lines.add("- " + slot.name() + ": " + eq.getId() + "|" + eq.getName() + "|" + eq.getDecription());
-                } else {
-                    lines.add("- " + slot.name() + ": none");
-                }
-            }
-
-            lines.addAll(realmLog);
-            String profileData = String.join("\n", lines);
-
             String sql = "MERGE " + PROFILE_TABLE + " AS target " +
                     "USING (SELECT ? AS name, ? AS profile) AS src " +
                     "ON target.name = src.name " +
@@ -775,7 +783,7 @@ public class Player extends GameActor implements DrawableEntity {
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, getName());
-                ps.setString(2, profileData);
+                ps.setString(2, pendingProfile);
                 ps.executeUpdate();
             }
         } catch (ClassNotFoundException | SQLException e) {
