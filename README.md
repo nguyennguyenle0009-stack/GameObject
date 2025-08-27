@@ -17,6 +17,13 @@
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
 
+## [1.0.23]
+
+### Thêm
+- Lưu trạng thái người chơi bằng các bảng chuẩn hóa `Players`, `PlayerBaseStats`, `PlayerRuntime`, `PlayerInventory` và `PlayerEquipment`.
+- `PlayerDAO` và `ItemDAO` truy vấn cơ sở dữ liệu, item/trang bị đọc chỉ số từ bảng `ItemStatMods`.
+- `EquipmentItem` mang theo bản đồ cộng chỉ số, `Attributes` tách giá trị gốc và cộng thêm qua lớp `Stat`.
+
 ## [1.0.20]
 
 ### Thêm
