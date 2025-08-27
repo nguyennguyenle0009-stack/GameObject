@@ -81,10 +81,17 @@ Sửa lỗi và cải tiến:
 
 ## 1.0.19
 - Sửa lỗi tải thuộc tính khiến ATTACK/DEF bằng 0 và không gây sát thương lên quái vật.
-- Phát hiện bug: mặc trang bị hồi đầy máu (đã sửa ở 1.0.20).
+- Bug sử dụng trang bị hồi đầy máu
 
 ## 1.0.20
-- Sửa lỗi mặc trang bị hồi đầy máu, HEALTH giữ nguyên khi thay đổi trang bị.
-- Bỏ qua chỉ số cộng thêm trong tệp lưu để tránh lỗi NumberFormatException khi tải hồ sơ.
-- Bug: lỗi hiễn thị HEALTH, PEP, SPIRIT
+- Chuyển lưu hồ sơ người chơi sang bảng `PlayerProfile` trên SQL Server.
+- Thêm lớp `DBAccount` cung cấp kết nối cơ sở dữ liệu.
+- `Player.saveProfile` và `Player.loadProfile` sử dụng JDBC thay cho tệp văn bản.
 
+## 1.0.21
+- Thêm script `sql/game_db_core_schema.sql` tạo schema GameDB và seed dữ liệu mẫu.
+
+## 1.0.22
+- Đổi tên cột `Percent` thành `PercentBonus` trong `sql/game_db_core_schema.sql` để tránh từ khóa SQL.
+- Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa có.
+- Cập nhật README hướng dẫn chạy script trước khi khởi động game.

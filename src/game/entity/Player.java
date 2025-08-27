@@ -5,12 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.sql.*;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -46,6 +43,7 @@ import game.entity.skill.CultivationTechnique;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
+import game.db.DBAccount;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -53,6 +51,9 @@ public class Player extends GameActor implements DrawableEntity {
     private final int screenY;
     
     private static final int INTERACTION_RANGE = 80;
+
+    /** Database table storing serialized player profiles. */
+    private static final String PROFILE_TABLE = "PlayerProfile";
 
     private final Inventory bag = new Inventory();
     private final EnumMap<EquipSlot, EquipmentItem> equipment = new EnumMap<>(EquipSlot.class);
@@ -128,7 +129,7 @@ public class Player extends GameActor implements DrawableEntity {
                 setDirection("down");
                 setSpriteCouter(0);
         setSpriteNum(1);
-        setName("Nguyeen pro");
+        setName("Nguyeen pro2o");
 
         if (!loadProfile()) {
             // Thuộc tính cơ bản
@@ -722,12 +723,20 @@ public class Player extends GameActor implements DrawableEntity {
         saveState();
     }
 
+    /** Persist current player profile to SQL Server. */
     private void saveProfile() {
-        try {
-            Path file = getProfilePath();
+        try (Connection conn = DBAccount.getConnectDB()) {
+            try (Statement st = conn.createStatement()) {
+                st.execute(
+                    "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'" +
+                    PROFILE_TABLE + "') AND type = N'U') " +
+                    "CREATE TABLE " + PROFILE_TABLE +
+                    " (name NVARCHAR(100) PRIMARY KEY, profile NVARCHAR(MAX))"
+                );
+            }
+
             List<String> lines = new ArrayList<>();
-            String fileName = file.getFileName().toString();
-            lines.add("============" + fileName + "==============");
+            lines.add("CREATION_DATE: " + creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
             String items = bag.all().stream()
                     .map(it -> it.getName() + " (" + it.getQuantity() + ")")
                     .collect(Collectors.joining(", "));
@@ -756,259 +765,111 @@ public class Player extends GameActor implements DrawableEntity {
             }
 
             lines.addAll(realmLog);
-            Files.write(file, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
+            String profileData = String.join("\n", lines);
+
+            String sql = "MERGE " + PROFILE_TABLE + " AS target " +
+                    "USING (SELECT ? AS name, ? AS profile) AS src " +
+                    "ON target.name = src.name " +
+                    "WHEN MATCHED THEN UPDATE SET profile = src.profile " +
+                    "WHEN NOT MATCHED THEN INSERT (name, profile) VALUES (src.name, src.profile);";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, getName());
+                ps.setString(2, profileData);
+                ps.executeUpdate();
+            }
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private Path getProfilePath() {
-        String safeName = getName().replaceAll("\\s+", "_");
-        String date = creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        return Paths.get("player." + safeName + "." + date + ".txt");
-    }
-
+    /** Load player profile from SQL Server. */
     private boolean loadProfile() {
-        try {
-            Path file = findExistingProfile();
-            if (file == null) return false;
+        try (Connection conn = DBAccount.getConnectDB();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT profile FROM " + PROFILE_TABLE + " WHERE name = ?")) {
+            ps.setString(1, getName());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return false;
+                String profileData = rs.getString("profile");
+                List<String> lines = Arrays.asList(profileData.split("\\r?\\n"));
+                int idxLine = 0;
 
-            List<String> lines = Files.readAllLines(file);
-            if (lines.size() < 2) return false;
-
-            // cập nhật ngày tạo từ tên file
-            String fileName = file.getFileName().toString();
-            String[] parts = fileName.split("\\.");
-            if (parts.length >= 3) {
-                creationDate = LocalDate.parse(parts[2], DateTimeFormatter.ofPattern("yyyyMMdd"));
-            }
-
-            // Items
-            String itemLine = lines.get(1);
-            String prefix = "Itemcủa nhân vật: ";
-            if (itemLine.startsWith(prefix)) {
-                String items = itemLine.substring(prefix.length()).trim();
-                bag.clear();
-                if (!items.isEmpty()) {
-                    String[] tokens = items.split(",\\s*");
-                    for (String token : tokens) {
-                        int idxTok = token.lastIndexOf(" (");
-                        int end = token.lastIndexOf(")");
-                        if (idxTok > 0 && end > idxTok) {
-                            String name = token.substring(0, idxTok).trim();
-                            int qty = Integer.parseInt(token.substring(idxTok + 2, end));
-                            Item it = createItemByName(name, qty);
-                            if (it != null) bag.add(it);
-                        }
-                    }
+                if (idxLine < lines.size() && lines.get(idxLine).startsWith("CREATION_DATE:")) {
+                    String dateStr = lines.get(idxLine).substring("CREATION_DATE:".length()).trim();
+                    creationDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
+                    idxLine++;
                 }
-            }
 
-            int idxLine = 2;
-            if (idxLine < lines.size() && lines.get(idxLine).trim().equals("===EQUIPMENT===")) {
-                idxLine++;
-                equipment.clear();
-                while (idxLine < lines.size()) {
-                    String line = lines.get(idxLine).trim();
-                    if (!line.startsWith("-")) break;
-                    line = line.substring(1).trim();
-                    int colon = line.indexOf(":");
-                    if (colon < 0) { idxLine++; continue; }
-                    String slotName = line.substring(0, colon).trim();
-                    String data = line.substring(colon + 1).trim();
-                    EquipSlot slot;
-                    try {
-                        slot = EquipSlot.valueOf(slotName);
-                    } catch (IllegalArgumentException e) {
-                        idxLine++; continue;
-                    }
-                    if (!data.equalsIgnoreCase("none")) {
-                        String[] partsEq = data.split("\\|");
-                        String id = partsEq.length > 0 ? partsEq[0].trim() : "";
-                        String nameEq = partsEq.length > 1 ? partsEq[1].trim() : "";
-                        String descEq = partsEq.length > 2 ? partsEq[2].trim() : "";
-                        EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
-                        if (eq != null) {
-                            equipment.put(slot, eq);
-                            if (eq.getType() == EquipType.RING) bag.increaseCapacity(10);
+                if (idxLine < lines.size()) {
+                    String itemLine = lines.get(idxLine);
+                    String prefix = "Itemcủa nhân vật: ";
+                    if (itemLine.startsWith(prefix)) {
+                        String items = itemLine.substring(prefix.length()).trim();
+                        bag.clear();
+                        if (!items.isEmpty()) {
+                            String[] tokens = items.split(",\\s*");
+                            for (String token : tokens) {
+                                int idxTok = token.lastIndexOf(" (");
+                                int end = token.lastIndexOf(")");
+                                if (idxTok > 0 && end > idxTok) {
+                                    String name = token.substring(0, idxTok).trim();
+                                    int qty = Integer.parseInt(token.substring(idxTok + 2, end));
+                                    Item it = createItemByName(name, qty);
+                                    if (it != null) bag.add(it);
+                                }
+                            }
                         }
                     }
                     idxLine++;
                 }
-                refreshStats();
-            }
 
-            // Realm log
-            realmLog.clear();
-            if (lines.size() > idxLine) {
-                realmLog.addAll(lines.subList(idxLine, lines.size()));
-            }
-
-            // Parse last block for stats
-            int last = -1;
-            for (int i = idxLine; i < lines.size(); i++) {
-                if (lines.get(i).startsWith("=============================")) {
-                    last = i;
-                }
-            }
-            if (last == -1 || last + 1 >= lines.size()) {
-                refreshStats();
-                return true;
-            }
-
-            List<String> block = lines.subList(last, lines.size());
-            if (block.size() < 2) {
-                refreshStats();
-                return true;
-            }
-
-            String realmLine = block.get(1);
-            String realmPart = realmLine.substring("cảnh giới ".length(), realmLine.indexOf(" - ")).trim();
-            String lower = realmPart.toLowerCase();
-            if (lower.startsWith("phàm nhân")) {
-                realm = Realm.PHAM_NHAN;
-                realmStage = 0;
-            } else if (lower.startsWith("luyện thể")) {
-                realm = Realm.LUYEN_THE;
-                int idx = lower.lastIndexOf("tầng");
-                if (idx >= 0) realmStage = Integer.parseInt(lower.substring(idx + 4).trim());
-            } else if (lower.startsWith("luyện khí")) {
-                realm = Realm.LUYEN_KHI;
-                int idx = lower.lastIndexOf("tầng");
-                if (idx >= 0) realmStage = Integer.parseInt(lower.substring(idx + 4).trim());
-            }
-
-            boolean inEquipBlock = false;
-            for (int i = 2; i < block.size(); i++) {
-                String line = block.get(i);
-
-                if (line.startsWith("Thuộc tính sau khi mặc đồ")) {
-                    inEquipBlock = true;
-                    continue;
-                }
-                if (inEquipBlock) {
-                    if (line.startsWith("--------------------------")) {
-                        inEquipBlock = false;
-                    }
-                    continue;
-                }
-
-                if (line.startsWith("HEALTH: ")) {
-                    String val = line.substring(8).trim();
-                    int cur, max;
-                    if (val.contains("/")) {
-                        String[] parts2 = val.split("/");
-                        cur = Integer.parseInt(parts2[0].trim());
-                        max = Integer.parseInt(parts2[1].trim());
-                    } else {
-                        cur = max = Integer.parseInt(val);
-                    }
-                    baseAtts.setMax(Attr.HEALTH, max);
-                    baseAtts.set(Attr.HEALTH, cur);
-                } else if (line.startsWith("ATTACK: ")) {
-                    String val = line.substring(8).trim();
-                    int v = Integer.parseInt(val.split("\\s+")[0]);
-                    baseAtts.set(Attr.ATTACK, v);
-                } else if (line.startsWith("PEP: ")) {
-                    String val = line.substring(5).trim();
-                    int cur, max;
-                    if (val.contains("/")) {
-                        String[] parts2 = val.split("/");
-                        cur = Integer.parseInt(parts2[0].trim());
-                        max = Integer.parseInt(parts2[1].trim());
-                    } else {
-                        cur = max = Integer.parseInt(val);
-                    }
-                    baseAtts.setMax(Attr.PEP, max);
-                    baseAtts.set(Attr.PEP, cur);
-                } else if (line.startsWith("DEF: ")) {
-                    String val = line.substring(5).trim();
-                    int v = Integer.parseInt(val.split("\\s+")[0]);
-                    baseAtts.set(Attr.DEF, v);
-                } else if (line.startsWith("SOULD: ")) {
-                    String val = line.substring(7).trim();
-                    int v = Integer.parseInt(val.split("\\s+")[0]);
-                    baseAtts.set(Attr.SOULD, v);
-                } else if (line.startsWith("SPIRIT: ")) {
-                    String val = line.substring(8).trim();
-                    int cur, max;
-                    if (val.contains("/")) {
-                        String[] parts2 = val.split("/");
-                        cur = Integer.parseInt(parts2[0].trim());
-                        max = Integer.parseInt(parts2[1].trim());
-                    } else {
-                        cur = 0;
-                        max = Integer.parseInt(val);
-                    }
-                    spiritToNextLevel = max;
-                    baseAtts.setMax(Attr.SPIRIT, max);
-                    baseAtts.set(Attr.SPIRIT, cur);
-                } else if (line.startsWith("SPIRIT ")) {
-                    // Hỗ trợ định dạng cũ không có dấu ':'
-                    spiritToNextLevel = Integer.parseInt(line.substring(7).trim());
-                    baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
-                    baseAtts.set(Attr.SPIRIT, 0);
-                } else if (line.startsWith("STRENGTH: ")) {
-                    String val = line.substring(10).trim();
-                    int v = Integer.parseInt(val.split("\\s+")[0]);
-                    baseAtts.set(Attr.STRENGTH, v);
-                } else if (line.startsWith("PHYSIQUE: ")) {
-                    physique = parsePhysique(line.substring(10).trim());
-                } else if (line.startsWith("AFFINITY: ")) {
-                    affinities = parseAffinities(line.substring(10).trim());
-                } else if (line.startsWith("SKILL: ")) {
-                    techniques.clear();
-                    String list = line.substring(7).trim();
-                    if (!list.isBlank() && !list.equalsIgnoreCase("None")) {
-                        String[] toks = list.split(",\\s*");
-                        for (String tk : toks) {
-                            int i1 = tk.indexOf('(');
-                            int i2 = tk.indexOf(')', i1);
-                            int i3 = tk.indexOf('(', i2);
-                            int i4 = tk.indexOf(')', i3);
-                            String name = (i1 > 0) ? tk.substring(0, i1).trim() : tk.trim();
-                            int lvl = (i1 > 0 && i2 > i1) ? Integer.parseInt(tk.substring(i1 + 1, i2)) : 1;
-                            String gradeStr = (i3 > i2 && i4 > i3) ? tk.substring(i3 + 1, i4) : SkillGrade.HA.getDisplay();
-                            SkillGrade grade = SkillGrade.fromDisplay(gradeStr);
-                            int sps = switch (grade) {
-                                case HA -> 1;
-                                case TRUNG -> 2;
-                                case THUONG -> 3;
-                                case CUC -> 5;
-                            };
-                            techniques.add(new CultivationTechnique(name, grade, lvl, sps));
+                if (idxLine < lines.size() && lines.get(idxLine).trim().equals("===EQUIPMENT===")) {
+                    idxLine++;
+                    equipment.clear();
+                    while (idxLine < lines.size()) {
+                        String line = lines.get(idxLine).trim();
+                        if (!line.startsWith("-")) break;
+                        line = line.substring(1).trim();
+                        int colon = line.indexOf(":");
+                        if (colon < 0) { idxLine++; continue; }
+                        String slotName = line.substring(0, colon).trim();
+                        String data = line.substring(colon + 1).trim();
+                        EquipSlot slot;
+                        try {
+                            slot = EquipSlot.valueOf(slotName);
+                        } catch (IllegalArgumentException e) {
+                            idxLine++; continue;
                         }
+                        if (!data.equalsIgnoreCase("none")) {
+                            String[] partsEq = data.split("\\|");
+                            String id = partsEq.length > 0 ? partsEq[0].trim() : "";
+                            String nameEq = partsEq.length > 1 ? partsEq[1].trim() : "";
+                            String descEq = partsEq.length > 2 ? partsEq[2].trim() : "";
+                            EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
+                            if (eq != null) {
+                                equipment.put(slot, eq);
+                                if (eq.getType() == EquipType.RING) bag.increaseCapacity(10);
+                            }
+                        }
+                        idxLine++;
+                    }
+                    refreshStats();
+                }
+
+                if (idxLine < lines.size()) {
+                    realmLog.clear();
+                    for (; idxLine < lines.size(); idxLine++) {
+                        realmLog.add(lines.get(idxLine));
                     }
                 }
+                return true;
             }
-
-            // Sau khi đọc xong, tính lại yêu cầu SPIRIT cơ bản.
-            if (spiritToNextLevel <= 0) {
-                baseSpiritRequirement = computeBaseSpiritRequirement(realm, realmStage);
-                spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-                baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
-            } else {
-                baseSpiritRequirement = (int) Math.round(spiritToNextLevel / physique.getSpiritReqFactor());
-            }
-
-            refreshStats();
-            return true;
-        } catch (IOException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
-    private Path findExistingProfile() throws IOException {
-        String safeName = getName().replaceAll("\\s+", "_");
-        try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("."), "player." + safeName + ".*.txt")) {
-            for (Path p : ds) {
-                return p;
-            }
-        }
-        return null;
-    }
-
     private Physique parsePhysique(String display) {
         for (Physique p : Physique.values()) {
             if (p.getDisplay().equals(display)) return p;
@@ -1030,7 +891,7 @@ public class Player extends GameActor implements DrawableEntity {
         }
         if (realm == Realm.LUYEN_KHI) {
             base *= 2; // đột phá đại cảnh giới
-            for (int i = 1; i <= stage; i++) {
+            for (int i = 1; i <= stage; i++) { 
                 base += base / 2;
             }
         }
@@ -1176,10 +1037,6 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     private void refreshStats() {
-        int currentHealth = atts().get(Attr.HEALTH);
-        int currentPep = atts().get(Attr.PEP);
-        int currentSpirit = atts().get(Attr.SPIRIT);
-
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
             int max = baseAtts.getMax(a);
@@ -1197,10 +1054,6 @@ public class Player extends GameActor implements DrawableEntity {
                 default -> {}
             }
         }
-
-        atts().set(Attr.HEALTH, currentHealth);
-        atts().set(Attr.PEP, currentPep);
-        atts().set(Attr.SPIRIT, currentSpirit);
     }
 
     // -------- Equipment handling ---------
