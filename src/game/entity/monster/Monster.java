@@ -249,7 +249,7 @@ public abstract class Monster extends GameActor {
             gp.getPlayer().getCollisionArea().height
         );
         if (attackRect.intersects(playerRect)) {
-            gp.getPlayer().atts().add(Attr.HEALTH, -attackDamage);
+            gp.getPlayer().atts().addBase(Attr.HEALTH, -attackDamage);
             gp.getUi().triggerDamageEffect();
         }
         if (canAttackMonsters) {
@@ -270,7 +270,7 @@ public abstract class Monster extends GameActor {
                             i--;
                         }
                     } else if (other instanceof GameActor m) {
-                        m.atts().add(Attr.HEALTH, -attackDamage);
+                        m.atts().addBase(Attr.HEALTH, -attackDamage);
                         if (m.atts().get(Attr.HEALTH) <= 0) {
                             gp.getMonsters().remove(i);
                             i--;
@@ -306,7 +306,7 @@ public abstract class Monster extends GameActor {
      * @return true nếu quái vật chết
      */
     public boolean takeDamage(int amount) {
-        atts().add(Attr.HEALTH, -amount);
+        atts().addBase(Attr.HEALTH, -amount);
         healthBarCounter = HEALTH_BAR_TIME;
         return atts().get(Attr.HEALTH) <= 0;
     }
