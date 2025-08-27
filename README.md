@@ -17,6 +17,19 @@
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
 
+## [1.0.23]
+
+### Thay đổi
+- Lưu hồ sơ người chơi bằng các bảng chuẩn hoá (`Players`, `PlayerBaseStats`, `PlayerRuntime`, `PlayerInventory`, `PlayerEquipment`).
+- Thêm lớp `PlayerDAO` và `ItemDAO` thao tác cơ sở dữ liệu.
+- `EquipmentItem` chứa bản đồ cộng chỉ số, không còn mã hoá cứng.
+- `Attributes` hỗ trợ giá trị gốc và cộng thêm thông qua lớp `Stat`.
+
+### Hướng dẫn
+1. Chạy script `src/sql/game_db_core_schema.sql` để tạo database và seed dữ liệu.
+2. Cập nhật cấu hình trong `DBAccount` cho phù hợp với SQL Server của bạn.
+3. Biên dịch bằng `javac $(find src -name '*.java') -d bin`.
+
 ## [1.0.20]
 
 ### Thêm

@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.sql.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -43,7 +41,7 @@ import game.entity.skill.CultivationTechnique;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
-import game.db.DBAccount;
+import game.db.PlayerDAO;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -51,9 +49,6 @@ public class Player extends GameActor implements DrawableEntity {
     private final int screenY;
     
     private static final int INTERACTION_RANGE = 80;
-
-    /** Database table storing serialized player profiles. */
-    private static final String PROFILE_TABLE = "PlayerProfile";
 
     private final Inventory bag = new Inventory();
     private final EnumMap<EquipSlot, EquipmentItem> equipment = new EnumMap<>(EquipSlot.class);
@@ -134,13 +129,19 @@ public class Player extends GameActor implements DrawableEntity {
         if (!loadProfile()) {
             // Thuộc tính cơ bản
             baseAtts.setMax(Attr.HEALTH, 100);
+            baseAtts.setBase(Attr.HEALTH, 100);
             baseAtts.set(Attr.HEALTH, 100);
             baseAtts.setMax(Attr.PEP, 100);
+            baseAtts.setBase(Attr.PEP, 100);
             baseAtts.set(Attr.PEP, 100);
             // Attack/Def không còn giới hạn max mặc định để có thể tăng khi lên cấp
+            baseAtts.setBase(Attr.ATTACK, 5);
             baseAtts.set(Attr.ATTACK, 5);
+            baseAtts.setBase(Attr.DEF, 4);
             baseAtts.set(Attr.DEF, 4);
+            baseAtts.setBase(Attr.STRENGTH, 1);
             baseAtts.set(Attr.STRENGTH, 1);
+            baseAtts.setBase(Attr.SOULD, 5);
             baseAtts.set(Attr.SOULD, 5);
 
             // Thiết lập thể chất và linh căn ngẫu nhiên
@@ -151,6 +152,7 @@ public class Player extends GameActor implements DrawableEntity {
             baseSpiritRequirement = 1000;
             spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
             baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
+            baseAtts.setBase(Attr.SPIRIT, 0);
             baseAtts.set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
@@ -355,7 +357,6 @@ public class Player extends GameActor implements DrawableEntity {
         int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
         if (monsterIndex != 999 && !invincible) {
             atts().add(Attr.HEALTH, -1);
-            baseAtts.add(Attr.HEALTH, -1);
             gp.getUi().triggerDamageEffect();
             invincible = true;
         }
@@ -461,9 +462,13 @@ public class Player extends GameActor implements DrawableEntity {
     public void gainSpirit(int amount) {
         // Tiên Linh Thể tu luyện nhanh gấp 3 lần
         int modified = (int) Math.round(amount * physique.getCultivationSpeedFactor());
-        baseAtts.add(Attr.SPIRIT, modified);
+        int cur = baseAtts.getBase(Attr.SPIRIT) + modified;
+        baseAtts.setBase(Attr.SPIRIT, cur);
+        baseAtts.set(Attr.SPIRIT, cur);
         while (baseAtts.get(Attr.SPIRIT) >= spiritToNextLevel) {
-            baseAtts.add(Attr.SPIRIT, -spiritToNextLevel);
+            cur = baseAtts.get(Attr.SPIRIT) - spiritToNextLevel;
+            baseAtts.setBase(Attr.SPIRIT, cur);
+            baseAtts.set(Attr.SPIRIT, cur);
             levelUp();
         }
         refreshStats();
@@ -563,13 +568,17 @@ public class Player extends GameActor implements DrawableEntity {
                 initializeLuyenThe();
                 baseSpiritRequirement += baseSpiritRequirement / 2;
                 spiritToNextLevel = (int) Math.round(baseSpiritRequirement * physique.getSpiritReqFactor());
-                baseAtts.add(Attr.SOULD, 10);
+                int newSoul = baseAtts.getBase(Attr.SOULD) + 10;
+                baseAtts.setBase(Attr.SOULD, newSoul);
+                baseAtts.set(Attr.SOULD, newSoul);
             }
             case LUYEN_THE -> {
                 realmStage++;
                 if (realmStage > physique.getMaxStage()) {
                     breakThroughToLuyenKhi();
-                    baseAtts.add(Attr.SOULD, 10);
+                    int newSoul2 = baseAtts.getBase(Attr.SOULD) + 10;
+                    baseAtts.setBase(Attr.SOULD, newSoul2);
+                    baseAtts.set(Attr.SOULD, newSoul2);
                 } else {
                     applyStageGrowth();
                     baseSpiritRequirement += baseSpiritRequirement / 2;
@@ -599,15 +608,23 @@ public class Player extends GameActor implements DrawableEntity {
     private void initializeLuyenThe() {
         int hp = (int) (150 * physique.getStatFactor());
         baseAtts.setMax(Attr.HEALTH, hp);
+        baseAtts.setBase(Attr.HEALTH, hp);
         baseAtts.set(Attr.HEALTH, hp);
 
         int pep = (int) (150 * physique.getStatFactor());
         baseAtts.setMax(Attr.PEP, pep);
+        baseAtts.setBase(Attr.PEP, pep);
         baseAtts.set(Attr.PEP, pep);
 
-        baseAtts.set(Attr.ATTACK, (int) (10 * physique.getStatFactor()));
-        baseAtts.set(Attr.DEF, (int) (5 * physique.getDefFactor()));
-        baseAtts.set(Attr.STRENGTH, (int) (2 * physique.getStatFactor()));
+        int atk = (int) (10 * physique.getStatFactor());
+        baseAtts.setBase(Attr.ATTACK, atk);
+        baseAtts.set(Attr.ATTACK, atk);
+        int def = (int) (5 * physique.getDefFactor());
+        baseAtts.setBase(Attr.DEF, def);
+        baseAtts.set(Attr.DEF, def);
+        int str = (int) (2 * physique.getStatFactor());
+        baseAtts.setBase(Attr.STRENGTH, str);
+        baseAtts.set(Attr.STRENGTH, str);
     }
 
     /**
@@ -621,27 +638,35 @@ public class Player extends GameActor implements DrawableEntity {
         int hpInc = (int) (stage * 50 * physique.getStatFactor());
         int newHp = baseAtts.getMax(Attr.HEALTH) + hpInc;
         baseAtts.setMax(Attr.HEALTH, newHp);
+        baseAtts.setBase(Attr.HEALTH, newHp);
         baseAtts.set(Attr.HEALTH, newHp);
 
         int pepInc = (int) (stage * 50 * physique.getStatFactor());
         int newPep = baseAtts.getMax(Attr.PEP) + pepInc;
         baseAtts.setMax(Attr.PEP, newPep);
+        baseAtts.setBase(Attr.PEP, newPep);
         baseAtts.set(Attr.PEP, newPep);
 
         // ATTACK: +1, riêng bội số của 3 cộng thêm chính số đó
         int atkInc = (stage % 3 == 0) ? stage : 1;
-        baseAtts.add(Attr.ATTACK, (int) (atkInc * physique.getStatFactor()));
+        int newAtk = baseAtts.getBase(Attr.ATTACK) + (int) (atkInc * physique.getStatFactor());
+        baseAtts.setBase(Attr.ATTACK, newAtk);
+        baseAtts.set(Attr.ATTACK, newAtk);
 
         // DEF: +1, bội số của 3 cộng thêm stage/2 (làm tròn lên)
         int defInc = 1;
         if (stage % 3 == 0) {
             defInc = (stage + 1) / 2;
         }
-        baseAtts.add(Attr.DEF, (int) (defInc * physique.getDefFactor()));
+        int newDef = baseAtts.getBase(Attr.DEF) + (int) (defInc * physique.getDefFactor());
+        baseAtts.setBase(Attr.DEF, newDef);
+        baseAtts.set(Attr.DEF, newDef);
 
         // STRENGTH: +1 ở bội số của 3
         if (stage % 3 == 0) {
-            baseAtts.add(Attr.STRENGTH, (int) (1 * physique.getStatFactor()));
+            int newStr = baseAtts.getBase(Attr.STRENGTH) + (int) (1 * physique.getStatFactor());
+            baseAtts.setBase(Attr.STRENGTH, newStr);
+            baseAtts.set(Attr.STRENGTH, newStr);
         }
     }
 
@@ -654,22 +679,28 @@ public class Player extends GameActor implements DrawableEntity {
 
         int hp = (int) (baseAtts.getMax(Attr.HEALTH) * 2 * physique.getStatFactor());
         baseAtts.setMax(Attr.HEALTH, hp);
+        baseAtts.setBase(Attr.HEALTH, hp);
         baseAtts.set(Attr.HEALTH, hp);
 
         int pep = (int) (baseAtts.getMax(Attr.PEP) * 2 * physique.getStatFactor());
         baseAtts.setMax(Attr.PEP, pep);
+        baseAtts.setBase(Attr.PEP, pep);
         baseAtts.set(Attr.PEP, pep);
 
-        int atk = (int) (baseAtts.get(Attr.ATTACK) * 2 * physique.getStatFactor());
+        int atk = (int) (baseAtts.getBase(Attr.ATTACK) * 2 * physique.getStatFactor());
+        baseAtts.setBase(Attr.ATTACK, atk);
         baseAtts.set(Attr.ATTACK, atk);
 
-        int def = (int) (baseAtts.get(Attr.DEF) * 3 * physique.getDefFactor());
+        int def = (int) (baseAtts.getBase(Attr.DEF) * 3 * physique.getDefFactor());
+        baseAtts.setBase(Attr.DEF, def);
         baseAtts.set(Attr.DEF, def);
 
-        int str = (int) (baseAtts.get(Attr.STRENGTH) * 2 * physique.getStatFactor());
+        int str = (int) (baseAtts.getBase(Attr.STRENGTH) * 2 * physique.getStatFactor());
+        baseAtts.setBase(Attr.STRENGTH, str);
         baseAtts.set(Attr.STRENGTH, str);
 
-        int soul = (int) (baseAtts.get(Attr.SOULD) * 2 * physique.getStatFactor());
+        int soul = (int) (baseAtts.getBase(Attr.SOULD) * 2 * physique.getStatFactor());
+        baseAtts.setBase(Attr.SOULD, soul);
         baseAtts.set(Attr.SOULD, soul);
 
         baseSpiritRequirement *= 2;
@@ -724,151 +755,14 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     /** Persist current player profile to SQL Server. */
+    /** Persist player state using DAO. */
     private void saveProfile() {
-        try (Connection conn = DBAccount.getConnectDB()) {
-            try (Statement st = conn.createStatement()) {
-                st.execute(
-                    "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'" +
-                    PROFILE_TABLE + "') AND type = N'U') " +
-                    "CREATE TABLE " + PROFILE_TABLE +
-                    " (name NVARCHAR(100) PRIMARY KEY, profile NVARCHAR(MAX))"
-                );
-            }
-
-            List<String> lines = new ArrayList<>();
-            lines.add("CREATION_DATE: " + creationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-            String items = bag.all().stream()
-                    .map(it -> it.getName() + " (" + it.getQuantity() + ")")
-                    .collect(Collectors.joining(", "));
-            lines.add("Itemcủa nhân vật: " + items);
-
-            lines.add("===EQUIPMENT===");
-            EquipSlot[] order = {
-                EquipSlot.ARMOR,
-                EquipSlot.HELMET,
-                EquipSlot.PANTS,
-                EquipSlot.SHOES,
-                EquipSlot.WEAPON1,
-                EquipSlot.WEAPON2,
-                EquipSlot.NECKLACE,
-                EquipSlot.RING1,
-                EquipSlot.RING2,
-                EquipSlot.AMULET
-            };
-            for (EquipSlot slot : order) {
-                EquipmentItem eq = equipment.get(slot);
-                if (eq != null) {
-                    lines.add("- " + slot.name() + ": " + eq.getId() + "|" + eq.getName() + "|" + eq.getDecription());
-                } else {
-                    lines.add("- " + slot.name() + ": none");
-                }
-            }
-
-            lines.addAll(realmLog);
-            String profileData = String.join("\n", lines);
-
-            String sql = "MERGE " + PROFILE_TABLE + " AS target " +
-                    "USING (SELECT ? AS name, ? AS profile) AS src " +
-                    "ON target.name = src.name " +
-                    "WHEN MATCHED THEN UPDATE SET profile = src.profile " +
-                    "WHEN NOT MATCHED THEN INSERT (name, profile) VALUES (src.name, src.profile);";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, getName());
-                ps.setString(2, profileData);
-                ps.executeUpdate();
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
+        PlayerDAO.save(this);
     }
 
-    /** Load player profile from SQL Server. */
+    /** Load player profile from normalized tables via DAO. */
     private boolean loadProfile() {
-        try (Connection conn = DBAccount.getConnectDB();
-             PreparedStatement ps = conn.prepareStatement(
-                     "SELECT profile FROM " + PROFILE_TABLE + " WHERE name = ?")) {
-            ps.setString(1, getName());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return false;
-                String profileData = rs.getString("profile");
-                List<String> lines = Arrays.asList(profileData.split("\\r?\\n"));
-                int idxLine = 0;
-
-                if (idxLine < lines.size() && lines.get(idxLine).startsWith("CREATION_DATE:")) {
-                    String dateStr = lines.get(idxLine).substring("CREATION_DATE:".length()).trim();
-                    creationDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
-                    idxLine++;
-                }
-
-                if (idxLine < lines.size()) {
-                    String itemLine = lines.get(idxLine);
-                    String prefix = "Itemcủa nhân vật: ";
-                    if (itemLine.startsWith(prefix)) {
-                        String items = itemLine.substring(prefix.length()).trim();
-                        bag.clear();
-                        if (!items.isEmpty()) {
-                            String[] tokens = items.split(",\\s*");
-                            for (String token : tokens) {
-                                int idxTok = token.lastIndexOf(" (");
-                                int end = token.lastIndexOf(")");
-                                if (idxTok > 0 && end > idxTok) {
-                                    String name = token.substring(0, idxTok).trim();
-                                    int qty = Integer.parseInt(token.substring(idxTok + 2, end));
-                                    Item it = createItemByName(name, qty);
-                                    if (it != null) bag.add(it);
-                                }
-                            }
-                        }
-                    }
-                    idxLine++;
-                }
-
-                if (idxLine < lines.size() && lines.get(idxLine).trim().equals("===EQUIPMENT===")) {
-                    idxLine++;
-                    equipment.clear();
-                    while (idxLine < lines.size()) {
-                        String line = lines.get(idxLine).trim();
-                        if (!line.startsWith("-")) break;
-                        line = line.substring(1).trim();
-                        int colon = line.indexOf(":");
-                        if (colon < 0) { idxLine++; continue; }
-                        String slotName = line.substring(0, colon).trim();
-                        String data = line.substring(colon + 1).trim();
-                        EquipSlot slot;
-                        try {
-                            slot = EquipSlot.valueOf(slotName);
-                        } catch (IllegalArgumentException e) {
-                            idxLine++; continue;
-                        }
-                        if (!data.equalsIgnoreCase("none")) {
-                            String[] partsEq = data.split("\\|");
-                            String id = partsEq.length > 0 ? partsEq[0].trim() : "";
-                            String nameEq = partsEq.length > 1 ? partsEq[1].trim() : "";
-                            String descEq = partsEq.length > 2 ? partsEq[2].trim() : "";
-                            EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
-                            if (eq != null) {
-                                equipment.put(slot, eq);
-                                if (eq.getType() == EquipType.RING) bag.increaseCapacity(10);
-                            }
-                        }
-                        idxLine++;
-                    }
-                    refreshStats();
-                }
-
-                if (idxLine < lines.size()) {
-                    realmLog.clear();
-                    for (; idxLine < lines.size(); idxLine++) {
-                        realmLog.add(lines.get(idxLine));
-                    }
-                }
-                return true;
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return PlayerDAO.load(this);
     }
     private Physique parsePhysique(String display) {
         for (Physique p : Physique.values()) {
@@ -912,66 +806,7 @@ public class Player extends GameActor implements DrawableEntity {
         return set;
     }
 
-    private Item createItemByName(String name, int qty) {
-        return switch (name) {
-            case "Đan dược hồi máu" -> new game.entity.item.elixir.HealthPotion(50, qty);
-            case "Đan dược tinh thần" -> new game.entity.item.elixir.SpiritPotion(200, qty);
-            case "Đan hạ phẩm" -> new game.entity.item.elixir.CultivationPill("Đan hạ phẩm", 1, qty);
-            case "Đan trung phẩm" -> new game.entity.item.elixir.CultivationPill("Đan trung phẩm", 2, qty);
-            case "Đan thượng phẩm" -> new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, qty);
-            case "Đan cực phẩm" -> new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, qty);
-            case "Sách Công pháp hạ phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1));
-            case "Sách Công pháp trung phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2));
-            case "Sách Công pháp thượng phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3));
-            
-            case "Sách Công pháp cực phẩm" -> new game.entity.item.book.CultivationBook(new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5));
-            case "Áo giáp" -> new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR);
-            case "Mũ sắt" -> new EquipmentItem("Mũ sắt", "+3 DEF", "/data/item/equipment/helmet.png", EquipType.HELMET);
-            case "Quần vải" -> new EquipmentItem("Quần vải", "+3 DEF", "/data/item/equipment/pants.png", EquipType.PANTS);
-            case "Giày da" -> new EquipmentItem("Giày da", "+3 DEF", "/data/item/equipment/shoes.png", EquipType.SHOES);
-            case "Kiếm gỗ" -> new EquipmentItem("Kiếm gỗ", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
-            case "Kiếm sắt" -> new EquipmentItem("Kiếm sắt", "+10 ATTACK", "/data/item/equipment/sword.png", EquipType.WEAPON);
-            case "Dây chuyền" -> new EquipmentItem("Dây chuyền", "+10 SOULD", "/data/item/equipment/ring.png", EquipType.NECKLACE);
-            case "Nhẫn đá" -> new EquipmentItem("Nhẫn đá", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
-            case "Nhẫn bạc" -> new EquipmentItem("Nhẫn bạc", "+10 ô kho", "/data/item/equipment/ring.png", EquipType.RING);
-            case "Bùa hộ mệnh" -> new EquipmentItem("Bùa hộ mệnh", "Chưa có tác dụng", "/data/item/equipment/d_1.png", EquipType.AMULET);
-            
-            default -> null;
-        };
-    }
-
-    private EquipmentItem createEquipmentFromSlot(String id, String name, String desc, EquipSlot slot) {
-        EquipType type = switch (slot) {
-            case ARMOR -> EquipType.ARMOR;
-            case HELMET -> EquipType.HELMET;
-            case PANTS -> EquipType.PANTS;
-            case SHOES -> EquipType.SHOES;
-            case NECKLACE -> EquipType.NECKLACE;
-            case AMULET -> EquipType.AMULET;
-            case RING1, RING2 -> EquipType.RING;
-            case WEAPON1, WEAPON2 -> EquipType.WEAPON;
-        };
-        String icon = switch (slot) {
-            case ARMOR -> "/data/item/equipment/armor.png";
-            case HELMET -> "/data/item/equipment/helmet.png";
-            case PANTS -> "/data/item/equipment/pants.png";
-            case SHOES -> "/data/item/equipment/shoes.png";
-            case NECKLACE -> "/data/item/equipment/ring.png";
-            case AMULET -> "/data/item/equipment/d_1.png";
-            case RING1, RING2 -> "/data/item/equipment/ring.png";
-            case WEAPON1, WEAPON2 -> "/data/item/equipment/sword.png";
-        };
-        if (desc == null || desc.isEmpty()) {
-            desc = switch (type) {
-                case ARMOR, HELMET, PANTS, SHOES -> "+3 DEF";
-                case WEAPON -> "+10 ATTACK";
-                case NECKLACE -> "+10 SOULD";
-                case RING -> "+10 ô kho";
-                case AMULET -> "Chưa có tác dụng";
-            };
-        }
-        return new EquipmentItem(id, name, desc, icon, type);
-    }
+    // Item creation now handled by ItemDAO; helper methods removed.
 
     // -------- Random Physique/Affinity ---------
 
@@ -1016,6 +851,12 @@ public class Player extends GameActor implements DrawableEntity {
     public Physique getPhysique() { return physique; }
     public EnumSet<Affinity> getAffinities() { return affinities; }
 
+    /** Expose base attribute container for DAO usage. */
+    public Attributes getBaseAtts() { return baseAtts; }
+
+    /** Direct access to equipment map for persistence layer. */
+    public EnumMap<EquipSlot, EquipmentItem> getEquipmentMap() { return equipment; }
+
     /**
      * @return tên cảnh giới + tầng hiện tại để hiển thị.
      */
@@ -1036,22 +877,19 @@ public class Player extends GameActor implements DrawableEntity {
                 .orElse("None");
     }
 
-    private void refreshStats() {
-        atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
+    public void refreshStats() {
+        // Reset to base values
         for (Attr a : Attr.values()) {
-            int max = baseAtts.getMax(a);
-            if (max > 0) {
-                atts().setMax(a, max);
-            } else {
-                atts().setMax(a, Integer.MAX_VALUE);
-            }
+            atts().setBase(a, baseAtts.getBase(a));
+            atts().set(a, baseAtts.get(a));
+            atts().setMax(a, baseAtts.getMax(a));
         }
+        atts().clearBonuses();
+        // Sum bonuses from equipped items
         for (EquipmentItem eq : equipment.values()) {
-            switch (eq.getType()) {
-                case HELMET, ARMOR, SHOES, PANTS -> atts().add(Attr.DEF, 3);
-                case WEAPON -> atts().add(Attr.ATTACK, 10);
-                case NECKLACE -> atts().add(Attr.SOULD, 10);
-                default -> {}
+            if (eq == null) continue;
+            for (var e : eq.getBonuses().entrySet()) {
+                atts().addBonus(e.getKey(), e.getValue());
             }
         }
     }
