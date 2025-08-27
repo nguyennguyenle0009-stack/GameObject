@@ -341,11 +341,33 @@ public class Player extends GameActor implements DrawableEntity {
                 }
             }
         }
-	
-	@Override
-	public void checkCollision() {
-		setCollisionOn(false);
-		gp.getCheckCollision().checkTile(this);
+
+    // -------- Health handling ---------
+
+    /**
+     * Gây sát thương cho người chơi, cập nhật cả chỉ số hiện tại và gốc.
+     *
+     * @param amount lượng sát thương nhận vào
+     */
+    public void takeDamage(int amount) {
+        atts().add(Attr.HEALTH, -amount);
+        baseAtts.add(Attr.HEALTH, -amount);
+    }
+
+    /**
+     * Hồi máu cho người chơi, đảm bảo không vượt quá giới hạn tối đa.
+     *
+     * @param amount lượng máu hồi
+     */
+    public void heal(int amount) {
+        atts().add(Attr.HEALTH, amount);
+        baseAtts.add(Attr.HEALTH, amount);
+    }
+
+        @Override
+        public void checkCollision() {
+                setCollisionOn(false);
+                gp.getCheckCollision().checkTile(this);
         gp.getCheckCollision().checkObject(this, false);
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
         int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
@@ -353,8 +375,7 @@ public class Player extends GameActor implements DrawableEntity {
 
         int monsterIndex = gp.getCheckCollision().checkEntity(this, gp.getMonsters());
         if (monsterIndex != 999 && !invincible) {
-            atts().add(Attr.HEALTH, -1);
-            baseAtts.add(Attr.HEALTH, -1);
+            takeDamage(1);
             gp.getUi().triggerDamageEffect();
             invincible = true;
         }

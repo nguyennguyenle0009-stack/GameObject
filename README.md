@@ -6,6 +6,11 @@
 
 ## Cập nhật
 
+## [1.0.20]
+
+### Sửa lỗi
+- Trang bị không còn làm hồi đầy máu; máu chỉ thay đổi khi nhận sát thương hoặc dùng đan dược.
+
 ## [1.0.19]
 
 ### Sửa lỗi

@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 
 import game.entity.Player;
 import game.entity.item.Item;
-import game.enums.Attr;
 
 public class HealthPotion extends Item {
 	
@@ -32,12 +31,9 @@ public class HealthPotion extends Item {
 
 	@Override
     public void use(Player p) {
-        int current = p.atts().get(Attr.HEALTH);
-        int max = p.atts().getMax(Attr.HEALTH);
-        int newHealth = Math.min(current + healthAmount, max);
-        p.atts().set(Attr.HEALTH, newHealth);
+        p.heal(healthAmount);
         decreaseQuantity(1);
-}
+    }
 	
    @Override
     public Item copyWithQuantity(int qty) {

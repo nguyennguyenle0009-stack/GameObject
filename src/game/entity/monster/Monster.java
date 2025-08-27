@@ -249,7 +249,7 @@ public abstract class Monster extends GameActor {
             gp.getPlayer().getCollisionArea().height
         );
         if (attackRect.intersects(playerRect)) {
-            gp.getPlayer().atts().add(Attr.HEALTH, -attackDamage);
+            gp.getPlayer().takeDamage(attackDamage);
             gp.getUi().triggerDamageEffect();
         }
         if (canAttackMonsters) {
