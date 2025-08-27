@@ -34,7 +34,7 @@ public class GreenSlime extends GameActor {
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
         setCollisionArea(new Rectangle(8, 16, 32, 32));
-        atts().set(Attr.HEALTH, 10);
+        atts().setBase(Attr.HEALTH, 10);
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());
     }
 
@@ -114,7 +114,7 @@ public class GreenSlime extends GameActor {
                 gp.getPlayer().getCollisionArea().height
         );
         if (attackRect.intersects(playerRect)) {
-            gp.getPlayer().atts().add(Attr.HEALTH, -attackDamage);
+            gp.getPlayer().atts().addBase(Attr.HEALTH, -attackDamage);
             gp.getUi().triggerDamageEffect();
         }
     }
