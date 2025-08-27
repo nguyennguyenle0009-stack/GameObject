@@ -50,9 +50,15 @@ public class HealthPotion extends Item {
         return this.getName().equals(other.getName()) && this.healthAmount == hp.healthAmount;
     }
 
-	@Override
-	public BufferedImage getIcon() {
-		return icon;
-	}
+    @Override
+    public BufferedImage getIcon() {
+        return icon;
+    }
 
+    /**
+     * @return amount of health restored when the potion is used.
+     */
+    public int getHealthAmount() {
+        return healthAmount;
+    }
 }

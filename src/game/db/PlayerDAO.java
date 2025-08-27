@@ -208,6 +208,17 @@ public class PlayerDAO {
         PreparedStatement ins = conn.prepareStatement(
             "INSERT INTO " + INV + " (PlayerId, ItemId, Quantity) VALUES (?,?,?)");
         for (Item it : bag.all()) {
+            boolean exists = ItemDAO.exists(conn, it.getId());
+            if (!exists) {
+                try {
+                    if (!ItemDAO.insert(conn, it)) {
+                        continue; // skip unsupported items
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    continue;
+                }
+            }
             ins.setString(1, pid);
             ins.setString(2, it.getId());
             ins.setInt(3, it.getQuantity());

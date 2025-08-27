@@ -14,6 +14,7 @@ import game.entity.GameActor;
 import game.entity.Entity;
 import game.enums.Attr;
 import game.main.GamePanel;
+import game.db.ItemDAO;
 
 /**
  * Lớp cơ sở cho tất cả quái vật trong game.
@@ -327,7 +328,13 @@ public abstract class Monster extends GameActor {
      */
     protected java.util.List<game.entity.item.Item> createDropItems() {
         java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
-        list.add(new game.entity.item.elixir.HealthPotion("HP_DROP", 30, 1));
+        var potion = new game.entity.item.elixir.HealthPotion("HP_DROP", 30, 1);
+        try {
+            ItemDAO.insert(potion);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        list.add(potion);
         return list;
     }
 

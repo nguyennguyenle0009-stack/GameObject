@@ -106,3 +106,8 @@ Sửa lỗi và cải tiến:
 ## 1.0.24
 - Mỗi `Item` mang mã `id`, kho đồ lưu được cả tiêu hao và vật liệu.
 - Thêm `ItemTemplateDAO` và `ItemGenerator` tạo trang bị ngẫu nhiên từ mẫu.
+
+## 1.0.25
+- Thêm `ItemDAO.insert` lưu vật phẩm tiêu hao và nguyên liệu mới vào bảng `Items`/`ItemStatMods`.
+- `PlayerDAO.saveInventory` tự tạo bản ghi còn thiếu hoặc bỏ qua item không hỗ trợ.
+- `Player` và `Monster` đăng ký vật phẩm mới vào cơ sở dữ liệu khi tạo bên ngoài template.
