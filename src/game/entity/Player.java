@@ -878,8 +878,21 @@ public class Player extends GameActor implements DrawableEntity {
                 if (idx >= 0) realmStage = Integer.parseInt(lower.substring(idx + 4).trim());
             }
 
+            boolean inEquipBlock = false;
             for (int i = 2; i < block.size(); i++) {
                 String line = block.get(i);
+
+                if (line.startsWith("Thuộc tính sau khi mặc đồ")) {
+                    inEquipBlock = true;
+                    continue;
+                }
+                if (inEquipBlock) {
+                    if (line.startsWith("--------------------------")) {
+                        inEquipBlock = false;
+                    }
+                    continue;
+                }
+
                 if (line.startsWith("HEALTH: ")) {
                     String val = line.substring(8).trim();
                     int cur, max;
@@ -893,7 +906,8 @@ public class Player extends GameActor implements DrawableEntity {
                     baseAtts.setMax(Attr.HEALTH, max);
                     baseAtts.set(Attr.HEALTH, cur);
                 } else if (line.startsWith("ATTACK: ")) {
-                    int v = Integer.parseInt(line.substring(8).trim());
+                    String val = line.substring(8).trim();
+                    int v = Integer.parseInt(val.split("\\s+")[0]);
                     baseAtts.set(Attr.ATTACK, v);
                 } else if (line.startsWith("PEP: ")) {
                     String val = line.substring(5).trim();
@@ -908,10 +922,12 @@ public class Player extends GameActor implements DrawableEntity {
                     baseAtts.setMax(Attr.PEP, max);
                     baseAtts.set(Attr.PEP, cur);
                 } else if (line.startsWith("DEF: ")) {
-                    int v = Integer.parseInt(line.substring(5).trim());
+                    String val = line.substring(5).trim();
+                    int v = Integer.parseInt(val.split("\\s+")[0]);
                     baseAtts.set(Attr.DEF, v);
                 } else if (line.startsWith("SOULD: ")) {
-                    int v = Integer.parseInt(line.substring(7).trim());
+                    String val = line.substring(7).trim();
+                    int v = Integer.parseInt(val.split("\\s+")[0]);
                     baseAtts.set(Attr.SOULD, v);
                 } else if (line.startsWith("SPIRIT: ")) {
                     String val = line.substring(8).trim();
@@ -933,7 +949,8 @@ public class Player extends GameActor implements DrawableEntity {
                     baseAtts.setMax(Attr.SPIRIT, spiritToNextLevel);
                     baseAtts.set(Attr.SPIRIT, 0);
                 } else if (line.startsWith("STRENGTH: ")) {
-                    int v = Integer.parseInt(line.substring(10).trim());
+                    String val = line.substring(10).trim();
+                    int v = Integer.parseInt(val.split("\\s+")[0]);
                     baseAtts.set(Attr.STRENGTH, v);
                 } else if (line.startsWith("PHYSIQUE: ")) {
                     physique = parsePhysique(line.substring(10).trim());
@@ -1159,6 +1176,10 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     private void refreshStats() {
+        int currentHealth = atts().get(Attr.HEALTH);
+        int currentPep = atts().get(Attr.PEP);
+        int currentSpirit = atts().get(Attr.SPIRIT);
+
         atts().setStarts(new EnumMap<>(baseAtts.getStarts()));
         for (Attr a : Attr.values()) {
             int max = baseAtts.getMax(a);
@@ -1176,6 +1197,10 @@ public class Player extends GameActor implements DrawableEntity {
                 default -> {}
             }
         }
+
+        atts().set(Attr.HEALTH, currentHealth);
+        atts().set(Attr.PEP, currentPep);
+        atts().set(Attr.SPIRIT, currentSpirit);
     }
 
     // -------- Equipment handling ---------

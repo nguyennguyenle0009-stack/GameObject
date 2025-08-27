@@ -6,6 +6,12 @@
 
 ## Cập nhật
 
+## [1.0.20]
+
+### Sửa lỗi
+- Mặc trang bị không còn hồi đầy máu.
+- Tải hồ sơ bỏ qua chỉ số cộng thêm, tránh lỗi NumberFormatException.
+
 ## [1.0.19]
 
 ### Sửa lỗi

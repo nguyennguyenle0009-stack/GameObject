@@ -81,4 +81,10 @@ Sửa lỗi và cải tiến:
 
 ## 1.0.19
 - Sửa lỗi tải thuộc tính khiến ATTACK/DEF bằng 0 và không gây sát thương lên quái vật.
-- Bug sử dụng trang bị hồi đầy máu
+- Phát hiện bug: mặc trang bị hồi đầy máu (đã sửa ở 1.0.20).
+
+## 1.0.20
+- Sửa lỗi mặc trang bị hồi đầy máu, HEALTH giữ nguyên khi thay đổi trang bị.
+- Bỏ qua chỉ số cộng thêm trong tệp lưu để tránh lỗi NumberFormatException khi tải hồ sơ.
+- Bug: lỗi hiễn thị HEALTH, PEP, SPIRIT
+
