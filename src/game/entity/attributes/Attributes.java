@@ -6,56 +6,57 @@ import java.util.Map;
 import game.enums.Attr;
 
 /**
- * Lưu trữ các thuộc tính chiến đấu của nhân vật.
- * <p>
- * Mỗi thuộc tính có giá trị hiện tại và giá trị tối đa (để hiển thị thanh máu, năng lượng...).
- * Một số thuộc tính như Attack/Def có thể dùng chung giá trị max hiện tại.
+ * Stores combat attributes using {@link Stat} objects that separate base and bonus
+ * values. The final stat is {@code base + bonus} capped by the defined max.
  */
 public class Attributes {
 
-    /** Giá trị hiện tại của các thuộc tính */
-    private EnumMap<Attr, Integer> stats = new EnumMap<>(Attr.class);
+    /** Map of attribute to stat container. */
+    private EnumMap<Attr, Stat> stats = new EnumMap<>(Attr.class);
 
-    /** Giá trị tối đa của các thuộc tính (máu tối đa, pep tối đa, exp cần để lên cấp...) */
-    private EnumMap<Attr, Integer> maxStats = new EnumMap<>(Attr.class);
+    /** Retrieve the final value of an attribute. */
+    public int get(Attr k) { return stats.getOrDefault(k, new Stat()).getFinal(); }
+
+    /** Retrieve the base value of an attribute. */
+    public int getBase(Attr k) { return stats.getOrDefault(k, new Stat()).getBase(); }
+
+    /** Set the base value of an attribute. */
+    public void set(Attr k, int v) { stats.computeIfAbsent(k, a -> new Stat()).setBase(v); }
+
+    /** Increase/decrease the base value of an attribute. */
+    public void add(Attr k, int d) { set(k, getBase(k) + d); }
+
+    /** Retrieve the max value of an attribute. */
+    public int getMax(Attr k) { return stats.getOrDefault(k, new Stat()).getMax(); }
+
+    /** Set the max value of an attribute. */
+    public void setMax(Attr k, int v) { stats.computeIfAbsent(k, a -> new Stat()).setMax(v); }
+
+    /** Add a temporary bonus to an attribute. */
+    public void addBonus(Attr k, int b) { stats.computeIfAbsent(k, a -> new Stat()).addBonus(b); }
+
+    /** Get current bonus of an attribute. */
+    public int getBonus(Attr k) { return stats.getOrDefault(k, new Stat()).getBonus(); }
+
+    /** Reset all bonuses back to zero. */
+    public void resetBonuses() { stats.values().forEach(s -> s.setBonus(0)); }
+
+    /** Convenience wrapper for {@link #get(Attr)}. */
+    public int getFinal(Attr k) { return get(k); }
 
     /**
-     * Lấy giá trị hiện tại của thuộc tính.
+     * Copy base values and max values from another {@link Attributes} instance
+     * while clearing all bonuses.
      */
-    public int get(Attr k) { return stats.getOrDefault(k, 0); }
-
-    /**
-     * Gán giá trị hiện tại của thuộc tính (đã clamp ≥0 và ≤ max nếu có).
-     */
-    public void set(Attr k, int v) {
-        int max = maxStats.getOrDefault(k, Integer.MAX_VALUE);
-        stats.put(k, Math.max(0, Math.min(v, max)));
+    public void copyFrom(Attributes other) {
+        stats.clear();
+        for (Map.Entry<Attr, Stat> e : other.stats.entrySet()) {
+            Stat src = e.getValue();
+            Stat dst = new Stat(src.getBase(), src.getMax());
+            stats.put(e.getKey(), dst);
+        }
     }
 
-    /**
-     * Tăng/giảm giá trị thuộc tính, tự động kẹp trong khoảng [0, max].
-     */
-    public void add(Attr k, int d) { set(k, get(k) + d); }
-
-    /**
-     * Lấy giá trị tối đa của thuộc tính.
-     */
-    public int getMax(Attr k) { return maxStats.getOrDefault(k, 0); }
-
-    /**
-     * Gán giá trị tối đa của thuộc tính.
-     */
-    public void setMax(Attr k, int v) {
-        maxStats.put(k, Math.max(0, v));
-        // đảm bảo giá trị hiện tại không vượt quá max mới
-        set(k, get(k));
-    }
-
-    /**
-     * Trả về bản sao không thể chỉnh sửa của map thuộc tính hiện tại.
-     */
-    public Map<Attr, Integer> view() { return Map.copyOf(stats); }
-
-    public EnumMap<Attr, Integer> getStarts() { return stats; }
-    public Attributes setStarts(EnumMap<Attr, Integer> starts) { this.stats = starts; return this; }
+    /** @return unmodifiable view of internal stat map. */
+    public Map<Attr, Stat> view() { return Map.copyOf(stats); }
 }

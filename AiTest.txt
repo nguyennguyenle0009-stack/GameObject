@@ -1,0 +1,2 @@
+Đã chạy kiểm tra biên dịch:
+- javac @sources.txt: biên dịch toàn bộ mã nguồn thành công.
