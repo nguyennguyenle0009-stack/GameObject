@@ -1,4 +1,4 @@
-package game.entity.item;
+package server.item;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-import game.db.DBAccount;
-import game.db.ItemTemplateDAO;
+import server.db.DBAccount;
+import server.db.ItemTemplateDAO;
+import game.entity.item.EquipmentItem;
+import game.entity.item.ItemTemplate;
 import game.enums.Attr;
 import game.enums.EquipType;
 

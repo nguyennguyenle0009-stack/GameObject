@@ -1,4 +1,4 @@
-package game.db;
+package server.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -138,6 +138,21 @@ public class PlayerDAO {
             saveRuntime(conn, playerId, p.getBaseAttributes());
             saveInventory(conn, playerId, p.getBag());
             saveEquipment(conn, playerId, p);
+            conn.commit();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Quickly persist only runtime stats (HP/PEP) without touching inventory
+     * or equipment. Useful when health changes frequently during gameplay.
+     */
+    public static void saveRuntime(Player p) {
+        try (Connection conn = DBAccount.getConnectDB()) {
+            conn.setAutoCommit(false);
+            String playerId = upsertPlayer(conn, p);
+            saveRuntime(conn, playerId, p.getBaseAttributes());
             conn.commit();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();

@@ -41,8 +41,8 @@ import game.entity.skill.CultivationTechnique;
 import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
-import game.db.PlayerDAO;
-import game.db.ItemDAO;
+import client.net.ServerApi;
+import client.cache.PlayerCache;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -94,6 +94,9 @@ public class Player extends GameActor implements DrawableEntity {
         return t;
     });
 
+    // Bộ nhớ đệm thuộc tính và kho đồ của người chơi
+    private PlayerCache cache;
+
     // Danh sách công pháp đã học
     private final List<CultivationTechnique> techniques = new ArrayList<>();
     // Trạng thái tu luyện
@@ -127,7 +130,9 @@ public class Player extends GameActor implements DrawableEntity {
         setSpriteNum(1);
         setName("Nguyeen pro2o");
 
-        if (!PlayerDAO.load(this)) {
+        // Tạo bộ nhớ đệm và tải thuộc tính/kho đồ từ server
+        cache = new PlayerCache(this);
+        if (!cache.load()) {
             // Thuộc tính cơ bản
             baseAtts.setBase(Attr.HEALTH, 100);
             baseAtts.setMax(Attr.HEALTH, 100);
@@ -210,6 +215,7 @@ public class Player extends GameActor implements DrawableEntity {
         }
 
         refreshStats();
+        cache.start();
 
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
@@ -466,18 +472,15 @@ public class Player extends GameActor implements DrawableEntity {
     // Thêm item vào túi và lưu, trả về true nếu thành công
     public boolean addItem(Item item) {
         boolean added = bag.add(item);
-        PlayerDAO.save(this);
+        // Lưu trạng thái qua server để client không ghi DB trực tiếp
+        ServerApi.getInstance().savePlayer(this);
         return added;
     }
 
     // Tạo item mới, ghi vào DB nếu cần rồi thêm vào túi
     private void addItemAndStore(Item item) {
-        try {
-            ItemDAO.insert(item);
-        } catch (Exception e) {
-            // Nếu không lưu được vẫn tiếp tục thêm vào túi để tránh gián đoạn
-            e.printStackTrace();
-        }
+        // Đăng ký item mới thông qua server rồi thêm vào túi của người chơi
+        ServerApi.getInstance().insertItem(item);
         addItem(item);
     }
 
@@ -744,16 +747,19 @@ public class Player extends GameActor implements DrawableEntity {
 
     public synchronized void saveState() {
         logRealmState();
-        PlayerDAO.save(this);
+        ServerApi.getInstance().savePlayer(this);
     }
 
     private void startAutoSave() {
-        autoSaveExecutor.scheduleAtFixedRate(this::saveState, 10, 10, TimeUnit.MINUTES);
+        // Persist runtime stats like HEALTH/PEP every 5 seconds to avoid heavy writes on each hit
+        autoSaveExecutor.scheduleAtFixedRate(() -> ServerApi.getInstance().savePlayerRuntime(this), 5, 5, TimeUnit.SECONDS);
     }
 
     public void stopAutoSave() {
         autoSaveExecutor.shutdownNow();
-        saveState();
+        if (cache != null) {
+            cache.close();
+        }
     }
 
     private Physique parsePhysique(String display) {

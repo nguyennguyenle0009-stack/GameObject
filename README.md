@@ -33,6 +33,12 @@
 - Mọi `Item` đều có `id` riêng, kho đồ lưu được cả tiêu hao và vật liệu.
 - Xem thêm `ItemAndStatGuide.md` để mở rộng trang bị và chỉ số.
 
+## [1.0.27]
+
+### Thêm
+- Tách dự án thành hai phần `client` và `server`. Các DAO chuyển vào `server.db` và client
+  tương tác qua `client.net.ServerApi`.
+
 ## [1.0.25]
 
 ### Thêm
