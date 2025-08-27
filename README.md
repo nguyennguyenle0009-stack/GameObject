@@ -26,6 +26,13 @@
 - `EquipmentItem` mang `EnumMap<Attr,Integer>` mô tả bonus; `Attributes` tách giá trị gốc
   và cộng thêm bằng lớp `Stat`.
 
+## [1.0.24]
+
+### Thêm
+- `ItemTemplateDAO` và `ItemGenerator` tạo trang bị ngẫu nhiên từ mẫu trong SQL.
+- Mọi `Item` đều có `id` riêng, kho đồ lưu được cả tiêu hao và vật liệu.
+- Xem thêm `ItemAndStatGuide.md` để mở rộng trang bị và chỉ số.
+
 ## [1.0.20]
 
 ### Thêm

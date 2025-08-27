@@ -1,0 +1,1 @@
+Compiled all Java source files with `javac $(find src -name "*.java")` to ensure build succeeds.

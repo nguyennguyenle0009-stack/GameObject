@@ -9,6 +9,9 @@ import java.util.Map;
 
 import game.entity.item.EquipmentItem;
 import game.entity.item.Item;
+import game.entity.item.MaterialItem;
+import game.entity.item.elixir.HealthPotion;
+import game.entity.item.elixir.SpiritPotion;
 import game.enums.Attr;
 import game.enums.EquipType;
 
@@ -38,16 +41,32 @@ public class ItemDAO {
                 if (!rs.next()) return null;
                 String name = rs.getString("Name");
                 String type = rs.getString("Type");
-                EquipType eType = parseEquipType(type);
-                if (eType == null) {
-                    return null; // unsupported for now
-                }
-                EnumMap<Attr, Integer> bonuses = loadBonuses(conn, itemId);
-                String icon = defaultIcon(eType);
-                return new EquipmentItem(itemId, name, "", icon, eType, bonuses);
-            }
-        }
-    }
+                  EnumMap<Attr, Integer> bonuses = loadBonuses(conn, itemId);
+                  EquipType eType = parseEquipType(type);
+                  if (eType != null) {
+                      String icon = defaultIcon(eType);
+                      return new EquipmentItem(itemId, name, "", icon, eType, bonuses);
+                  }
+                  String t = type == null ? "" : type.trim().toUpperCase();
+                  switch (t) {
+                      case "HEALTH_POTION" -> {
+                          int heal = bonuses.getOrDefault(Attr.HEALTH, 0);
+                          return new HealthPotion(itemId, heal, 1);
+                      }
+                      case "SPIRIT_POTION" -> {
+                          int amount = bonuses.getOrDefault(Attr.SPIRIT, 0);
+                          return new SpiritPotion(itemId, amount, 1);
+                      }
+                      case "MATERIAL" -> {
+                          return new MaterialItem(itemId, name, "", null, 1, 99);
+                      }
+                      default -> {
+                          return null; // unsupported type
+                      }
+                  }
+              }
+          }
+      }
 
     private static EnumMap<Attr, Integer> loadBonuses(Connection conn, String itemId) throws SQLException {
         EnumMap<Attr, Integer> map = new EnumMap<>(Attr.class);

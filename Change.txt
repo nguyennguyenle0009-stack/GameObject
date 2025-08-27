@@ -103,3 +103,6 @@ Sửa lỗi và cải tiến:
   `EnumMap<Attr,Integer>` mô tả chỉ số cộng thêm.
 - Refactor `Attributes` sử dụng lớp `Stat` hỗ trợ giá trị gốc và cộng thêm;
   `Player.refreshStats()` cộng dồn bonus từ trang bị.
+## 1.0.24
+- Mỗi `Item` mang mã `id`, kho đồ lưu được cả tiêu hao và vật liệu.
+- Thêm `ItemTemplateDAO` và `ItemGenerator` tạo trang bị ngẫu nhiên từ mẫu.

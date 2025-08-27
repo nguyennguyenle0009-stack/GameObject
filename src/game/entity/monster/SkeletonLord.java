@@ -73,7 +73,7 @@ public class SkeletonLord extends Monster {
     @Override
     protected java.util.List<game.entity.item.Item> createDropItems() {
         java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
-        list.add(new game.entity.item.MaterialItem("Xương Skeleton", "Bone", "/data/item/skeleton/SKELETON_Bone.png", 1, 20));
+        list.add(new game.entity.item.MaterialItem("SKEL_BONE", "Xương Skeleton", "Bone", "/data/item/skeleton/SKELETON_Bone.png", 1, 20));
         return list;
     }
 

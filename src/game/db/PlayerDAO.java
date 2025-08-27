@@ -208,12 +208,10 @@ public class PlayerDAO {
         PreparedStatement ins = conn.prepareStatement(
             "INSERT INTO " + INV + " (PlayerId, ItemId, Quantity) VALUES (?,?,?)");
         for (Item it : bag.all()) {
-            if (it instanceof EquipmentItem eq) {
-                ins.setString(1, pid);
-                ins.setString(2, eq.getId());
-                ins.setInt(3, it.getQuantity());
-                ins.addBatch();
-            }
+            ins.setString(1, pid);
+            ins.setString(2, it.getId());
+            ins.setInt(3, it.getQuantity());
+            ins.addBatch();
         }
         ins.executeBatch();
     }

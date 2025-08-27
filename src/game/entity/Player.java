@@ -156,24 +156,24 @@ public class Player extends GameActor implements DrawableEntity {
             baseAtts.set(Attr.SPIRIT, 0);
 
             // Thêm vài item test: bình hồi máu & tinh thần
-            addItem(new game.entity.item.elixir.HealthPotion(50, 3));
-            addItem(new game.entity.item.elixir.SpiritPotion(200, 100));
-            addItem(new game.entity.item.elixir.SpiritPotion(2000, 100));
-            addItem(new game.entity.item.elixir.SpiritPotion(20000, 100));
+            addItem(new game.entity.item.elixir.HealthPotion("HP_TEST", 50, 3));
+            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST1", 200, 100));
+            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST2", 2000, 100));
+            addItem(new game.entity.item.elixir.SpiritPotion("SP_TEST3", 20000, 100));
 
             // Các sách công pháp và đan dược tu luyện để thử nghiệm
             var low = new CultivationTechnique("Công pháp hạ phẩm", SkillGrade.HA, 1, 1);
             var mid = new CultivationTechnique("Công pháp trung phẩm", SkillGrade.TRUNG, 1, 2);
             var high = new CultivationTechnique("Công pháp thượng phẩm", SkillGrade.THUONG, 1, 3);
             var top = new CultivationTechnique("Công pháp cực phẩm", SkillGrade.CUC, 1, 5);
-            addItem(new game.entity.item.book.CultivationBook(low));
-            addItem(new game.entity.item.book.CultivationBook(mid));
-            addItem(new game.entity.item.book.CultivationBook(high));
-            addItem(new game.entity.item.book.CultivationBook(top));
-            addItem(new game.entity.item.elixir.CultivationPill("Đan hạ phẩm", 1, 1));
-            addItem(new game.entity.item.elixir.CultivationPill("Đan trung phẩm", 2, 1));
-            addItem(new game.entity.item.elixir.CultivationPill("Đan thượng phẩm", 3, 1));
-            addItem(new game.entity.item.elixir.CultivationPill("Đan cực phẩm", 4, 1));
+            addItem(new game.entity.item.book.CultivationBook("BOOK_LOW", low));
+            addItem(new game.entity.item.book.CultivationBook("BOOK_MID", mid));
+            addItem(new game.entity.item.book.CultivationBook("BOOK_HIGH", high));
+            addItem(new game.entity.item.book.CultivationBook("BOOK_TOP", top));
+            addItem(new game.entity.item.elixir.CultivationPill("PILL_LOW", "Đan hạ phẩm", 1, 1));
+            addItem(new game.entity.item.elixir.CultivationPill("PILL_MID", "Đan trung phẩm", 2, 1));
+            addItem(new game.entity.item.elixir.CultivationPill("PILL_HIGH", "Đan thượng phẩm", 3, 1));
+            addItem(new game.entity.item.elixir.CultivationPill("PILL_TOP", "Đan cực phẩm", 4, 1));
             
             EquipmentItem armor = new EquipmentItem("Áo giáp", "+3 DEF", "/data/item/equipment/armor.png", EquipType.ARMOR);
             armor.setBonus(Attr.DEF, 3);

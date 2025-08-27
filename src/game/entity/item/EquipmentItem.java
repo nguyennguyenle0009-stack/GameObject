@@ -40,7 +40,7 @@ public class EquipmentItem extends Item {
      * Full constructor including stat bonuses.
      */
     public EquipmentItem(String id, String name, String desc, String iconPath, EquipType type, Map<Attr, Integer> bonusMap) {
-        super(name, desc, 1, 1);
+        super(id, name, desc, 1, 1);
         this.type = type;
         this.iconPath = iconPath;
         this.id = id;
