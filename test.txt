@@ -1,0 +1,3 @@
+1. Chạy `ItemGenerator.createFromTemplate("TEMPLATE_ID")` và kiểm tra hàng mới trong bảng `Items` và `ItemStatMods`.
+2. Tạo nhân vật, nhặt vật phẩm tiêu hao và lưu game để kiểm tra `PlayerInventory` lưu mọi item.
+3. Đọc `ItemAndStatGuide.md` để thêm trang bị mới, sau đó dùng ItemDAO.load xác nhận xuất hiện.

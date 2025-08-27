@@ -12,20 +12,22 @@ public class MaterialItem extends Item {
     private final String iconPath;
     private final BufferedImage icon;
 
-    public MaterialItem(String name, String desc, String iconPath, int quantity, int maxStack) {
-        super(name, desc, quantity, maxStack);
+    public MaterialItem(String id, String name, String desc, String iconPath, int quantity, int maxStack) {
+        super(id, name, desc, quantity, maxStack);
         this.iconPath = iconPath;
-        BufferedImage img;
-        try {
-            img = ImageIO.read(getClass().getResourceAsStream(iconPath));
-        } catch (IOException | IllegalArgumentException e) {
-            img = null;
+        BufferedImage img = null;
+        if (iconPath != null) {
+            try {
+                img = ImageIO.read(getClass().getResourceAsStream(iconPath));
+            } catch (IOException | IllegalArgumentException e) {
+                img = null;
+            }
         }
         this.icon = img;
     }
 
     private MaterialItem(MaterialItem other, int qty) {
-        this(other.getName(), other.getDecription(), other.iconPath, qty, other.getMaxStack());
+        this(other.getId(), other.getName(), other.getDecription(), other.iconPath, qty, other.getMaxStack());
     }
 
     @Override
