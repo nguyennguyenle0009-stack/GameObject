@@ -1,0 +1,4 @@
+Các trường hợp cần kiểm tra:
+- Thiết lập database theo README và chạy game.
+- Tạo nhân vật mới, thoát game và mở lại để kiểm tra load/save qua PlayerDAO.
+- Trang bị vật phẩm có bonus và xác nhận chỉ số thay đổi đúng.

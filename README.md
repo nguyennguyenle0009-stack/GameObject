@@ -6,6 +6,16 @@
 
 ## Cập nhật
 
+## [1.0.23]
+
+### Thêm
+- Lớp `PlayerDAO` và `ItemDAO` để đọc/ghi trạng thái người chơi, item và trang bị từ các bảng chuẩn hoá (`Players`, `PlayerBaseStats`, `PlayerInventory`, `PlayerEquipment`, `Items`, `ItemStatMods`).
+- `EquipmentItem` lưu các bonus chỉ số thông qua `EnumMap<Attr,Integer>`.
+- `Attributes` tách giá trị gốc và cộng thêm bằng lớp `Stat`, cung cấp `addBonus` và `getFinal`.
+
+### Sửa đổi
+- `Player` không còn chuỗi hoá `PlayerProfile` mà dùng các DAO mới.
+
 ## [1.0.21]
 
 ### Thêm
@@ -162,7 +172,7 @@
 ## Cách chạy
 
 1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo database và dữ liệu mẫu.
-2. Chạy script `sql/create_player_profile.sql` để đảm bảo bảng `PlayerProfile` tồn tại.
+2. Cập nhật thông tin kết nối trong `src/game/db/DBAccount.java` nếu cần.
 3. Mở project trong Eclipse.
 4. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
 
