@@ -12,6 +12,7 @@ import java.util.Random;
 
 import game.entity.GameActor;
 import game.entity.Entity;
+import game.db.ItemDAO;
 import game.enums.Attr;
 import game.main.GamePanel;
 
@@ -327,7 +328,9 @@ public abstract class Monster extends GameActor {
      */
     protected java.util.List<game.entity.item.Item> createDropItems() {
         java.util.List<game.entity.item.Item> list = new java.util.ArrayList<>();
-        list.add(new game.entity.item.elixir.HealthPotion("HP_DROP", 30, 1));
+        var hp = new game.entity.item.elixir.HealthPotion("HP_DROP", 30, 1);
+        ItemDAO.insert(hp);
+        list.add(hp);
         return list;
     }
 

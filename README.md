@@ -6,6 +6,13 @@
 
 ## Cập nhật
 
+## [1.0.25]
+
+### Thêm
+- `ItemDAO.insert` lưu vật phẩm tiêu hao và vật liệu vào bảng `Items` và `ItemStatMods`.
+- `Player` và quái vật đăng ký các vật phẩm mới tạo vào cơ sở dữ liệu.
+- `PlayerDAO.saveInventory` bỏ qua hoặc tự chèn những vật phẩm chưa có bản ghi.
+
 ## [1.0.21]
 
 ### Thêm

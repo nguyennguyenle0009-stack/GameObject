@@ -52,4 +52,9 @@ public class SpiritPotion extends Item {
     public BufferedImage getIcon() {
         return icon;
     }
+
+    /**
+     * @return lượng Spirit cộng thêm khi sử dụng.
+     */
+    public int getSpiritAmount() { return spiritAmount; }
 }

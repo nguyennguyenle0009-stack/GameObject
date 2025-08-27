@@ -10,6 +10,7 @@ import game.entity.Player;
 import game.entity.item.EquipmentItem;
 import game.entity.item.Item;
 import game.entity.inventory.Inventory;
+import game.db.ItemDAO;
 import game.enums.Attr;
 import game.enums.EquipSlot;
 import game.entity.attributes.Attributes;
@@ -207,7 +208,13 @@ public class PlayerDAO {
         del.executeUpdate();
         PreparedStatement ins = conn.prepareStatement(
             "INSERT INTO " + INV + " (PlayerId, ItemId, Quantity) VALUES (?,?,?)");
+        PreparedStatement exist = conn.prepareStatement("SELECT 1 FROM Items WHERE ItemId=?");
         for (Item it : bag.all()) {
+            exist.setString(1, it.getId());
+            ResultSet rs = exist.executeQuery();
+            if (!rs.next()) {
+                if (!ItemDAO.insert(it)) continue; // skip if cannot persist
+            }
             ins.setString(1, pid);
             ins.setString(2, it.getId());
             ins.setInt(3, it.getQuantity());

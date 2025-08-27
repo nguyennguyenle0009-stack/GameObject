@@ -88,6 +88,59 @@ public class ItemDAO {
         return map;
     }
 
+    /**
+     * Insert a consumable or material item definition if it does not already exist.
+     *
+     * @param item item to persist
+     * @return {@code true} if the item exists or was inserted; {@code false} if unsupported
+     */
+    public static boolean insert(Item item) {
+        if (item == null || item.getId() == null) return false;
+        try (Connection conn = DBAccount.getConnectDB()) {
+            PreparedStatement check = conn.prepareStatement(
+                "SELECT 1 FROM " + ITEMS + " WHERE ItemId = ?");
+            check.setString(1, item.getId());
+            if (check.executeQuery().next()) return true; // already present
+
+            PreparedStatement insItem = conn.prepareStatement(
+                "INSERT INTO " + ITEMS + " (ItemId, Name, Type) VALUES (?,?,?)");
+            if (item instanceof HealthPotion hp) {
+                insItem.setString(1, hp.getId());
+                insItem.setString(2, hp.getName());
+                insItem.setString(3, "HEALTH_POTION");
+                insItem.executeUpdate();
+                PreparedStatement insMod = conn.prepareStatement(
+                    "INSERT INTO " + ITEM_MODS + " (ItemId, Stat, Flat) VALUES (?,?,?)");
+                insMod.setString(1, hp.getId());
+                insMod.setString(2, Attr.HEALTH.name());
+                insMod.setInt(3, hp.getHealthAmount());
+                insMod.executeUpdate();
+                return true;
+            } else if (item instanceof SpiritPotion sp) {
+                insItem.setString(1, sp.getId());
+                insItem.setString(2, sp.getName());
+                insItem.setString(3, "SPIRIT_POTION");
+                insItem.executeUpdate();
+                PreparedStatement insMod = conn.prepareStatement(
+                    "INSERT INTO " + ITEM_MODS + " (ItemId, Stat, Flat) VALUES (?,?,?)");
+                insMod.setString(1, sp.getId());
+                insMod.setString(2, Attr.SPIRIT.name());
+                insMod.setInt(3, sp.getSpiritAmount());
+                insMod.executeUpdate();
+                return true;
+            } else if (item instanceof MaterialItem m) {
+                insItem.setString(1, m.getId());
+                insItem.setString(2, m.getName());
+                insItem.setString(3, "MATERIAL");
+                insItem.executeUpdate();
+                return true;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private static EquipType parseEquipType(String type) {
         if (type == null) return null;
         try {

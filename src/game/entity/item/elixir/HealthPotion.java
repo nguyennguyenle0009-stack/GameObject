@@ -50,9 +50,14 @@ public class HealthPotion extends Item {
         return this.getName().equals(other.getName()) && this.healthAmount == hp.healthAmount;
     }
 
-	@Override
-	public BufferedImage getIcon() {
-		return icon;
-	}
+        @Override
+        public BufferedImage getIcon() {
+                return icon;
+        }
+
+    /**
+     * @return lượng máu hồi khi sử dụng bình.
+     */
+    public int getHealthAmount() { return healthAmount; }
 
 }
