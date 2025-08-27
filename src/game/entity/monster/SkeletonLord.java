@@ -42,7 +42,7 @@ public class SkeletonLord extends Monster {
         setScaleEntityX(gp.getTileSize());
         setScaleEntityY(gp.getTileSize());
         setCollisionArea(new Rectangle(8, 16, 32, 32));
-        atts().set(Attr.HEALTH, 30);
+        atts().setBase(Attr.HEALTH, 30);
         maxHealth = 30;
         attackDamage = 5;
         attackArea = new Rectangle(0, 0, gp.getTileSize(), gp.getTileSize());

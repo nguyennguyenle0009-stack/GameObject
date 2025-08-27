@@ -17,6 +17,12 @@
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
 
+## [1.0.23]
+
+### Thêm
+- `Attributes` dùng lớp `Stat` để quản lý base/bonus/max của từng chỉ số.
+- `EquipmentItem` mang theo các bonus stat và `Player.refreshStats()` cộng dồn tự động.
+
 ## [1.0.20]
 
 ### Thêm
