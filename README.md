@@ -11,6 +11,12 @@
 ### Thêm
 - Script SQL `sql/game_db_core_schema.sql` khởi tạo schema GameDB và seed dữ liệu mẫu.
 
+## [1.0.22]
+
+### Sửa đổi
+- Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
+- Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
+
 ## [1.0.20]
 
 ### Thêm
@@ -156,8 +162,9 @@
 ## Cách chạy
 
 1. Chạy script `sql/game_db_core_schema.sql` trên SQL Server để tạo database và dữ liệu mẫu.
-2. Mở project trong Eclipse.
-3. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
+2. Chạy script `sql/create_player_profile.sql` để đảm bảo bảng `PlayerProfile` tồn tại.
+3. Mở project trong Eclipse.
+4. Chạy class `Main.java` bằng cách click chuột phải → Run As → Java Application.
 
 ## Yêu cầu hệ thống
 

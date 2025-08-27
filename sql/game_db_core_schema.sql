@@ -68,7 +68,7 @@ CREATE TABLE dbo.ItemStatMods (
   ItemId NVARCHAR(64) NOT NULL,
   Stat NVARCHAR(32) NOT NULL,      -- 'ATTACK','DEF','HEALTH_MAX','PEP_MAX',...
   Flat INT NOT NULL DEFAULT 0,     -- +x
-  Percent DECIMAL(6,3) NOT NULL DEFAULT 0.000, -- 0.10 = +10%
+  PercentBonus DECIMAL(6,3) NOT NULL DEFAULT 0.000, -- 0.10 = +10%
   CONSTRAINT FK_ItemStatMods_Items FOREIGN KEY (ItemId)
     REFERENCES dbo.Items(ItemId) ON DELETE CASCADE
 );
@@ -130,14 +130,14 @@ WHEN NOT MATCHED THEN
 -- Kiếm gỗ: +10 ATTACK
 IF NOT EXISTS (SELECT 1 FROM dbo.ItemStatMods WHERE ItemId = N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec')
 BEGIN
-  INSERT INTO dbo.ItemStatMods (ItemId, Stat, Flat, Percent)
+  INSERT INTO dbo.ItemStatMods (ItemId, Stat, Flat, PercentBonus)
   VALUES (N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec', N'ATTACK', 10, 0.000);
 END
 
 -- Áo giáp: +3 DEF
 IF NOT EXISTS (SELECT 1 FROM dbo.ItemStatMods WHERE ItemId = N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386')
 BEGIN
-  INSERT INTO dbo.ItemStatMods (ItemId, Stat, Flat, Percent)
+  INSERT INTO dbo.ItemStatMods (ItemId, Stat, Flat, PercentBonus)
   VALUES (N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386', N'DEF', 3, 0.000);
 END
 GO
@@ -186,7 +186,7 @@ WHERE e.PlayerId = (SELECT PlayerId FROM dbo.Players WHERE Name = N'Nguyeen_pro'
 ORDER BY e.Slot;
 
 -- Tính modifier từ trang bị (server sẽ dùng để tính effective)
-SELECT e.Slot, ism.Stat, SUM(ism.Flat) AS SumFlat, SUM(ism.Percent) AS SumPercent
+SELECT e.Slot, ism.Stat, SUM(ism.Flat) AS SumFlat, SUM(ism.PercentBonus) AS SumPercent
 FROM dbo.PlayerEquipment e
 JOIN dbo.ItemStatMods ism ON e.ItemId = ism.ItemId
 WHERE e.PlayerId = (SELECT PlayerId FROM dbo.Players WHERE Name = N'Nguyeen_pro')
