@@ -99,3 +99,6 @@ Sửa lỗi và cải tiến:
 ## 1.0.23
 - Thêm các lớp DAO tương tác với bảng `Players`, `PlayerBaseStats` và `PlayerRuntime` để lưu chỉ số nhân vật.
 - `Player.saveState` và `Player.loadProfile` sử dụng các DAO này thay cho chuỗi `PlayerProfile`.
+
+## 1.0.24
+- Lưu thêm `RealmStage` vào bảng `Players` và đọc/ghi giá trị này khi tải hoặc lưu nhân vật.

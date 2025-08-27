@@ -25,6 +25,11 @@
 - Các lớp DAO (`PlayerDao`, `PlayerBaseStatsDao`, `PlayerRuntimeDao`) lưu trữ và đọc thuộc tính nhân vật từ database.
 - `Player.saveState` và `Player.loadProfile` sử dụng các bảng `Players`, `PlayerBaseStats`, `PlayerRuntime` thay cho chuỗi profile.
 
+## [1.0.24]
+
+### Sửa đổi
+- Bảng `Players` lưu thêm cột `RealmStage` để giữ tiểu cảnh giới hiện tại của người chơi.
+
 ## [1.0.20]
 
 ### Thêm

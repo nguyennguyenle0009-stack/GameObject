@@ -23,6 +23,7 @@ CREATE TABLE dbo.Players (
   PlayerId UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Players PRIMARY KEY DEFAULT NEWID(),
   Name NVARCHAR(64) NOT NULL UNIQUE,
   Realm NVARCHAR(64) NULL,
+  RealmStage INT NOT NULL DEFAULT 0,
   CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
 
@@ -146,7 +147,8 @@ GO
    6) Tạo 1 player mẫu để test
    ---------------------------- */
 DECLARE @pid UNIQUEIDENTIFIER = NEWID();
-INSERT INTO dbo.Players (PlayerId, Name, Realm) VALUES (@pid, N'Nguyeen_pro', N'phàm nhân');
+INSERT INTO dbo.Players (PlayerId, Name, Realm, RealmStage)
+VALUES (@pid, N'Nguyeen_pro', N'phàm nhân', 0);
 
 INSERT INTO dbo.PlayerBaseStats (PlayerId, Atk, Def, HealthMax, PepMax, Sould, Spirit, SpiritMax, Strength)
 VALUES (@pid, 5, 4, 100, 100, 5, 0, 1000, 1);
