@@ -6,6 +6,11 @@
 
 ## Cập nhật
 
+## [1.0.24]
+
+### Thay đổi
+- Dữ liệu người chơi được lưu tạm trong bộ nhớ và ghi xuống cơ sở dữ liệu mỗi 10 phút hoặc khi thoát game.
+
 ## [1.0.23]
 
 ### Thay đổi
