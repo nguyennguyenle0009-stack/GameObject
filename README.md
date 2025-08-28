@@ -4,7 +4,7 @@
 	
 ## Tính năng
 
-- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats` và `PlayerRuntime`.
+- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats`, `PlayerRuntime` và `PlayerTechniques`.
 
 ## Cập nhật
 
@@ -40,6 +40,12 @@
 
 ### Thêm
 - `PlayerDao.PlayerRecord` cung cấp phương thức `getFullRealmName()` trả về chuỗi như "Luyện thể tầng 10" kết hợp `Realm` và `RealmStage`.
+
+## [1.0.27]
+
+### Thêm
+- Bảng `PlayerTechniques` lưu danh sách công pháp đã học của người chơi.
+- `PlayerSkillDao` và `Player` đọc/ghi công pháp vào database.
 
 ## [1.0.20]
 

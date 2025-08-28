@@ -47,6 +47,7 @@ import game.db.DBAccount;
 import game.db.PlayerDao;
 import game.db.PlayerBaseStatsDao;
 import game.db.PlayerRuntimeDao;
+import game.db.PlayerSkillDao;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -740,6 +741,9 @@ public class Player extends GameActor implements DrawableEntity {
 
             PlayerRuntimeDao rtDao = new PlayerRuntimeDao();
             rtDao.upsert(playerId, baseAtts.get(Attr.HEALTH), baseAtts.get(Attr.PEP), 0);
+
+            PlayerSkillDao skDao = new PlayerSkillDao();
+            skDao.replaceAll(playerId, techniques);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -843,6 +847,10 @@ public class Player extends GameActor implements DrawableEntity {
                 baseAtts.set(Attr.HEALTH, rt.currentHP);
                 baseAtts.set(Attr.PEP, rt.currentPep);
             }
+
+            PlayerSkillDao skDao = new PlayerSkillDao();
+            techniques.clear();
+            techniques.addAll(skDao.load(playerId));
 
             // Load inventory/equipment from serialized profile if present
             try (Connection conn = DBAccount.getConnectDB();
