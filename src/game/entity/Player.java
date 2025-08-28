@@ -117,6 +117,9 @@ public class Player extends GameActor implements DrawableEntity {
     private int pillSpiritBonus = 0;
     private long pillBuffEnd = 0;
 
+    /** Identifier of the current map the player is located in. */
+    private String mapId = "world01";
+
 	public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
@@ -740,7 +743,8 @@ public class Player extends GameActor implements DrawableEntity {
             bsDao.upsert(playerId, baseAtts);
 
             PlayerRuntimeDao rtDao = new PlayerRuntimeDao();
-            rtDao.upsert(playerId, baseAtts.get(Attr.HEALTH), baseAtts.get(Attr.PEP), 0);
+            rtDao.upsert(playerId, baseAtts.get(Attr.HEALTH), baseAtts.get(Attr.PEP), 0,
+                    mapId, getWorldX(), getWorldY());
 
             PlayerSkillDao skDao = new PlayerSkillDao();
             skDao.replaceAll(playerId, techniques);
@@ -846,6 +850,11 @@ public class Player extends GameActor implements DrawableEntity {
             if (rt != null) {
                 baseAtts.set(Attr.HEALTH, rt.currentHP);
                 baseAtts.set(Attr.PEP, rt.currentPep);
+                setWorldX(rt.posX);
+                setWorldY(rt.posY);
+                if (rt.mapId != null) {
+                    mapId = rt.mapId;
+                }
             }
 
             PlayerSkillDao skDao = new PlayerSkillDao();

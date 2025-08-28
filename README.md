@@ -4,7 +4,7 @@
 	
 ## Tính năng
 
-- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats`, `PlayerRuntime` và `PlayerTechniques`.
+- Thuộc tính và vị trí nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats`, `PlayerRuntime` (HP, Pep, bản đồ, tọa độ) và `PlayerTechniques`.
 
 ## Cập nhật
 
@@ -46,6 +46,12 @@
 ### Thêm
 - Bảng `PlayerTechniques` lưu danh sách công pháp đã học của người chơi.
 - `PlayerSkillDao` và `Player` đọc/ghi công pháp vào database.
+
+## [1.0.28]
+
+### Thêm
+- Bảng `PlayerRuntime` lưu thêm `MapId`, `PosX`, `PosY` để ghi nhận vị trí và bản đồ hiện tại của người chơi.
+- `PlayerRuntimeDao` và `Player` đọc/ghi các giá trị này khi lưu hoặc tải nhân vật.
 
 ## [1.0.20]
 

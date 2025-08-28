@@ -113,3 +113,7 @@ Sửa lỗi và cải tiến:
 ## 1.0.27
 - Thêm bảng `PlayerTechniques` lưu công pháp đã học.
 - `PlayerSkillDao` và `Player` đọc/ghi công pháp vào database.
+
+## 1.0.28
+- Bảng `PlayerRuntime` lưu thêm thông tin bản đồ (`MapId`) và tọa độ (`PosX`, `PosY`).
+- `PlayerRuntimeDao` và `Player` đọc/ghi vị trí hiện tại của nhân vật.

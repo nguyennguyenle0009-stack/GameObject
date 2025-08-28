@@ -14,7 +14,6 @@ GO
 /* ----------------------------
    1) Players & Stats (Base/Runtime)
    ---------------------------- */
-IF OBJECT_ID('dbo.PlayerTechniques','U') IS NOT NULL DROP TABLE dbo.PlayerTechniques;
 IF OBJECT_ID('dbo.PlayerRuntime','U') IS NOT NULL DROP TABLE dbo.PlayerRuntime;
 IF OBJECT_ID('dbo.PlayerBaseStats','U') IS NOT NULL DROP TABLE dbo.PlayerBaseStats;
 IF OBJECT_ID('dbo.Players','U') IS NOT NULL DROP TABLE dbo.Players;
@@ -24,6 +23,8 @@ CREATE TABLE dbo.Players (
   PlayerId UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Players PRIMARY KEY DEFAULT NEWID(),
   Name NVARCHAR(64) NOT NULL UNIQUE,
   Realm NVARCHAR(64) NULL,
+  RealmStage INT NOT NULL DEFAULT 0,
+  Physique NVARCHAR(64) NOT NULL DEFAULT 'NORMAL',
   CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
 
@@ -51,17 +52,10 @@ CREATE TABLE dbo.PlayerRuntime (
 );
 GO
 
-CREATE TABLE dbo.PlayerTechniques (
-  PlayerId UNIQUEIDENTIFIER NOT NULL,
-  Name NVARCHAR(128) NOT NULL,
-  Grade NVARCHAR(16) NOT NULL,
-  Level INT NOT NULL,
-  SpiritPerSecond INT NOT NULL,
-  CONSTRAINT PK_PlayerTechniques PRIMARY KEY (PlayerId, Name),
-  CONSTRAINT FK_PlayerTechniques_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
-);
-GO
+ALTER TABLE dbo.PlayerRuntime 
+  ADD MapId NVARCHAR(64) NOT NULL DEFAULT N'unknown',
+      PosX  INT NOT NULL DEFAULT 0,
+      PosY  INT NOT NULL DEFAULT 0;
 
 /* ----------------------------
    2) Items & Stat Mods
@@ -100,8 +94,9 @@ CREATE TABLE dbo.PlayerInventory (
   Quantity INT NOT NULL CONSTRAINT CK_PlayerInventory_Quantity CHECK (Quantity >= 0),
   CONSTRAINT PK_PlayerInventory PRIMARY KEY (PlayerId, ItemId),
   CONSTRAINT FK_PlayerInventory_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
-  -- Bỏ ràng buộc với bảng Items để tránh lỗi khi có item mới chưa được định nghĩa
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE,
+  CONSTRAINT FK_PlayerInventory_Item FOREIGN KEY (ItemId)
+    REFERENCES dbo.Items(ItemId)
 );
 
 -- Slot hợp lệ gợi ý: ARMOR, HELMET, PANTS, SHOES, WEAPON1, WEAPON2, NECKLACE, RING1, RING2, AMULET
@@ -111,8 +106,9 @@ CREATE TABLE dbo.PlayerEquipment (
   ItemId NVARCHAR(64) NULL,          -- NULL = none
   CONSTRAINT PK_PlayerEquipment PRIMARY KEY (PlayerId, Slot),
   CONSTRAINT FK_PlayerEquipment_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
-  -- Không kiểm tra khoá ngoại ItemId để việc thêm item mới không bị chặn
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE,
+  CONSTRAINT FK_PlayerEquipment_Item FOREIGN KEY (ItemId)
+    REFERENCES dbo.Items(ItemId)
 );
 GO
 
@@ -157,7 +153,8 @@ GO
    6) Tạo 1 player mẫu để test
    ---------------------------- */
 DECLARE @pid UNIQUEIDENTIFIER = NEWID();
-INSERT INTO dbo.Players (PlayerId, Name, Realm) VALUES (@pid, N'Nguyeen_pro', N'phàm nhân');
+INSERT INTO dbo.Players (PlayerId, Name, Realm, RealmStage, Physique)
+VALUES (@pid, N'Nguyeen_pro', N'phàm nhân', 0, N'NORMAL');
 
 INSERT INTO dbo.PlayerBaseStats (PlayerId, Atk, Def, HealthMax, PepMax, Sould, Spirit, SpiritMax, Strength)
 VALUES (@pid, 5, 4, 100, 100, 5, 0, 1000, 1);
@@ -165,13 +162,9 @@ VALUES (@pid, 5, 4, 100, 100, 5, 0, 1000, 1);
 INSERT INTO dbo.PlayerRuntime (PlayerId, CurrentHP, CurrentPep, Money)
 VALUES (@pid, 100, 100, 0);
 
--- Techniques: sample skill
-INSERT INTO dbo.PlayerTechniques (PlayerId, Name, Grade, Level, SpiritPerSecond)
-VALUES (@pid, N'Công pháp hạ phẩm', N'HA', 1, 1);
-
 -- Inventory: có 1 kiếm gỗ, 1 áo giáp
 INSERT INTO dbo.PlayerInventory (PlayerId, ItemId, Quantity)
-VALUES
+VALUES 
   (@pid, N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec', 1),
   (@pid, N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386', 1);
 
@@ -180,6 +173,35 @@ INSERT INTO dbo.PlayerEquipment (PlayerId, Slot, ItemId)
 VALUES 
   (@pid, N'ARMOR',  N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386'),
   (@pid, N'WEAPON1',N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec');
+GO
+
+CREATE TABLE dbo.PlayerTechniques (
+  PlayerId UNIQUEIDENTIFIER NOT NULL,
+  Name NVARCHAR(128) NOT NULL,
+  Grade NVARCHAR(16) NOT NULL,
+  Level INT NOT NULL,
+  SpiritPerSecond INT NOT NULL,
+  CONSTRAINT PK_PlayerTechniques PRIMARY KEY (PlayerId, Name),
+  CONSTRAINT FK_PlayerTechniques_Player FOREIGN KEY (PlayerId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+);
+GO
+
+-- Techniques: sample skill
+INSERT INTO dbo.PlayerTechniques (PlayerId, Name, Grade, Level, SpiritPerSecond)
+VALUES (N'Nguyeen_pro', N'Công pháp hạ phẩm', N'HA', 1, 1);
+
+-- Create table to store serialized player profiles if it does not exist
+IF NOT EXISTS (
+    SELECT * FROM sys.objects
+    WHERE object_id = OBJECT_ID(N'dbo.PlayerProfile') AND type = N'U'
+)
+BEGIN
+    CREATE TABLE dbo.PlayerProfile (
+        name NVARCHAR(100) NOT NULL PRIMARY KEY,
+        profile NVARCHAR(MAX) NOT NULL
+    );
+END;
 GO
 
 /* ----------------------------
