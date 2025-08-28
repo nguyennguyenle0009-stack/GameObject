@@ -4,7 +4,7 @@
 	
 ## Tính năng
 
-- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players`, `PlayerBaseStats` và `PlayerRuntime`.
+- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats` và `PlayerRuntime`.
 
 ## Cập nhật
 
@@ -24,6 +24,22 @@
 ### Thêm
 - Các lớp DAO (`PlayerDao`, `PlayerBaseStatsDao`, `PlayerRuntimeDao`) lưu trữ và đọc thuộc tính nhân vật từ database.
 - `Player.saveState` và `Player.loadProfile` sử dụng các bảng `Players`, `PlayerBaseStats`, `PlayerRuntime` thay cho chuỗi profile.
+
+## [1.0.24]
+
+### Sửa đổi
+- Bảng `Players` lưu thêm cột `RealmStage` để giữ tiểu cảnh giới hiện tại của người chơi.
+
+## [1.0.25]
+
+### Thêm
+- Bảng `Players` lưu thể chất (`Physique`) của người chơi.
+- `PlayerDao` và `Player` đọc/ghi cột `Physique` để giữ nguyên thể chất khi tải lại nhân vật.
+
+## [1.0.26]
+
+### Thêm
+- `PlayerDao.PlayerRecord` cung cấp phương thức `getFullRealmName()` trả về chuỗi như "Luyện thể tầng 10" kết hợp `Realm` và `RealmStage`.
 
 ## [1.0.20]
 

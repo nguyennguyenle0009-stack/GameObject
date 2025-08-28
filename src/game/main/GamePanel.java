@@ -13,8 +13,6 @@ import javax.swing.JPanel;
 import game.check.CollisionChecker;
 import game.entity.Entity;
 import game.entity.Player;
-import game.entity.item.elixir.HealthPotion;
-import game.entity.item.elixir.SpiritPotion;
 import game.interfaces.DrawableEntity;
 import game.keyhandler.KeyHandler;
 import game.mouseclick.MouseHandler;

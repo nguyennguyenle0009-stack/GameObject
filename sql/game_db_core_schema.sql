@@ -87,9 +87,8 @@ CREATE TABLE dbo.PlayerInventory (
   Quantity INT NOT NULL CONSTRAINT CK_PlayerInventory_Quantity CHECK (Quantity >= 0),
   CONSTRAINT PK_PlayerInventory PRIMARY KEY (PlayerId, ItemId),
   CONSTRAINT FK_PlayerInventory_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE,
-  CONSTRAINT FK_PlayerInventory_Item FOREIGN KEY (ItemId)
-    REFERENCES dbo.Items(ItemId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+  -- Bỏ ràng buộc với bảng Items để tránh lỗi khi có item mới chưa được định nghĩa
 );
 
 -- Slot hợp lệ gợi ý: ARMOR, HELMET, PANTS, SHOES, WEAPON1, WEAPON2, NECKLACE, RING1, RING2, AMULET
@@ -99,9 +98,8 @@ CREATE TABLE dbo.PlayerEquipment (
   ItemId NVARCHAR(64) NULL,          -- NULL = none
   CONSTRAINT PK_PlayerEquipment PRIMARY KEY (PlayerId, Slot),
   CONSTRAINT FK_PlayerEquipment_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE,
-  CONSTRAINT FK_PlayerEquipment_Item FOREIGN KEY (ItemId)
-    REFERENCES dbo.Items(ItemId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+  -- Không kiểm tra khoá ngoại ItemId để việc thêm item mới không bị chặn
 );
 GO
 

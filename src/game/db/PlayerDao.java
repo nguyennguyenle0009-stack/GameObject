@@ -3,6 +3,8 @@ package game.db;
 import java.sql.*;
 import java.time.LocalDateTime;
 
+import game.enums.Realm;
+
 /**
  * DAO for the {@code Players} table.
  */
@@ -12,7 +14,26 @@ public class PlayerDao {
     public static class PlayerRecord {
         public String playerId;
         public String realm;
+        public int realmStage;
+        public String physique;
         public LocalDateTime createdAt;
+
+        /**
+         * @return tên hiển thị đầy đủ của cảnh giới bao gồm cả tiểu cảnh giới,
+         *         ví dụ: "Luyện thể tầng 10".
+         */
+        public String getFullRealmName() {
+            if (realm == null) return null;
+            try {
+                Realm r = Realm.valueOf(realm);
+                return switch (r) {
+                    case PHAM_NHAN -> r.getDisplayName();
+                    default -> r.getDisplayName() + " tầng " + realmStage;
+                };
+            } catch (IllegalArgumentException ex) {
+                return realmStage > 0 ? realm + " tầng " + realmStage : realm;
+            }
+        }
     }
 
     /**
@@ -24,13 +45,15 @@ public class PlayerDao {
     public PlayerRecord load(String name) throws ClassNotFoundException, SQLException {
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT PlayerId, Realm, CreatedAt FROM dbo.Players WHERE Name = ?")) {
+                     "SELECT PlayerId, Realm, RealmStage, Physique, CreatedAt FROM dbo.Players WHERE Name = ?")) {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     PlayerRecord rec = new PlayerRecord();
                     rec.playerId = rs.getString("PlayerId");
                     rec.realm = rs.getString("Realm");
+                    rec.realmStage = rs.getInt("RealmStage");
+                    rec.physique = rs.getString("Physique");
                     Timestamp ts = rs.getTimestamp("CreatedAt");
                     rec.createdAt = ts != null ? ts.toLocalDateTime() : null;
                     return rec;
@@ -43,17 +66,19 @@ public class PlayerDao {
     /**
      * Insert or update a player and return the {@code PlayerId}.
      */
-    public String upsert(String name, String realm) throws ClassNotFoundException, SQLException {
+    public String upsert(String name, String realm, int realmStage, String physique) throws ClassNotFoundException, SQLException {
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
                      "MERGE dbo.Players AS target " +
-                     "USING (SELECT ? AS Name, ? AS Realm) AS src " +
+                     "USING (SELECT ? AS Name, ? AS Realm, ? AS RealmStage, ? AS Physique) AS src " +
                      "ON target.Name = src.Name " +
-                     "WHEN MATCHED THEN UPDATE SET Realm = src.Realm " +
-                     "WHEN NOT MATCHED THEN INSERT (Name, Realm) VALUES (src.Name, src.Realm) " +
+                     "WHEN MATCHED THEN UPDATE SET Realm = src.Realm, RealmStage = src.RealmStage, Physique = src.Physique " +
+                     "WHEN NOT MATCHED THEN INSERT (Name, Realm, RealmStage, Physique) VALUES (src.Name, src.Realm, src.RealmStage, src.Physique) " +
                      "OUTPUT inserted.PlayerId;")) {
             ps.setString(1, name);
             ps.setString(2, realm);
+            ps.setInt(3, realmStage);
+            ps.setString(4, physique);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString(1);
@@ -63,4 +88,3 @@ public class PlayerDao {
         return null;
     }
 }
-
