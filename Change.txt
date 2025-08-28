@@ -109,3 +109,7 @@ Sửa lỗi và cải tiến:
 
 ## 1.0.26
 - Thêm phương thức `getFullRealmName` trong `PlayerDao.PlayerRecord` trả về tên cảnh giới kèm tiểu cảnh giới (ví dụ: "Luyện thể tầng 10").
+
+## 1.0.27
+- Thêm bảng `PlayerTechniques` lưu công pháp đã học.
+- `PlayerSkillDao` và `Player` đọc/ghi công pháp vào database.

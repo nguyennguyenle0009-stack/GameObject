@@ -14,6 +14,7 @@ GO
 /* ----------------------------
    1) Players & Stats (Base/Runtime)
    ---------------------------- */
+IF OBJECT_ID('dbo.PlayerTechniques','U') IS NOT NULL DROP TABLE dbo.PlayerTechniques;
 IF OBJECT_ID('dbo.PlayerRuntime','U') IS NOT NULL DROP TABLE dbo.PlayerRuntime;
 IF OBJECT_ID('dbo.PlayerBaseStats','U') IS NOT NULL DROP TABLE dbo.PlayerBaseStats;
 IF OBJECT_ID('dbo.Players','U') IS NOT NULL DROP TABLE dbo.Players;
@@ -46,6 +47,18 @@ CREATE TABLE dbo.PlayerRuntime (
   CurrentPep INT NOT NULL,
   Money BIGINT NOT NULL DEFAULT 0,
   CONSTRAINT FK_Runtime_Player FOREIGN KEY (PlayerId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE dbo.PlayerTechniques (
+  PlayerId UNIQUEIDENTIFIER NOT NULL,
+  Name NVARCHAR(128) NOT NULL,
+  Grade NVARCHAR(16) NOT NULL,
+  Level INT NOT NULL,
+  SpiritPerSecond INT NOT NULL,
+  CONSTRAINT PK_PlayerTechniques PRIMARY KEY (PlayerId, Name),
+  CONSTRAINT FK_PlayerTechniques_Player FOREIGN KEY (PlayerId)
     REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
 );
 GO
@@ -152,9 +165,13 @@ VALUES (@pid, 5, 4, 100, 100, 5, 0, 1000, 1);
 INSERT INTO dbo.PlayerRuntime (PlayerId, CurrentHP, CurrentPep, Money)
 VALUES (@pid, 100, 100, 0);
 
+-- Techniques: sample skill
+INSERT INTO dbo.PlayerTechniques (PlayerId, Name, Grade, Level, SpiritPerSecond)
+VALUES (@pid, N'Công pháp hạ phẩm', N'HA', 1, 1);
+
 -- Inventory: có 1 kiếm gỗ, 1 áo giáp
 INSERT INTO dbo.PlayerInventory (PlayerId, ItemId, Quantity)
-VALUES 
+VALUES
   (@pid, N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec', 1),
   (@pid, N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386', 1);
 
@@ -190,3 +207,8 @@ JOIN dbo.ItemStatMods ism ON e.ItemId = ism.ItemId
 WHERE e.PlayerId = (SELECT PlayerId FROM dbo.Players WHERE Name = N'Nguyeen_pro')
 GROUP BY e.Slot, ism.Stat
 ORDER BY e.Slot, ism.Stat;
+
+-- Learned techniques
+SELECT Name, Grade, Level, SpiritPerSecond
+FROM dbo.PlayerTechniques
+WHERE PlayerId = (SELECT PlayerId FROM dbo.Players WHERE Name = N'Nguyeen_pro');
