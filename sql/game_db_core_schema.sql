@@ -45,6 +45,9 @@ CREATE TABLE dbo.PlayerRuntime (
   PlayerId UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_PlayerRuntime PRIMARY KEY,
   CurrentHP INT NOT NULL,
   CurrentPep INT NOT NULL,
+  MapId NVARCHAR(64) NOT NULL,
+  PosX INT NOT NULL,
+  PosY INT NOT NULL,
   Money BIGINT NOT NULL DEFAULT 0,
   CONSTRAINT FK_Runtime_Player FOREIGN KEY (PlayerId)
     REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
@@ -162,8 +165,8 @@ INSERT INTO dbo.Players (PlayerId, Name, Realm) VALUES (@pid, N'Nguyeen_pro', N'
 INSERT INTO dbo.PlayerBaseStats (PlayerId, Atk, Def, HealthMax, PepMax, Sould, Spirit, SpiritMax, Strength)
 VALUES (@pid, 5, 4, 100, 100, 5, 0, 1000, 1);
 
-INSERT INTO dbo.PlayerRuntime (PlayerId, CurrentHP, CurrentPep, Money)
-VALUES (@pid, 100, 100, 0);
+INSERT INTO dbo.PlayerRuntime (PlayerId, CurrentHP, CurrentPep, MapId, PosX, PosY, Money)
+VALUES (@pid, 100, 100, N'world01', 100, 100, 0);
 
 -- Techniques: sample skill
 INSERT INTO dbo.PlayerTechniques (PlayerId, Name, Grade, Level, SpiritPerSecond)
