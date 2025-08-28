@@ -80,10 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
 //        player.addItem(new SpiritPotion(200000, 60));
 
 
-        objectManager.setObject();
-        objectManager.setEntity();
-        objectManager.setMonsters();
-        objectManager.setMonsterZones();
+        objectManager.loadMapObjects(player.getMapId());
         gameState = playState;
     }
 	
