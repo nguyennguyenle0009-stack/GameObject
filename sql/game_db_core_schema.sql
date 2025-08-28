@@ -52,10 +52,36 @@ CREATE TABLE dbo.PlayerRuntime (
 );
 GO
 
-ALTER TABLE dbo.PlayerRuntime 
+ALTER TABLE dbo.PlayerRuntime
   ADD MapId NVARCHAR(64) NOT NULL DEFAULT N'unknown',
       PosX  INT NOT NULL DEFAULT 0,
       PosY  INT NOT NULL DEFAULT 0;
+
+/* ----------------------------
+   1.1) Map definitions & permissions
+   ---------------------------- */
+IF OBJECT_ID('dbo.Maps','U') IS NOT NULL DROP TABLE dbo.Maps;
+IF OBJECT_ID('dbo.MapPermissions','U') IS NOT NULL DROP TABLE dbo.MapPermissions;
+GO
+
+CREATE TABLE dbo.Maps (
+  MapId NVARCHAR(64) NOT NULL CONSTRAINT PK_Maps PRIMARY KEY,
+  Name NVARCHAR(128) NOT NULL,
+  Info NVARCHAR(512) NULL
+);
+
+CREATE TABLE dbo.MapPermissions (
+  MapId NVARCHAR(64) NOT NULL,
+  PlayerId UNIQUEIDENTIFIER NOT NULL,
+  CanEnter BIT NOT NULL DEFAULT 0,
+  CanManage BIT NOT NULL DEFAULT 0,
+  CONSTRAINT PK_MapPermissions PRIMARY KEY (MapId, PlayerId),
+  CONSTRAINT FK_MapPermissions_Map FOREIGN KEY (MapId)
+    REFERENCES dbo.Maps(MapId) ON DELETE CASCADE,
+  CONSTRAINT FK_MapPermissions_Player FOREIGN KEY (PlayerId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+);
+GO
 
 /* ----------------------------
    2) Items & Stat Mods
@@ -123,6 +149,16 @@ GO
 /* ----------------------------
    5) Seed dữ liệu mẫu
    ---------------------------- */
+-- 5.0 Maps
+MERGE dbo.Maps AS t
+USING (VALUES
+  (N'world01', N'Bản đồ 1', N'Map mặc định'),
+  (N'world02', N'Bản đồ 2', N'Map thử nghiệm')
+) AS s(MapId, Name, Info)
+ON t.MapId = s.MapId
+WHEN NOT MATCHED THEN
+  INSERT (MapId, Name, Info) VALUES (s.MapId, s.Name, s.Info);
+
 -- 5.1 Items
 MERGE dbo.Items AS t
 USING (VALUES
@@ -170,9 +206,14 @@ VALUES
 
 -- Equip: mặc áo giáp, cầm kiếm gỗ ở WEAPON1
 INSERT INTO dbo.PlayerEquipment (PlayerId, Slot, ItemId)
-VALUES 
+VALUES
   (@pid, N'ARMOR',  N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386'),
   (@pid, N'WEAPON1',N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec');
+
+-- sample map permissions for the test player
+INSERT INTO dbo.MapPermissions (MapId, PlayerId, CanEnter, CanManage) VALUES
+  (N'world01', @pid, 1, 1),
+  (N'world02', @pid, 1, 0);
 GO
 
 CREATE TABLE dbo.PlayerTechniques (

@@ -10,12 +10,37 @@ import game.main.GamePanel;
 import game.object.house.OBJ_House_1;
 import game.object.tree.OBJ_Tree_1;
 import game.object.tree.OBJ_Tree_da;
+import game.object.portal.OBJ_Portal;
 
 public class ObjectManager {
     private final GamePanel gp; 
     public ObjectManager(GamePanel gp) { this.gp = gp; }
 
-    public void setObject() {
+    public void loadMapObjects(String mapId) {
+        gp.getObjects().clear();
+        gp.getNpcs().clear();
+        gp.getMonsters().clear();
+        gp.getMonsterZones().clear();
+
+        if ("world01".equals(mapId)) {
+            setObject();
+            setEntity();
+            setMonsters();
+            setMonsterZones();
+
+            SuperObject portal = new OBJ_Portal("world02", 6 * gp.getTileSize(), 6 * gp.getTileSize());
+            portal.setWorldX(8 * gp.getTileSize());
+            portal.setWorldY(8 * gp.getTileSize());
+            gp.getObjects().add(portal);
+        } else if ("world02".equals(mapId)) {
+            SuperObject portal = new OBJ_Portal("world01", 6 * gp.getTileSize(), 6 * gp.getTileSize());
+            portal.setWorldX(5 * gp.getTileSize());
+            portal.setWorldY(5 * gp.getTileSize());
+            gp.getObjects().add(portal);
+        }
+    }
+
+    private void setObject() {
         SuperObject tree = new OBJ_Tree_da();
         tree.setWorldX(5 * gp.getTileSize()); //Vị trí trên trục X
         tree.setWorldY(5 * gp.getTileSize()); //Vị trí trên trục Y
@@ -42,7 +67,7 @@ public class ObjectManager {
         gp.getObjects().add(house);
     }
     
-    public void setEntity(){
+    private void setEntity(){
         Entity cat1 = new Cat_yellow(gp);
         cat1.setWorldX(7 * 48);
         cat1.setWorldY(7 * 48);
@@ -57,7 +82,7 @@ public class ObjectManager {
     /**
      * Khởi tạo các quái vật trong bản đồ.
      */
-    public void setMonsters(){
+    private void setMonsters(){
         // Slime cơ bản
         Entity slime = new GreenSlime(gp);
         slime.setWorldX(10 * gp.getTileSize());
@@ -74,7 +99,7 @@ public class ObjectManager {
     /**
      * Khởi tạo các khu vực sinh quái.
      */
-    public void setMonsterZones() {
+    private void setMonsterZones() {
         MonsterZone zone1 = new MonsterZone(gp,
                 10, 2, 20, 10,
                 () -> new Orc(gp),

@@ -39,6 +39,8 @@ import game.enums.SkillGrade;
 import game.enums.EquipSlot;
 import game.enums.EquipType;
 import game.entity.skill.CultivationTechnique;
+import game.object.SuperObject;
+import game.object.portal.OBJ_Portal;
 
 import game.main.GamePanel;
 import game.util.CameraHelper;
@@ -120,7 +122,7 @@ public class Player extends GameActor implements DrawableEntity {
     /** Identifier of the current map the player is located in. */
     private String mapId = "world01";
 
-	public Player(GamePanel gp) {
+    public Player(GamePanel gp) {
 		super(gp);
         this.screenX = gp.getScreenWidth() / 2 - (gp.getTileSize() / 2);//360
         this.screenY = gp.getScreenHeight() / 2 - (gp.getTileSize() / 2);//264
@@ -207,6 +209,8 @@ public class Player extends GameActor implements DrawableEntity {
         setCollisionDefaultX(getCollisionArea().x);
         setCollisionDefaultY(getCollisionArea().y);
     }
+
+    public String getMapId() { return mapId; }
 
     public Realm getRealm() {
         return realm;
@@ -353,10 +357,20 @@ public class Player extends GameActor implements DrawableEntity {
         }
 	
 	@Override
-	public void checkCollision() {
-		setCollisionOn(false);
-		gp.getCheckCollision().checkTile(this);
-        gp.getCheckCollision().checkObject(this, false);
+        public void checkCollision() {
+                setCollisionOn(false);
+                gp.getCheckCollision().checkTile(this);
+        int objIndex = gp.getCheckCollision().checkObject(this, true);
+        if (objIndex != 999) {
+            SuperObject obj = gp.getObjects().get(objIndex);
+            if (obj instanceof OBJ_Portal portal) {
+                gp.getTileManager().loadMap("/data/map/" + portal.getTargetMap() + ".txt");
+                setWorldX(portal.getTargetX());
+                setWorldY(portal.getTargetY());
+                mapId = portal.getTargetMap();
+                gp.getObjectManager().loadMapObjects(mapId);
+            }
+        }
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
         int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
         interactWithNPC(npcIndex);
