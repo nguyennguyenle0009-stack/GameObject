@@ -95,3 +95,17 @@ Sửa lỗi và cải tiến:
 - Đổi tên cột `Percent` thành `PercentBonus` trong `sql/game_db_core_schema.sql` để tránh từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa có.
 - Cập nhật README hướng dẫn chạy script trước khi khởi động game.
+
+## 1.0.23
+- Thêm các lớp DAO tương tác với bảng `Players`, `PlayerBaseStats` và `PlayerRuntime` để lưu chỉ số nhân vật.
+- `Player.saveState` và `Player.loadProfile` sử dụng các DAO này thay cho chuỗi `PlayerProfile`.
+
+## 1.0.24
+- Lưu thêm `RealmStage` vào bảng `Players` và đọc/ghi giá trị này khi tải hoặc lưu nhân vật.
+
+## 1.0.25
+- Bảng `Players` lưu thể chất `Physique` của người chơi.
+- `PlayerDao` và `Player` đọc/ghi thể chất để duy trì tối đa tầng và các hiệu ứng đặc biệt sau khi tải lại.
+
+## 1.0.26
+- Thêm phương thức `getFullRealmName` trong `PlayerDao.PlayerRecord` trả về tên cảnh giới kèm tiểu cảnh giới (ví dụ: "Luyện thể tầng 10").

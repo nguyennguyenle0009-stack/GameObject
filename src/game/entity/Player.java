@@ -44,6 +44,9 @@ import game.main.GamePanel;
 import game.util.CameraHelper;
 import game.util.UtilityTool;
 import game.db.DBAccount;
+import game.db.PlayerDao;
+import game.db.PlayerBaseStatsDao;
+import game.db.PlayerRuntimeDao;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -70,6 +73,8 @@ public class Player extends GameActor implements DrawableEntity {
     // Cảnh giới hiện tại của người chơi
     private Realm realm = Realm.PHAM_NHAN;
     private int realmStage = 0;
+    /** PlayerId from SQL database. */
+    private String playerId;
     /**
      * Yêu cầu SPIRIT thực tế để lên cấp tiếp theo sau khi áp dụng hệ số thể chất.
      * Giá trị gốc trước khi áp dụng hệ số được lưu trong {@code baseSpiritRequirement}.
@@ -711,6 +716,7 @@ public class Player extends GameActor implements DrawableEntity {
 
     public synchronized void saveState() {
         logRealmState();
+        saveStats();
         saveProfile();
     }
 
@@ -721,6 +727,22 @@ public class Player extends GameActor implements DrawableEntity {
     public void stopAutoSave() {
         autoSaveExecutor.shutdownNow();
         saveState();
+    }
+
+    /** Persist core stats to SQL Server tables. */
+    private void saveStats() {
+        try {
+            PlayerDao pdao = new PlayerDao();
+            playerId = pdao.upsert(getName(), realm.name(), realmStage, physique.name());
+
+            PlayerBaseStatsDao bsDao = new PlayerBaseStatsDao();
+            bsDao.upsert(playerId, baseAtts);
+
+            PlayerRuntimeDao rtDao = new PlayerRuntimeDao();
+            rtDao.upsert(playerId, baseAtts.get(Attr.HEALTH), baseAtts.get(Attr.PEP), 0);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /** Persist current player profile to SQL Server. */
@@ -785,86 +807,126 @@ public class Player extends GameActor implements DrawableEntity {
 
     /** Load player profile from SQL Server. */
     private boolean loadProfile() {
-        try (Connection conn = DBAccount.getConnectDB();
-             PreparedStatement ps = conn.prepareStatement(
-                     "SELECT profile FROM " + PROFILE_TABLE + " WHERE name = ?")) {
-            ps.setString(1, getName());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return false;
-                String profileData = rs.getString("profile");
-                List<String> lines = Arrays.asList(profileData.split("\\r?\\n"));
-                int idxLine = 0;
+        try {
+            PlayerDao pdao = new PlayerDao();
+            PlayerDao.PlayerRecord rec = pdao.load(getName());
+            if (rec == null) return false;
+            playerId = rec.playerId;
+            if (rec.realm != null) {
+                try { realm = Realm.valueOf(rec.realm); } catch (IllegalArgumentException ignored) {}
+            }
+            realmStage = rec.realmStage;
+            if (rec.physique != null) {
+                try { physique = Physique.valueOf(rec.physique); } catch (IllegalArgumentException ignored) {}
+            }
+            if (rec.createdAt != null) {
+                creationDate = rec.createdAt.toLocalDate();
+            }
 
-                if (idxLine < lines.size() && lines.get(idxLine).startsWith("CREATION_DATE:")) {
-                    String dateStr = lines.get(idxLine).substring("CREATION_DATE:".length()).trim();
-                    creationDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
-                    idxLine++;
-                }
+            PlayerBaseStatsDao bsDao = new PlayerBaseStatsDao();
+            PlayerBaseStatsDao.BaseStats bs = bsDao.load(playerId);
+            if (bs == null) return false;
+            baseAtts.set(Attr.ATTACK, bs.atk);
+            baseAtts.set(Attr.DEF, bs.def);
+            baseAtts.setMax(Attr.HEALTH, bs.healthMax);
+            baseAtts.setMax(Attr.PEP, bs.pepMax);
+            baseAtts.set(Attr.SOULD, bs.sould);
+            baseAtts.set(Attr.SPIRIT, bs.spirit);
+            baseAtts.setMax(Attr.SPIRIT, bs.spiritMax);
+            baseAtts.set(Attr.STRENGTH, bs.strength);
+            baseSpiritRequirement = bs.spiritMax;
+            spiritToNextLevel = bs.spiritMax;
 
-                if (idxLine < lines.size()) {
-                    String itemLine = lines.get(idxLine);
-                    String prefix = "Itemcủa nhân vật: ";
-                    if (itemLine.startsWith(prefix)) {
-                        String items = itemLine.substring(prefix.length()).trim();
-                        bag.clear();
-                        if (!items.isEmpty()) {
-                            String[] tokens = items.split(",\\s*");
-                            for (String token : tokens) {
-                                int idxTok = token.lastIndexOf(" (");
-                                int end = token.lastIndexOf(")");
-                                if (idxTok > 0 && end > idxTok) {
-                                    String name = token.substring(0, idxTok).trim();
-                                    int qty = Integer.parseInt(token.substring(idxTok + 2, end));
-                                    Item it = createItemByName(name, qty);
-                                    if (it != null) bag.add(it);
+            PlayerRuntimeDao rtDao = new PlayerRuntimeDao();
+            PlayerRuntimeDao.RuntimeStats rt = rtDao.load(playerId);
+            if (rt != null) {
+                baseAtts.set(Attr.HEALTH, rt.currentHP);
+                baseAtts.set(Attr.PEP, rt.currentPep);
+            }
+
+            // Load inventory/equipment from serialized profile if present
+            try (Connection conn = DBAccount.getConnectDB();
+                 PreparedStatement ps = conn.prepareStatement(
+                         "SELECT profile FROM " + PROFILE_TABLE + " WHERE name = ?")) {
+                ps.setString(1, getName());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String profileData = rs.getString("profile");
+                        List<String> lines = Arrays.asList(profileData.split("\\r?\\n"));
+                        int idxLine = 0;
+
+                        if (idxLine < lines.size() && lines.get(idxLine).startsWith("CREATION_DATE:")) {
+                            String dateStr = lines.get(idxLine).substring("CREATION_DATE:".length()).trim();
+                            creationDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
+                            idxLine++;
+                        }
+
+                        if (idxLine < lines.size()) {
+                            String itemLine = lines.get(idxLine);
+                            String prefix = "Itemcủa nhân vật: ";
+                            if (itemLine.startsWith(prefix)) {
+                                String items = itemLine.substring(prefix.length()).trim();
+                                bag.clear();
+                                if (!items.isEmpty()) {
+                                    String[] tokens = items.split(",\\s*");
+                                    for (String token : tokens) {
+                                        int idxTok = token.lastIndexOf(" (");
+                                        int end = token.lastIndexOf(")");
+                                        if (idxTok > 0 && end > idxTok) {
+                                            String name = token.substring(0, idxTok).trim();
+                                            int qty = Integer.parseInt(token.substring(idxTok + 2, end));
+                                            Item it = createItemByName(name, qty);
+                                            if (it != null) bag.add(it);
+                                        }
+                                    }
                                 }
                             }
+                            idxLine++;
                         }
-                    }
-                    idxLine++;
-                }
 
-                if (idxLine < lines.size() && lines.get(idxLine).trim().equals("===EQUIPMENT===")) {
-                    idxLine++;
-                    equipment.clear();
-                    while (idxLine < lines.size()) {
-                        String line = lines.get(idxLine).trim();
-                        if (!line.startsWith("-")) break;
-                        line = line.substring(1).trim();
-                        int colon = line.indexOf(":");
-                        if (colon < 0) { idxLine++; continue; }
-                        String slotName = line.substring(0, colon).trim();
-                        String data = line.substring(colon + 1).trim();
-                        EquipSlot slot;
-                        try {
-                            slot = EquipSlot.valueOf(slotName);
-                        } catch (IllegalArgumentException e) {
-                            idxLine++; continue;
+                        if (idxLine < lines.size() && lines.get(idxLine).trim().equals("===EQUIPMENT===")) {
+                            idxLine++;
+                            equipment.clear();
+                            while (idxLine < lines.size()) {
+                                String line = lines.get(idxLine).trim();
+                                if (!line.startsWith("-")) break;
+                                line = line.substring(1).trim();
+                                int colon = line.indexOf(":");
+                                if (colon < 0) { idxLine++; continue; }
+                                String slotName = line.substring(0, colon).trim();
+                                String data = line.substring(colon + 1).trim();
+                                EquipSlot slot;
+                                try {
+                                    slot = EquipSlot.valueOf(slotName);
+                                } catch (IllegalArgumentException e) {
+                                    idxLine++; continue;
+                                }
+                                if (!data.equalsIgnoreCase("none")) {
+                                    String[] partsEq = data.split("\\|");
+                                    String id = partsEq.length > 0 ? partsEq[0].trim() : "";
+                                    String nameEq = partsEq.length > 1 ? partsEq[1].trim() : "";
+                                    String descEq = partsEq.length > 2 ? partsEq[2].trim() : "";
+                                    EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
+                                    if (eq != null) {
+                                        equipment.put(slot, eq);
+                                        if (eq.getType() == EquipType.RING) bag.increaseCapacity(10);
+                                    }
+                                }
+                                idxLine++;
+                            }
+                            refreshStats();
                         }
-                        if (!data.equalsIgnoreCase("none")) {
-                            String[] partsEq = data.split("\\|");
-                            String id = partsEq.length > 0 ? partsEq[0].trim() : "";
-                            String nameEq = partsEq.length > 1 ? partsEq[1].trim() : "";
-                            String descEq = partsEq.length > 2 ? partsEq[2].trim() : "";
-                            EquipmentItem eq = createEquipmentFromSlot(id, nameEq, descEq, slot);
-                            if (eq != null) {
-                                equipment.put(slot, eq);
-                                if (eq.getType() == EquipType.RING) bag.increaseCapacity(10);
+
+                        if (idxLine < lines.size()) {
+                            realmLog.clear();
+                            for (; idxLine < lines.size(); idxLine++) {
+                                realmLog.add(lines.get(idxLine));
                             }
                         }
-                        idxLine++;
-                    }
-                    refreshStats();
-                }
-
-                if (idxLine < lines.size()) {
-                    realmLog.clear();
-                    for (; idxLine < lines.size(); idxLine++) {
-                        realmLog.add(lines.get(idxLine));
                     }
                 }
-                return true;
             }
+            return true;
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             return false;
