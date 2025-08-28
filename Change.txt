@@ -102,3 +102,7 @@ Sửa lỗi và cải tiến:
 
 ## 1.0.24
 - Lưu thêm `RealmStage` vào bảng `Players` và đọc/ghi giá trị này khi tải hoặc lưu nhân vật.
+
+## 1.0.25
+- Bảng `Players` lưu thể chất `Physique` của người chơi.
+- `PlayerDao` và `Player` đọc/ghi thể chất để duy trì tối đa tầng và các hiệu ứng đặc biệt sau khi tải lại.

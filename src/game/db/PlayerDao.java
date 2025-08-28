@@ -13,6 +13,7 @@ public class PlayerDao {
         public String playerId;
         public String realm;
         public int realmStage;
+        public String physique;
         public LocalDateTime createdAt;
     }
 
@@ -25,7 +26,7 @@ public class PlayerDao {
     public PlayerRecord load(String name) throws ClassNotFoundException, SQLException {
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT PlayerId, Realm, RealmStage, CreatedAt FROM dbo.Players WHERE Name = ?")) {
+                     "SELECT PlayerId, Realm, RealmStage, Physique, CreatedAt FROM dbo.Players WHERE Name = ?")) {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -33,6 +34,7 @@ public class PlayerDao {
                     rec.playerId = rs.getString("PlayerId");
                     rec.realm = rs.getString("Realm");
                     rec.realmStage = rs.getInt("RealmStage");
+                    rec.physique = rs.getString("Physique");
                     Timestamp ts = rs.getTimestamp("CreatedAt");
                     rec.createdAt = ts != null ? ts.toLocalDateTime() : null;
                     return rec;
@@ -45,18 +47,19 @@ public class PlayerDao {
     /**
      * Insert or update a player and return the {@code PlayerId}.
      */
-    public String upsert(String name, String realm, int realmStage) throws ClassNotFoundException, SQLException {
+    public String upsert(String name, String realm, int realmStage, String physique) throws ClassNotFoundException, SQLException {
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
                      "MERGE dbo.Players AS target " +
-                     "USING (SELECT ? AS Name, ? AS Realm, ? AS RealmStage) AS src " +
+                     "USING (SELECT ? AS Name, ? AS Realm, ? AS RealmStage, ? AS Physique) AS src " +
                      "ON target.Name = src.Name " +
-                     "WHEN MATCHED THEN UPDATE SET Realm = src.Realm, RealmStage = src.RealmStage " +
-                     "WHEN NOT MATCHED THEN INSERT (Name, Realm, RealmStage) VALUES (src.Name, src.Realm, src.RealmStage) " +
+                     "WHEN MATCHED THEN UPDATE SET Realm = src.Realm, RealmStage = src.RealmStage, Physique = src.Physique " +
+                     "WHEN NOT MATCHED THEN INSERT (Name, Realm, RealmStage, Physique) VALUES (src.Name, src.Realm, src.RealmStage, src.Physique) " +
                      "OUTPUT inserted.PlayerId;")) {
             ps.setString(1, name);
             ps.setString(2, realm);
             ps.setInt(3, realmStage);
+            ps.setString(4, physique);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString(1);

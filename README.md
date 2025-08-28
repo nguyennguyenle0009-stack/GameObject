@@ -4,7 +4,7 @@
 	
 ## Tính năng
 
-- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players`, `PlayerBaseStats` và `PlayerRuntime`.
+- Thuộc tính nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats` và `PlayerRuntime`.
 
 ## Cập nhật
 
@@ -29,6 +29,12 @@
 
 ### Sửa đổi
 - Bảng `Players` lưu thêm cột `RealmStage` để giữ tiểu cảnh giới hiện tại của người chơi.
+
+## [1.0.25]
+
+### Thêm
+- Bảng `Players` lưu thể chất (`Physique`) của người chơi.
+- `PlayerDao` và `Player` đọc/ghi cột `Physique` để giữ nguyên thể chất khi tải lại nhân vật.
 
 ## [1.0.20]
 
