@@ -3,6 +3,8 @@ package game.db;
 import java.sql.*;
 import java.time.LocalDateTime;
 
+import game.enums.Realm;
+
 /**
  * DAO for the {@code Players} table.
  */
@@ -15,6 +17,23 @@ public class PlayerDao {
         public int realmStage;
         public String physique;
         public LocalDateTime createdAt;
+
+        /**
+         * @return tên hiển thị đầy đủ của cảnh giới bao gồm cả tiểu cảnh giới,
+         *         ví dụ: "Luyện thể tầng 10".
+         */
+        public String getFullRealmName() {
+            if (realm == null) return null;
+            try {
+                Realm r = Realm.valueOf(realm);
+                return switch (r) {
+                    case PHAM_NHAN -> r.getDisplayName();
+                    default -> r.getDisplayName() + " tầng " + realmStage;
+                };
+            } catch (IllegalArgumentException ex) {
+                return realmStage > 0 ? realm + " tầng " + realmStage : realm;
+            }
+        }
     }
 
     /**

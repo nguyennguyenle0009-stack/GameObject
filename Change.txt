@@ -106,3 +106,6 @@ Sửa lỗi và cải tiến:
 ## 1.0.25
 - Bảng `Players` lưu thể chất `Physique` của người chơi.
 - `PlayerDao` và `Player` đọc/ghi thể chất để duy trì tối đa tầng và các hiệu ứng đặc biệt sau khi tải lại.
+
+## 1.0.26
+- Thêm phương thức `getFullRealmName` trong `PlayerDao.PlayerRecord` trả về tên cảnh giới kèm tiểu cảnh giới (ví dụ: "Luyện thể tầng 10").

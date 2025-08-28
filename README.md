@@ -36,6 +36,11 @@
 - Bảng `Players` lưu thể chất (`Physique`) của người chơi.
 - `PlayerDao` và `Player` đọc/ghi cột `Physique` để giữ nguyên thể chất khi tải lại nhân vật.
 
+## [1.0.26]
+
+### Thêm
+- `PlayerDao.PlayerRecord` cung cấp phương thức `getFullRealmName()` trả về chuỗi như "Luyện thể tầng 10" kết hợp `Realm` và `RealmStage`.
+
 ## [1.0.20]
 
 ### Thêm
