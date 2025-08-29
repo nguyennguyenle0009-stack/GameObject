@@ -35,12 +35,12 @@ public class GamePanel extends JPanel implements Runnable {
 	//Tổng số độ dài khung hình hiển thị
 	private final int screenWidth = tileSize * maxScreenCol;//768
 	private final int screenHeight = tileSize * maxScreenRow;//576
-	// Tổng cột và hàng trong map
-	private final int maxWorldCol = 50;
-	private final int maxWorldRow = 50;
-	// Tổng số chiều rộng và chiều cao trong map(pixel)
-	private final int worldWidth = tileSize * maxWorldCol;//2400
-	private final int worldHeight = tileSize * maxWorldRow;
+        // Tổng cột và hàng trong map (sẽ được thiết lập khi tải bản đồ)
+        private int maxWorldCol;
+        private int maxWorldRow;
+        // Tổng số chiều rộng và chiều cao trong map(pixel)
+        private int worldWidth;
+        private int worldHeight;
 	private Thread thread;
 	private int FPS = 60;
 	public KeyHandler keyH = new KeyHandler(this);
@@ -173,11 +173,17 @@ public class GamePanel extends JPanel implements Runnable {
 	public int getMaxScreenCol() { return maxScreenCol; }
 	public int getMaxScreenRow() { return maxScreenRow; }
 	public int getScreenWidth() { return screenWidth; }
-	public int getScreenHeight() { return screenHeight; }
-	public int getMaxWorldCol() { return maxWorldCol; }
-	public int getMaxWorldRow() { return maxWorldRow; }
-	public int getWorldWidth() { return worldWidth; }
-	public int getWorldHeight() { return worldHeight; }
+        public int getScreenHeight() { return screenHeight; }
+        public int getMaxWorldCol() { return maxWorldCol; }
+        public int getMaxWorldRow() { return maxWorldRow; }
+        public int getWorldWidth() { return worldWidth; }
+        public int getWorldHeight() { return worldHeight; }
+        public void setWorldSize(int cols, int rows) {
+            this.maxWorldCol = cols;
+            this.maxWorldRow = rows;
+            this.worldWidth = tileSize * cols;
+            this.worldHeight = tileSize * rows;
+        }
 	public Player getPlayer() { return player; }
 	public TileManager getTileManager() { return tileManager; }
 	public CollisionChecker getCheckCollision() { return checkCollision; }

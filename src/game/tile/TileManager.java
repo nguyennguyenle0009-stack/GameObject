@@ -6,27 +6,33 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
 import game.main.GamePanel;
 import game.util.UtilityTool;
+import game.db.MapDao;
 
 public class TileManager {
 	private final GamePanel gp;
-	private final Tile[] tile;
-	// Mảng lưu số hiệu của từng tile trong bản đồ
-	private final int [][] mapTileNumber;
+        private final Tile[] tile;
+        // Mảng lưu bản đồ theo id
+        private final Map<String, GameMap> maps = new HashMap<>();
+        private GameMap currentMap;
+        private int [][] mapTileNumber;
 	
 	// Contructor
 	public TileManager(GamePanel gp) {
 		this.gp = gp;
-		this.tile = new Tile[30];
-		this.mapTileNumber = new int[gp.getMaxWorldCol()][gp.getMaxWorldRow()];
-		
-		getTileImage();
-		loadMap("/data/map/world01.txt");
+                this.tile = new Tile[30];
+
+                getTileImage();
+                loadMap("world01", "World 01", "", "/data/map/world01.txt");
 	}
 	
 	public void getTileImage() {
@@ -73,28 +79,56 @@ public class TileManager {
         }
     }
 	
-    public void loadMap(String mapPath) {
+    public void loadMap(String mapId, String name, String info, String mapPath) {
         try {
             InputStream inputStream = getClass().getResourceAsStream(mapPath);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            int col = 0;
-            int row = 0;
-            while (col < gp.getMaxWorldCol() && row < gp.getMaxWorldRow()) {
-                String line = bufferedReader.readLine();
-                while (col < gp.getMaxWorldCol()) {
-                    String[] numbers = line.split(" ");
-                    int number = Integer.parseInt(numbers[col]);
-                    mapTileNumber[col][row] = number;
-                    col++;
-                }
-                if (col == gp.getMaxWorldCol()) {
-                    col = 0;
-                    row++;
+            List<String> lines = new ArrayList<>();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    lines.add(line);
                 }
             }
             bufferedReader.close();
+
+            int rows = lines.size();
+            int cols = lines.get(0).split(" ").length;
+            mapTileNumber = new int[cols][rows];
+            for (int row = 0; row < rows; row++) {
+                String[] numbers = lines.get(row).split(" ");
+                for (int col = 0; col < cols; col++) {
+                    mapTileNumber[col][row] = Integer.parseInt(numbers[col]);
+                }
+            }
+
+            GameMap map = new GameMap(mapId, name, info, mapTileNumber);
+            maps.put(mapId, map);
+            currentMap = map;
+            gp.setWorldSize(cols, rows);
+
+            // ensure map exists in DB
+            try {
+                MapDao dao = new MapDao();
+                dao.ensureExists(mapId, name, info);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Switch to an already loaded map by its identifier.
+     */
+    public void setCurrentMap(String mapId) {
+        GameMap map = maps.get(mapId);
+        if (map != null) {
+            currentMap = map;
+            mapTileNumber = map.getTileNumbers();
+            gp.setWorldSize(map.getCols(), map.getRows());
         }
     }
 	
@@ -158,6 +192,7 @@ public class TileManager {
    
    public Tile[] getTile() { return tile; }
    public int[][] getMapTileNumber() { return mapTileNumber; }
+   public GameMap getCurrentMap() { return currentMap; }
 }
 
 

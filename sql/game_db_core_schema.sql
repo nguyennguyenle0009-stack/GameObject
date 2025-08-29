@@ -52,10 +52,38 @@ CREATE TABLE dbo.PlayerRuntime (
 );
 GO
 
-ALTER TABLE dbo.PlayerRuntime 
+IF OBJECT_ID('dbo.Maps','U') IS NOT NULL DROP TABLE dbo.Maps;
+GO
+
+CREATE TABLE dbo.Maps (
+  MapId NVARCHAR(64) NOT NULL CONSTRAINT PK_Maps PRIMARY KEY,
+  Name NVARCHAR(128) NOT NULL,
+  Info NVARCHAR(MAX) NULL
+);
+GO
+
+IF OBJECT_ID('dbo.MapAccess','U') IS NOT NULL DROP TABLE dbo.MapAccess;
+GO
+
+CREATE TABLE dbo.MapAccess (
+  MapId NVARCHAR(64) NOT NULL,
+  PlayerId UNIQUEIDENTIFIER NOT NULL,
+  CONSTRAINT PK_MapAccess PRIMARY KEY (MapId, PlayerId),
+  CONSTRAINT FK_MapAccess_Maps FOREIGN KEY (MapId)
+    REFERENCES dbo.Maps(MapId) ON DELETE CASCADE,
+  CONSTRAINT FK_MapAccess_Player FOREIGN KEY (PlayerId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+);
+GO
+
+ALTER TABLE dbo.PlayerRuntime
   ADD MapId NVARCHAR(64) NOT NULL DEFAULT N'unknown',
       PosX  INT NOT NULL DEFAULT 0,
       PosY  INT NOT NULL DEFAULT 0;
+
+ALTER TABLE dbo.PlayerRuntime
+  ADD CONSTRAINT FK_PlayerRuntime_Map FOREIGN KEY (MapId)
+    REFERENCES dbo.Maps(MapId);
 
 /* ----------------------------
    2) Items & Stat Mods
