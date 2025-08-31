@@ -719,6 +719,9 @@ public class Player extends GameActor implements DrawableEntity {
     }
 
     public synchronized void saveState() {
+        // Sync runtime attributes before persisting
+        baseAtts.set(Attr.HEALTH, atts().get(Attr.HEALTH));
+        baseAtts.set(Attr.PEP, atts().get(Attr.PEP));
         logRealmState();
         saveStats();
         saveProfile();
@@ -743,7 +746,7 @@ public class Player extends GameActor implements DrawableEntity {
             bsDao.upsert(playerId, baseAtts);
 
             PlayerRuntimeDao rtDao = new PlayerRuntimeDao();
-            rtDao.upsert(playerId, baseAtts.get(Attr.HEALTH), baseAtts.get(Attr.PEP), 0,
+            rtDao.upsert(playerId, atts().get(Attr.HEALTH), atts().get(Attr.PEP), 0,
                     mapId, getWorldX(), getWorldY());
 
             PlayerSkillDao skDao = new PlayerSkillDao();
