@@ -4,6 +4,8 @@
 	
 ## Tính năng
 
+- Thuộc tính và vị trí nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats`, `PlayerRuntime` (HP, Pep, bản đồ, tọa độ) và `PlayerTechniques`.
+
 ## Cập nhật
 
 ## [1.0.21]
@@ -16,6 +18,40 @@
 ### Sửa đổi
 - Đổi tên cột `ItemStatMods.Percent` thành `PercentBonus` để tránh xung đột từ khóa SQL.
 - Thêm script `sql/create_player_profile.sql` tạo bảng `PlayerProfile` nếu chưa tồn tại.
+
+## [1.0.23]
+
+### Thêm
+- Các lớp DAO (`PlayerDao`, `PlayerBaseStatsDao`, `PlayerRuntimeDao`) lưu trữ và đọc thuộc tính nhân vật từ database.
+- `Player.saveState` và `Player.loadProfile` sử dụng các bảng `Players`, `PlayerBaseStats`, `PlayerRuntime` thay cho chuỗi profile.
+
+## [1.0.24]
+
+### Sửa đổi
+- Bảng `Players` lưu thêm cột `RealmStage` để giữ tiểu cảnh giới hiện tại của người chơi.
+
+## [1.0.25]
+
+### Thêm
+- Bảng `Players` lưu thể chất (`Physique`) của người chơi.
+- `PlayerDao` và `Player` đọc/ghi cột `Physique` để giữ nguyên thể chất khi tải lại nhân vật.
+
+## [1.0.26]
+
+### Thêm
+- `PlayerDao.PlayerRecord` cung cấp phương thức `getFullRealmName()` trả về chuỗi như "Luyện thể tầng 10" kết hợp `Realm` và `RealmStage`.
+
+## [1.0.27]
+
+### Thêm
+- Bảng `PlayerTechniques` lưu danh sách công pháp đã học của người chơi.
+- `PlayerSkillDao` và `Player` đọc/ghi công pháp vào database.
+
+## [1.0.28]
+
+### Thêm
+- Bảng `PlayerRuntime` lưu thêm `MapId`, `PosX`, `PosY` để ghi nhận vị trí và bản đồ hiện tại của người chơi.
+- `PlayerRuntimeDao` và `Player` đọc/ghi các giá trị này khi lưu hoặc tải nhân vật.
 
 ## [1.0.20]
 

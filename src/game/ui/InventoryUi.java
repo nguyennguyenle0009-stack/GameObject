@@ -367,7 +367,7 @@ public class InventoryUi {
     }
 
     public boolean handleMousePress(int mx, int my, int button) {
-        Dimension gridDim = itemGrid.getPreferredSize();
+        //Dimension gridDim = itemGrid.getPreferredSize();
         Dimension equipDim = getEquipmentDim();
         int equipX = gp.getTileSize();
         int equipY = gp.getTileSize() * 2;

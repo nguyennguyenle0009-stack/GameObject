@@ -14,6 +14,7 @@ GO
 /* ----------------------------
    1) Players & Stats (Base/Runtime)
    ---------------------------- */
+IF OBJECT_ID('dbo.PlayerTechniques','U') IS NOT NULL DROP TABLE dbo.PlayerTechniques;
 IF OBJECT_ID('dbo.PlayerRuntime','U') IS NOT NULL DROP TABLE dbo.PlayerRuntime;
 IF OBJECT_ID('dbo.PlayerBaseStats','U') IS NOT NULL DROP TABLE dbo.PlayerBaseStats;
 IF OBJECT_ID('dbo.Players','U') IS NOT NULL DROP TABLE dbo.Players;
@@ -44,8 +45,23 @@ CREATE TABLE dbo.PlayerRuntime (
   PlayerId UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_PlayerRuntime PRIMARY KEY,
   CurrentHP INT NOT NULL,
   CurrentPep INT NOT NULL,
+  MapId NVARCHAR(64) NOT NULL,
+  PosX INT NOT NULL,
+  PosY INT NOT NULL,
   Money BIGINT NOT NULL DEFAULT 0,
   CONSTRAINT FK_Runtime_Player FOREIGN KEY (PlayerId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE dbo.PlayerTechniques (
+  PlayerId UNIQUEIDENTIFIER NOT NULL,
+  Name NVARCHAR(128) NOT NULL,
+  Grade NVARCHAR(16) NOT NULL,
+  Level INT NOT NULL,
+  SpiritPerSecond INT NOT NULL,
+  CONSTRAINT PK_PlayerTechniques PRIMARY KEY (PlayerId, Name),
+  CONSTRAINT FK_PlayerTechniques_Player FOREIGN KEY (PlayerId)
     REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
 );
 GO
@@ -87,9 +103,8 @@ CREATE TABLE dbo.PlayerInventory (
   Quantity INT NOT NULL CONSTRAINT CK_PlayerInventory_Quantity CHECK (Quantity >= 0),
   CONSTRAINT PK_PlayerInventory PRIMARY KEY (PlayerId, ItemId),
   CONSTRAINT FK_PlayerInventory_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE,
-  CONSTRAINT FK_PlayerInventory_Item FOREIGN KEY (ItemId)
-    REFERENCES dbo.Items(ItemId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+  -- Bỏ ràng buộc với bảng Items để tránh lỗi khi có item mới chưa được định nghĩa
 );
 
 -- Slot hợp lệ gợi ý: ARMOR, HELMET, PANTS, SHOES, WEAPON1, WEAPON2, NECKLACE, RING1, RING2, AMULET
@@ -99,9 +114,8 @@ CREATE TABLE dbo.PlayerEquipment (
   ItemId NVARCHAR(64) NULL,          -- NULL = none
   CONSTRAINT PK_PlayerEquipment PRIMARY KEY (PlayerId, Slot),
   CONSTRAINT FK_PlayerEquipment_Player FOREIGN KEY (PlayerId)
-    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE,
-  CONSTRAINT FK_PlayerEquipment_Item FOREIGN KEY (ItemId)
-    REFERENCES dbo.Items(ItemId)
+    REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
+  -- Không kiểm tra khoá ngoại ItemId để việc thêm item mới không bị chặn
 );
 GO
 
@@ -151,12 +165,16 @@ INSERT INTO dbo.Players (PlayerId, Name, Realm) VALUES (@pid, N'Nguyeen_pro', N'
 INSERT INTO dbo.PlayerBaseStats (PlayerId, Atk, Def, HealthMax, PepMax, Sould, Spirit, SpiritMax, Strength)
 VALUES (@pid, 5, 4, 100, 100, 5, 0, 1000, 1);
 
-INSERT INTO dbo.PlayerRuntime (PlayerId, CurrentHP, CurrentPep, Money)
-VALUES (@pid, 100, 100, 0);
+INSERT INTO dbo.PlayerRuntime (PlayerId, CurrentHP, CurrentPep, MapId, PosX, PosY, Money)
+VALUES (@pid, 100, 100, N'world01', 100, 100, 0);
+
+-- Techniques: sample skill
+INSERT INTO dbo.PlayerTechniques (PlayerId, Name, Grade, Level, SpiritPerSecond)
+VALUES (@pid, N'Công pháp hạ phẩm', N'HA', 1, 1);
 
 -- Inventory: có 1 kiếm gỗ, 1 áo giáp
 INSERT INTO dbo.PlayerInventory (PlayerId, ItemId, Quantity)
-VALUES 
+VALUES
   (@pid, N'WEAPON#60fd3b79-0239-4c41-b3a1-07439360cdec', 1),
   (@pid, N'ARMOR#13520a64-d4f0-4c64-82db-3bbe9e229386', 1);
 
@@ -192,3 +210,8 @@ JOIN dbo.ItemStatMods ism ON e.ItemId = ism.ItemId
 WHERE e.PlayerId = (SELECT PlayerId FROM dbo.Players WHERE Name = N'Nguyeen_pro')
 GROUP BY e.Slot, ism.Stat
 ORDER BY e.Slot, ism.Stat;
+
+-- Learned techniques
+SELECT Name, Grade, Level, SpiritPerSecond
+FROM dbo.PlayerTechniques
+WHERE PlayerId = (SELECT PlayerId FROM dbo.Players WHERE Name = N'Nguyeen_pro');
