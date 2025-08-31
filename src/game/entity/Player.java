@@ -722,7 +722,7 @@ public class Player extends GameActor implements DrawableEntity {
         // Sync runtime attributes before persisting
         baseAtts.set(Attr.HEALTH, atts().get(Attr.HEALTH));
         baseAtts.set(Attr.PEP, atts().get(Attr.PEP));
-        //logRealmState();
+        logRealmState();
         saveStats();
         saveProfile();
     }
