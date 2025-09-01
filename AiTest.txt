@@ -1,0 +1,3 @@
+1. Mở Skill UI, gán "Công pháp hạ phẩm" vào phím K và kiểm tra việc sử dụng bằng phím K hoạt động.
+2. Gán lại kỹ năng trên vào phím L và xác nhận phím K không còn hiệu lực.
+3. Lưu và tải lại người chơi, đảm bảo phím L vẫn kích hoạt đúng công pháp.
