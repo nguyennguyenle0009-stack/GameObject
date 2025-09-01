@@ -740,7 +740,7 @@ public class Player extends GameActor implements DrawableEntity {
     private void saveStats() {
         try {
             PlayerDao pdao = new PlayerDao();
-            playerId = pdao.upsert(getName(), realm.name(), realmStage, physique.name());
+            playerId = pdao.upsert(getName(), realm.name(), realmStage, physique.name(), getAffinityNames());
 
             PlayerBaseStatsDao bsDao = new PlayerBaseStatsDao();
             bsDao.upsert(playerId, baseAtts);
@@ -829,6 +829,9 @@ public class Player extends GameActor implements DrawableEntity {
             realmStage = rec.realmStage;
             if (rec.physique != null) {
                 try { physique = Physique.valueOf(rec.physique); } catch (IllegalArgumentException ignored) {}
+            }
+            if (rec.affinity != null) {
+                affinities = parseAffinities(rec.affinity);
             }
             if (rec.createdAt != null) {
                 creationDate = rec.createdAt.toLocalDate();

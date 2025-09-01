@@ -342,7 +342,7 @@ public class InventoryUi {
         var phys = p.getPhysique();
         String physName = (phys != null) ? phys.getDisplay() : "Unknown";
         g2.drawString("Physique: " + physName, textX, textY); textY += 15;
-        g2.drawString("Affinity: " + p.getAffinityNames(), textX, textY); textY += 20;
+        g2.drawString("Linh căn: " + p.getAffinityNames(), textX, textY); textY += 20;
 
         // Vẽ nút mở bảng công pháp
         int btnW = gp.getTileSize() * 3;
