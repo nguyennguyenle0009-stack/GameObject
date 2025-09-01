@@ -71,39 +71,37 @@ public class CollisionChecker {
 	// Check entity, player với object
 	public int checkObject(Entity entity, boolean isPlayer) {
 	    int index = 999;
-	    for (SuperObject object : gp.getObjects()) {
-	        if (object == null || !object.isCollision()) continue;
-	        // Tạo vùng va chạm tạm cho entity
-	        Rectangle entityArea = new Rectangle(
-	            entity.getWorldX() + entity.getCollisionArea().x,
-	            entity.getWorldY() + entity.getCollisionArea().y,
-	            entity.getCollisionArea().width,
-	            entity.getCollisionArea().height
-	        );
-	        // Tạo vùng va chạm tạm cho object
-	        Rectangle objectArea = new Rectangle(
-	            object.getWorldX() + object.getCollisionArea().x,
-	            object.getWorldY() + object.getCollisionArea().y,
-	            object.getCollisionArea().width,
-	            object.getCollisionArea().height
-	        );
-	        // Di chuyển vùng va chạm entity theo hướng
-	        switch (entity.getDirection()) {
-	            case "up" -> entityArea.y -= entity.getSpeed();
-	            case "down" -> entityArea.y += entity.getSpeed();
-	            case "left" -> entityArea.x -= entity.getSpeed();
-	            case "right" -> entityArea.x += entity.getSpeed();
-	        }
-	        // Kiểm tra va chạm
-	        if (entityArea.intersects(objectArea)) {
-	            entity.setCollisionOn(true);
-	            if (isPlayer) {
-	                index = object.getIndex();
-	            }
-	        }
-	    }
-	    return index;
-	}
+            for (SuperObject object : gp.getObjects()) {
+                if (object == null) continue;
+                Rectangle entityArea = new Rectangle(
+                    entity.getWorldX() + entity.getCollisionArea().x,
+                    entity.getWorldY() + entity.getCollisionArea().y,
+                    entity.getCollisionArea().width,
+                    entity.getCollisionArea().height
+                );
+                Rectangle objectArea = new Rectangle(
+                    object.getWorldX() + object.getCollisionArea().x,
+                    object.getWorldY() + object.getCollisionArea().y,
+                    object.getCollisionArea().width,
+                    object.getCollisionArea().height
+                );
+                switch (entity.getDirection()) {
+                    case "up" -> entityArea.y -= entity.getSpeed();
+                    case "down" -> entityArea.y += entity.getSpeed();
+                    case "left" -> entityArea.x -= entity.getSpeed();
+                    case "right" -> entityArea.x += entity.getSpeed();
+                }
+                if (entityArea.intersects(objectArea)) {
+                    if (object.isCollision()) {
+                        entity.setCollisionOn(true);
+                    }
+                    if (isPlayer) {
+                        index = object.getIndex();
+                    }
+                }
+            }
+            return index;
+        }
 	
 	// Check entity với entity, check player với entity
 	public int checkEntity(Entity entity, List<Entity> targets) {

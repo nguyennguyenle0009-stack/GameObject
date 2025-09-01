@@ -31,6 +31,7 @@ import game.entity.item.EquipmentItem;
 import game.entity.attributes.Attributes;
 import game.interfaces.DrawableEntity;
 import game.entity.monster.Monster;
+import game.object.SuperObject;
 import game.enums.Affinity;
 import game.enums.Attr;
 import game.enums.Physique;
@@ -354,9 +355,10 @@ public class Player extends GameActor implements DrawableEntity {
 	
 	@Override
 	public void checkCollision() {
-		setCollisionOn(false);
-		gp.getCheckCollision().checkTile(this);
-        gp.getCheckCollision().checkObject(this, false);
+        setCollisionOn(false);
+        gp.getCheckCollision().checkTile(this);
+        int objIndex = gp.getCheckCollision().checkObject(this, true);
+        interactWithObject(objIndex);
         gp.getCheckCollision().checkEntity(this, gp.getNpcs());
         int npcIndex = gp.getCheckCollision().checkInteraction(this, gp.getNpcs(), 48);
         interactWithNPC(npcIndex);
@@ -386,15 +388,34 @@ public class Player extends GameActor implements DrawableEntity {
 	    return null;
 	}
 	
-	private void interactWithNPC(int index) {
-		List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(this, gp.getNpcs(), 48);
-		if (!nearbyNpcs.isEmpty() && gp.keyH.isDialoguePressed()) {
-		    Entity npc = nearbyNpcs.get(0); // lấy NPC đầu tiên (bạn có thể chọn theo khoảng cách gần nhất)
-		    gp.setGameState(gp.getDialogueState());
-		    npc.speak();
-		    gp.keyH.setDialoguePressed(false);
-		}
-	}
+    private void interactWithNPC(int index) {
+        List<Entity> nearbyNpcs = gp.getCheckCollision().getEntitiesInRange(this, gp.getNpcs(), 48);
+        if (!nearbyNpcs.isEmpty() && gp.keyH.isDialoguePressed()) {
+            Entity npc = nearbyNpcs.get(0); // lấy NPC đầu tiên (bạn có thể chọn theo khoảng cách gần nhất)
+            gp.setGameState(gp.getDialogueState());
+            npc.speak();
+            gp.keyH.setDialoguePressed(false);
+        }
+    }
+
+    private void interactWithObject(int index) {
+        if (index != 999) {
+            SuperObject obj = gp.getObjects().get(index);
+            if ("Portal".equals(obj.getName())) {
+                mapId = "world02";
+                gp.getTileManager().loadMap("/data/map/world02.txt");
+                setWorldX(2 * gp.getTileSize());
+                setWorldY(2 * gp.getTileSize());
+                try {
+                    PlayerRuntimeDao rtDao = new PlayerRuntimeDao();
+                    rtDao.upsert(playerId, atts().get(Attr.HEALTH), atts().get(Attr.PEP), 0,
+                            mapId, getWorldX(), getWorldY());
+                } catch (ClassNotFoundException | SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 	
 	@Override
 	public void draw(Graphics2D g2) { }
