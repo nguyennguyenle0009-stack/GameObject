@@ -67,6 +67,20 @@ CREATE TABLE dbo.PlayerTechniques (
 GO
 
 /* ----------------------------
+   1b) Maps
+   ---------------------------- */
+IF OBJECT_ID('dbo.Maps','U') IS NOT NULL DROP TABLE dbo.Maps;
+GO
+CREATE TABLE dbo.Maps (
+  MapId NVARCHAR(64) NOT NULL CONSTRAINT PK_Maps PRIMARY KEY,
+  Name NVARCHAR(128) NOT NULL
+);
+GO
+INSERT INTO dbo.Maps (MapId, Name) VALUES (N'world01', N'World 01');
+INSERT INTO dbo.Maps (MapId, Name) VALUES (N'world02', N'World 02');
+GO
+
+/* ----------------------------
    2) Items & Stat Mods
    ---------------------------- */
 IF OBJECT_ID('dbo.ItemStatMods','U') IS NOT NULL DROP TABLE dbo.ItemStatMods;
