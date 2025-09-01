@@ -117,3 +117,7 @@ Sửa lỗi và cải tiến:
 ## 1.0.28
 - Bảng `PlayerRuntime` lưu thêm thông tin bản đồ (`MapId`) và tọa độ (`PosX`, `PosY`).
 - `PlayerRuntimeDao` và `Player` đọc/ghi vị trí hiện tại của nhân vật.
+
+## 1.0.29
+- Bảng `Players` lưu thêm cột `Affinity` để ghi nhận linh căn của người chơi.
+- Bảng thuộc tính nhân vật hiển thị "Linh căn" dựa trên dữ liệu này.
