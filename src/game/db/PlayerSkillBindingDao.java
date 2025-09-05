@@ -16,7 +16,7 @@ public class PlayerSkillBindingDao {
         Map<String, String> map = new HashMap<>();
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT Key, TechniqueName FROM dbo.PlayerTechniqueBindings WHERE PlayerId = ?")) {
+                     "SELECT [Key], TechniqueName FROM dbo.PlayerTechniqueBindings WHERE PlayerId = ?")) {
             ps.setString(1, playerId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -39,7 +39,7 @@ public class PlayerSkillBindingDao {
                 }
                 if (!bindings.isEmpty()) {
                     try (PreparedStatement ins = conn.prepareStatement(
-                            "INSERT INTO dbo.PlayerTechniqueBindings(PlayerId, Key, TechniqueName) VALUES(?,?,?)")) {
+                            "INSERT INTO dbo.PlayerTechniqueBindings(PlayerId, [Key], TechniqueName) VALUES(?,?,?)")) {
                         for (Map.Entry<String, String> e : bindings.entrySet()) {
                             ins.setString(1, playerId);
                             ins.setString(2, e.getKey());
@@ -63,7 +63,7 @@ public class PlayerSkillBindingDao {
     public boolean isKeyBound(String playerId, String key) throws ClassNotFoundException, SQLException {
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT 1 FROM dbo.PlayerTechniqueBindings WHERE PlayerId = ? AND Key = ?")) {
+                     "SELECT 1 FROM dbo.PlayerTechniqueBindings WHERE PlayerId = ? AND [Key] = ?")) {
             ps.setString(1, playerId);
             ps.setString(2, key);
             try (ResultSet rs = ps.executeQuery()) {
@@ -77,7 +77,7 @@ public class PlayerSkillBindingDao {
         List<String> keys = new ArrayList<>();
         try (Connection conn = DBAccount.getConnectDB();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT Key FROM dbo.PlayerTechniqueBindings WHERE PlayerId = ?")) {
+                     "SELECT [Key] FROM dbo.PlayerTechniqueBindings WHERE PlayerId = ?")) {
             ps.setString(1, playerId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) keys.add(rs.getString("Key"));

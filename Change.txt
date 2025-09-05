@@ -134,3 +134,6 @@ Sửa lỗi và cải tiến:
 - `SkillUi` cập nhật phím hiển thị ngay sau khi gán và báo lỗi nếu phím đã dùng.
 - `KeyHandler` chuyển mã phím sang tên phím trước khi kích hoạt.
 - Xuất danh sách phím đã gán vào file `UsedKeys.txt`.
+
+## 1.0.32
+- Tránh lỗi SQL từ khóa `Key` bằng cách bao cột `[Key]` trong các câu truy vấn `PlayerTechniqueBindings`.
