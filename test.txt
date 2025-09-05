@@ -1,3 +1,4 @@
-1. Trong game, mở bảng công pháp và thử gán mỗi công pháp vào một phím khác nhau, sau đó bấm các phím đó để kiểm tra.
-2. Đóng game và mở lại để chắc chắn các phím đã gán vẫn hoạt động.
-3. Thử gán một phím đã sử dụng cho công pháp khác để xem phím cũ bị thay thế.
+1. Trong game, mở bảng công pháp và gán từng công pháp vào một phím chữ cái.
+2. Gán lại một công pháp vào phím đã dùng và xác nhận hệ thống báo trùng lặp.
+3. Đóng game và mở lại để chắc chắn các phím đã gán vẫn hoạt động.
+4. Kiểm tra file UsedKeys.txt liệt kê đúng các phím đã gán.

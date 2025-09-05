@@ -97,9 +97,9 @@ public class SkillUi {
 
                 g2.setColor(Color.WHITE);
                 String name = tech.getName();
-                Integer key = gp.getPlayer().getKeyForTechnique(tech);
+                String key = gp.getPlayer().getKeyForTechnique(tech);
                 if (key != null) {
-                    name += " [" + KeyEvent.getKeyText(key) + "]";
+                    name += " [" + key + "]";
                 }
                 long cd = gp.getPlayer().getCultivationCooldownRemaining();
                 if (cd > 0) {
@@ -207,7 +207,11 @@ public class SkillUi {
     /** Xử lý phím khi đang chờ gán. */
     public boolean handleKeyPress(int keyCode) {
         if (!waitingForKey || pendingTechnique == null) return false;
-        gp.getPlayer().bindTechnique(keyCode, pendingTechnique);
+        String key = KeyEvent.getKeyText(keyCode).toUpperCase();
+        boolean ok = gp.getPlayer().bindTechnique(key, pendingTechnique);
+        if (!ok) {
+            System.out.println("Phím đã được gán trước đó: " + key);
+        }
         waitingForKey = false;
         pendingTechnique = null;
         return true;

@@ -5,7 +5,7 @@
 ## Tính năng
 
 - Thuộc tính và vị trí nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats`, `PlayerRuntime` (HP, Pep, bản đồ, tọa độ) và `PlayerTechniques`.
-- Có thể gán công pháp vào phím bất kỳ và lưu vào bảng `PlayerTechniqueBindings` để sử dụng nhanh.
+- Có thể gán công pháp vào phím bất kỳ, lưu tên phím trong bảng `PlayerTechniqueBindings`, tránh trùng lặp và xuất danh sách phím đã dùng vào `UsedKeys.txt`.
 
 ## Cập nhật
 

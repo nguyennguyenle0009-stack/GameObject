@@ -69,9 +69,9 @@ GO
 
 CREATE TABLE dbo.PlayerTechniqueBindings (
   PlayerId UNIQUEIDENTIFIER NOT NULL,
-  KeyCode INT NOT NULL,
+  [Key] NVARCHAR(32) NOT NULL,
   TechniqueName NVARCHAR(128) NOT NULL,
-  CONSTRAINT PK_PlayerTechniqueBindings PRIMARY KEY (PlayerId, KeyCode),
+  CONSTRAINT PK_PlayerTechniqueBindings PRIMARY KEY (PlayerId, [Key]),
   CONSTRAINT FK_PlayerTechniqueBindings_Player FOREIGN KEY (PlayerId)
     REFERENCES dbo.Players(PlayerId) ON DELETE CASCADE
 );
@@ -183,9 +183,9 @@ VALUES (@pid, 100, 100, N'world01', 100, 100, 0);
 INSERT INTO dbo.PlayerTechniques (PlayerId, Name, Grade, Level, SpiritPerSecond)
 VALUES (@pid, N'Công pháp hạ phẩm', N'HA', 1, 1);
 
--- Sample key binding: key code 75 = 'K'
-INSERT INTO dbo.PlayerTechniqueBindings (PlayerId, KeyCode, TechniqueName)
-VALUES (@pid, 75, N'Công pháp hạ phẩm');
+-- Sample key binding: phím 'K'
+INSERT INTO dbo.PlayerTechniqueBindings (PlayerId, [Key], TechniqueName)
+VALUES (@pid, N'K', N'Công pháp hạ phẩm');
 
 -- Inventory: có 1 kiếm gỗ, 1 áo giáp
 INSERT INTO dbo.PlayerInventory (PlayerId, ItemId, Quantity)

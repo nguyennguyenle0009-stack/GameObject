@@ -127,3 +127,10 @@ Sửa lỗi và cải tiến:
 - `Player` lưu nhiều công pháp gán phím, tải và lưu qua database.
 - `SkillUi` có nút "Gán" mở ô nhập phím, hiển thị phím đã gán bên cạnh tên công pháp.
 - `KeyHandler` nhận phím và kích hoạt công pháp tương ứng.
+
+## 1.0.31
+- Lưu tên phím dạng chữ thay vì mã số để dễ quản lý.
+- Chặn gán trùng lặp phím hoặc công pháp; kiểm tra cả dữ liệu trong database.
+- `SkillUi` cập nhật phím hiển thị ngay sau khi gán và báo lỗi nếu phím đã dùng.
+- `KeyHandler` chuyển mã phím sang tên phím trước khi kích hoạt.
+- Xuất danh sách phím đã gán vào file `UsedKeys.txt`.

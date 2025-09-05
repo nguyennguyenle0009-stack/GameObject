@@ -24,7 +24,8 @@ public class KeyHandler implements KeyListener {
             int code = e.getKeyCode();
             if (gp.getUi().getSkillUi().handleKeyPress(code)) return;
     if (gp.getGameState() == gp.getPlayState()) {
-        CultivationTechnique tech = gp.getPlayer().getTechniqueForKey(code);
+        String key = KeyEvent.getKeyText(code).toUpperCase();
+        CultivationTechnique tech = gp.getPlayer().getTechniqueForKey(key);
         if (tech != null) {
             tech.use(gp.getPlayer());
             return;
