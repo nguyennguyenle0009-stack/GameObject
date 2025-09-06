@@ -121,3 +121,19 @@ Sửa lỗi và cải tiến:
 ## 1.0.29
 - Bảng `Players` lưu thêm cột `Affinity` để ghi nhận linh căn của người chơi.
 - Bảng thuộc tính nhân vật hiển thị "Linh căn" dựa trên dữ liệu này.
+
+## 1.0.30
+- Thêm bảng `PlayerTechniqueBindings` và DAO tương ứng để lưu phím gán công pháp.
+- `Player` lưu nhiều công pháp gán phím, tải và lưu qua database.
+- `SkillUi` có nút "Gán" mở ô nhập phím, hiển thị phím đã gán bên cạnh tên công pháp.
+- `KeyHandler` nhận phím và kích hoạt công pháp tương ứng.
+
+## 1.0.31
+- Lưu tên phím dạng chữ thay vì mã số để dễ quản lý.
+- Chặn gán trùng lặp phím hoặc công pháp; kiểm tra cả dữ liệu trong database.
+- `SkillUi` cập nhật phím hiển thị ngay sau khi gán và báo lỗi nếu phím đã dùng.
+- `KeyHandler` chuyển mã phím sang tên phím trước khi kích hoạt.
+- Xuất danh sách phím đã gán vào file `UsedKeys.txt`.
+
+## 1.0.32
+- Tránh lỗi SQL từ khóa `Key` bằng cách bao cột `[Key]` trong các câu truy vấn `PlayerTechniqueBindings`.

@@ -1,0 +1,6 @@
+1. Mở Skill UI, gán "Công pháp hạ phẩm" vào phím K và kiểm tra việc sử dụng bằng phím K hoạt động.
+2. Thử gán lại vào phím K lần nữa và xác nhận hệ thống từ chối vì trùng lặp.
+3. Gán vào phím L, bảo đảm danh sách hiển thị đổi sang L.
+4. Lưu và tải lại người chơi, kiểm tra phím L vẫn kích hoạt đúng công pháp.
+5. Mở file UsedKeys.txt xác nhận chứa các phím đã gán.
+6. Khởi động lại game lần nữa để đảm bảo không còn lỗi SQL liên quan tới cột `Key`.

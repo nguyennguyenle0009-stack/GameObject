@@ -5,6 +5,7 @@
 ## Tính năng
 
 - Thuộc tính và vị trí nhân vật được lưu vào SQL Server thông qua các bảng `Players` (cảnh giới, thể chất), `PlayerBaseStats`, `PlayerRuntime` (HP, Pep, bản đồ, tọa độ) và `PlayerTechniques`.
+- Có thể gán công pháp vào phím bất kỳ, lưu tên phím trong bảng `PlayerTechniqueBindings`, tránh trùng lặp và xuất danh sách phím đã dùng vào `UsedKeys.txt`.
 
 ## Cập nhật
 
@@ -52,6 +53,12 @@
 ### Thêm
 - Bảng `PlayerRuntime` lưu thêm `MapId`, `PosX`, `PosY` để ghi nhận vị trí và bản đồ hiện tại của người chơi.
 - `PlayerRuntimeDao` và `Player` đọc/ghi các giá trị này khi lưu hoặc tải nhân vật.
+
+## [1.0.29]
+
+### Thêm
+- Cho phép gán công pháp vào phím tắt tùy chọn.
+- Bảng `PlayerTechniqueBindings` lưu cấu hình phím và được đọc khi tải game.
 
 ## [1.0.20]
 

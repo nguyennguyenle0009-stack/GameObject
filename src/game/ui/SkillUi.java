@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import game.entity.skill.CultivationTechnique;
@@ -29,6 +30,10 @@ public class SkillUi {
 
     // Lưu toạ độ cuối cùng của khung để kiểm tra vị trí cuộn.
     private Rectangle lastBounds = new Rectangle();
+
+    // Đang chờ người chơi nhập phím để gán.
+    private boolean waitingForKey = false;
+    private CultivationTechnique pendingTechnique;
 
     /** Thông tin hiển thị trên một dòng kỹ năng. */
     private static class Entry {
@@ -92,6 +97,10 @@ public class SkillUi {
 
                 g2.setColor(Color.WHITE);
                 String name = tech.getName();
+                String key = gp.getPlayer().getKeyForTechnique(tech);
+                if (key != null) {
+                    name += " [" + key + "]";
+                }
                 long cd = gp.getPlayer().getCultivationCooldownRemaining();
                 if (cd > 0) {
                     long sec = cd / 1000;
@@ -147,6 +156,17 @@ public class SkillUi {
                 g2.drawString(line3, tipX + padding, tipY + padding + 55);
                 g2.drawString(line4, tipX + padding, tipY + padding + 75);
             }
+
+            // Ô nhập phím khi đang chờ gán
+            if (waitingForKey && pendingTechnique != null) {
+                int boxW = tile * 6;
+                int boxH = tile * 2;
+                int bx = gp.getScreenWidth()/2 - boxW/2;
+                int by = gp.getScreenHeight()/2 - boxH/2;
+                HUDUtils.drawSubWindow(g2, bx, by, boxW, boxH, new Color(0,0,0,200), Color.WHITE);
+                g2.setColor(Color.WHITE);
+                g2.drawString("Nhấn phím cho: " + pendingTechnique.getName(), bx + 20, by + boxH/2 + 5);
+            }
         } finally {
             g2.setFont(oldFont);
         }
@@ -166,7 +186,8 @@ public class SkillUi {
                     return true;
                 }
                 if (e.assignBtn.contains(mx, my)) {
-                    gp.getPlayer().assignTechnique(e.tech);
+                    waitingForKey = true;
+                    pendingTechnique = e.tech;
                     return true;
                 }
             }
@@ -179,8 +200,21 @@ public class SkillUi {
      */
     public void handleMouseWheel(int rotation, int mx, int my) {
         if (!visible) return;
-        if (!lastBounds.contains(mx, my)) return;
-        scrollOffset += Integer.signum(rotation);
+       if (!lastBounds.contains(mx, my)) return;
+       scrollOffset += Integer.signum(rotation);
+    }
+
+    /** Xử lý phím khi đang chờ gán. */
+    public boolean handleKeyPress(int keyCode) {
+        if (!waitingForKey || pendingTechnique == null) return false;
+        String key = KeyEvent.getKeyText(keyCode).toUpperCase();
+        boolean ok = gp.getPlayer().bindTechnique(key, pendingTechnique);
+        if (!ok) {
+            System.out.println("Phím đã được gán trước đó: " + key);
+        }
+        waitingForKey = false;
+        pendingTechnique = null;
+        return true;
     }
 
     public void toggle() { visible = !visible; }

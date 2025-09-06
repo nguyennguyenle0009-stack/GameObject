@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import game.main.GamePanel;
+import game.entity.skill.CultivationTechnique;
 
 public class KeyHandler implements KeyListener {
     private boolean upPressed, downPressed, leftPressed, rightPressed, dialoguePressed, iPressed;
@@ -21,7 +22,14 @@ public class KeyHandler implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
+            if (gp.getUi().getSkillUi().handleKeyPress(code)) return;
     if (gp.getGameState() == gp.getPlayState()) {
+        String key = KeyEvent.getKeyText(code).toUpperCase();
+        CultivationTechnique tech = gp.getPlayer().getTechniqueForKey(key);
+        if (tech != null) {
+            tech.use(gp.getPlayer());
+            return;
+        }
         if (code == KeyEvent.VK_W) {
             upPressed = true;
         }

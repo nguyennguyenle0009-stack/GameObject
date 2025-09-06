@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -48,6 +50,7 @@ import game.db.PlayerDao;
 import game.db.PlayerBaseStatsDao;
 import game.db.PlayerRuntimeDao;
 import game.db.PlayerSkillDao;
+import game.db.PlayerSkillBindingDao;
 
 public class Player extends GameActor implements DrawableEntity {
 	// Vị trí nhân vật trên màn hình (luôn ở giữa)
@@ -488,15 +491,42 @@ public class Player extends GameActor implements DrawableEntity {
         saveState();
     }
 
-    // Công pháp được gán vào phím nhanh (tạm thời lưu 1 kỹ năng).
-    private CultivationTechnique assignedTechnique;
+    // Bản đồ tên phím -> công pháp được gán.
+    private final Map<String, CultivationTechnique> techniqueBindings = new HashMap<>();
 
-    /** Gán một công pháp cho phím nhanh. */
-    public void assignTechnique(CultivationTechnique tech) {
-        assignedTechnique = tech;
+    /**
+     * Gán một công pháp cho phím. Trả về {@code true} nếu gán thành công,
+     * {@code false} nếu phím hoặc công pháp đã được sử dụng.
+     */
+    public boolean bindTechnique(String key, CultivationTechnique tech) {
+        key = key.toUpperCase();
+        if (techniqueBindings.containsKey(key)) return false;           // phím đã dùng
+        if (techniqueBindings.containsValue(tech)) return false;        // công pháp đã gán
+        try {
+            PlayerSkillBindingDao dao = new PlayerSkillBindingDao();
+            if (playerId != null && dao.isKeyBound(playerId, key)) return false; // trùng trong DB
+        } catch (Exception ignored) { }
+        techniqueBindings.put(key, tech);
+        saveState();
+        return true;
     }
 
-    public CultivationTechnique getAssignedTechnique() { return assignedTechnique; }
+    /** Lấy công pháp được gán cho phím. */
+    public CultivationTechnique getTechniqueForKey(String key) {
+        return techniqueBindings.get(key.toUpperCase());
+    }
+
+    /** Tìm phím đã gán cho công pháp, trả về null nếu chưa gán. */
+    public String getKeyForTechnique(CultivationTechnique tech) {
+        for (Map.Entry<String, CultivationTechnique> e : techniqueBindings.entrySet()) {
+            if (e.getValue().equals(tech)) return e.getKey();
+        }
+        return null;
+    }
+
+    public Map<String, CultivationTechnique> getTechniqueBindings() {
+        return Map.copyOf(techniqueBindings);
+    }
 
     public List<CultivationTechnique> getTechniques() { return List.copyOf(techniques); }
 
@@ -505,6 +535,13 @@ public class Player extends GameActor implements DrawableEntity {
         return techniques.stream()
                 .map(t -> t.getName() + "(" + t.getLevel() + ")(" + t.getGrade().getDisplay() + ")")
                 .collect(Collectors.joining(", "));
+    }
+
+    private CultivationTechnique findTechniqueByName(String name) {
+        for (CultivationTechnique t : techniques) {
+            if (t.getName().equals(name)) return t;
+        }
+        return null;
     }
 
     public void startCultivating(CultivationTechnique tech) {
@@ -751,6 +788,16 @@ public class Player extends GameActor implements DrawableEntity {
 
             PlayerSkillDao skDao = new PlayerSkillDao();
             skDao.replaceAll(playerId, techniques);
+
+            PlayerSkillBindingDao bindDao = new PlayerSkillBindingDao();
+            Map<String, String> map = new HashMap<>();
+            for (Map.Entry<String, CultivationTechnique> e : techniqueBindings.entrySet()) {
+                map.put(e.getKey(), e.getValue().getName());
+            }
+            bindDao.replaceAll(playerId, map);
+            try {
+                bindDao.exportUsedKeys(playerId, java.nio.file.Path.of("UsedKeys.txt"));
+            } catch (Exception ignored) { }
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -866,6 +913,14 @@ public class Player extends GameActor implements DrawableEntity {
             PlayerSkillDao skDao = new PlayerSkillDao();
             techniques.clear();
             techniques.addAll(skDao.load(playerId));
+
+            // Load technique key bindings
+            PlayerSkillBindingDao bindDao = new PlayerSkillBindingDao();
+            techniqueBindings.clear();
+            for (Map.Entry<String, String> e : bindDao.load(playerId).entrySet()) {
+                CultivationTechnique t = findTechniqueByName(e.getValue());
+                if (t != null) techniqueBindings.put(e.getKey().toUpperCase(), t);
+            }
 
             // Load inventory/equipment from serialized profile if present
             try (Connection conn = DBAccount.getConnectDB();
